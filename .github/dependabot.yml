@@ -1,0 +1,23 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directories: 
+    - "\Announcarr\Announcarr.csproj"
+    - "\Integrations\Sonarr\Sonarr\Sonarr.csproj"
+    - "\Integrations\Radarr\Radarr\Radarr.csproj"
+    - "\Clients\Radarr.Client\Radarr.Client.csproj"
+    - "\Clients\Sonarr.Client\Sonarr.Client.csproj"
+    - "\Integrations\Abstractions\Abstractions.Extensions\Abstractions.Extensions.csproj"
+    - "\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj"
+    - "\Integrations\Radarr\Radarr.Extensions\Radarr.Extensions.csproj"
+    - "\Clients\Abstractions.Exceptions\Abstractions.Exceptions.csproj"
+    - "\Integrations\Abstractions\Abstractions\Abstractions.csproj"
+    - "\Utils\Extensions\Http\Http.csproj"
+    - "\Utils\Extensions\Dictionary\Dictionary.csproj"
+    schedule:
+      interval: "weekly"
