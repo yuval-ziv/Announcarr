@@ -3,7 +3,7 @@ using Announcarr.Integrations.Abstractions.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Announcarr.Integrations.Abstractions.Extensions.DependencyInjection;
+namespace Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection;
 
 public static class ServiceCollectionServiceExtensions
 {

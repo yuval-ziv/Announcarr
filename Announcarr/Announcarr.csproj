@@ -14,16 +14,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Integrations\Abstractions\Abstractions.Extensions\Abstractions.Extensions.csproj"/>
-        <ProjectReference Include="..\Integrations\Abstractions\Abstractions\Abstractions.csproj"/>
-        <ProjectReference Include="..\Integrations\Radarr\Radarr.Extensions\Radarr.Extensions.csproj"/>
-        <ProjectReference Include="..\Integrations\Radarr\Radarr\Radarr.csproj"/>
-        <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj"/>
-        <ProjectReference Include="..\Integrations\Sonarr\Sonarr\Sonarr.csproj"/>
+        <PackageReference Include="Quartz" Version="3.11.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Quartz" Version="3.11.0"/>
+        <ProjectReference Include="..\Exporters\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj" />
+        <ProjectReference Include="..\Exporters\Telegram\Telegram.csproj"/>
+        <ProjectReference Include="..\Integrations\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj" />
+        <ProjectReference Include="..\Integrations\Radarr\Radarr.Extensions\Radarr.Extensions.csproj"/>
+        <ProjectReference Include="..\Integrations\Radarr\Radarr.Integration\Radarr.Integration.csproj"/>
+        <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj"/>
+        <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Integration\Sonarr.Integration.csproj"/>
     </ItemGroup>
 
 </Project>

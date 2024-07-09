@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radarr.Client", "Clients\Ra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Integration", "Integrations\Abstractions\Abstractions.Integration\Abstractions.Integration.csproj", "{3FF28AD2-D45B-4063-815C-FA8BD106D91D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Extensions", "Integrations\Abstractions\Abstractions.Extensions\Abstractions.Extensions.csproj", "{C750269D-BDB9-4DDA-BAAF-BA52B2EABFCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Inegration.Extensions", "Integrations\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj", "{C750269D-BDB9-4DDA-BAAF-BA52B2EABFCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dictionary", "Utils\Extensions\Dictionary\Dictionary.csproj", "{64D907AF-39DF-4A7C-BC28-3A73FFC9978A}"
 EndProject
@@ -51,7 +51,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Exporter", "Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram", "Exporters\Telegram\Telegram.csproj", "{E8067C27-90DF-4185-BD03-005FC26E182A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Extensions", "Exporters\Abstractions\Abstractions.Extensions\Abstractions.Extensions.csproj", "{80D7C050-DC15-46E3-9950-27AD32CC82E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Exporter.Extensions", "Exporters\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj", "{80D7C050-DC15-46E3-9950-27AD32CC82E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
