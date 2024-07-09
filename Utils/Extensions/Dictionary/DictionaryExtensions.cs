@@ -1,4 +1,4 @@
-﻿namespace Announcer.Utils.Extensions.Dictionary;
+﻿namespace Announcarr.Utils.Extensions.Dictionary;
 
 public static class DictionaryExtensions
 {

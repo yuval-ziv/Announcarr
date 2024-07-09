@@ -1,4 +1,4 @@
-﻿namespace Announcer.Clients.Sonarr.Responses;
+﻿namespace Announcarr.Clients.Sonarr.Responses;
 
 public class SeriesResource
 {
@@ -46,6 +46,6 @@ public class SeriesResource
     public SeriesStatisticsResource Statistics { get; set; } = new();
     public bool? EpisodesChanged { get; set; }
 
-    [Obsolete("This property is marked as obsolete in the Sonarr V3 API docs.")]
+    [Obsolete("This property is marked as obsolete in the Sonarr.Integration V3 API docs.")]
     public int LanguageProfileId { get; set; }
 }

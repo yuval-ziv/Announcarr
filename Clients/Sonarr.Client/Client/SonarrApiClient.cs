@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
-using Announcer.Clients.Sonarr.Responses;
-using Announcer.Utils.Extensions.Http;
+using Announcarr.Clients.Sonarr.Responses;
+using Announcarr.Utils.Extensions.Http;
 using Newtonsoft.Json;
 
-namespace Announcer.Clients.Sonarr.Client;
+namespace Announcarr.Clients.Sonarr.Client;
 
 public class SonarrApiClient : ISonarrApiClient
 {

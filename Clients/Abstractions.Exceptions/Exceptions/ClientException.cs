@@ -1,4 +1,4 @@
-﻿namespace Announcer.Clients.Abstractions.Exceptions;
+﻿namespace Announcarr.Clients.Abstractions.Exceptions;
 
 public class ClientException : Exception
 {

@@ -1,4 +1,4 @@
-﻿using Announcer.Integrations.Abstractions.Responses;
+﻿using Announcarr.Integrations.Abstractions.Responses;
 
 namespace Announcarr.Services;
 

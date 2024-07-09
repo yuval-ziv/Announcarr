@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Announcarr.Integrations.Sonarr.Integration</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Clients\Sonarr.Client\Sonarr.Client.csproj"/>
+        <ProjectReference Include="..\..\Abstractions\Abstractions.Integration\Abstractions.Integration.csproj" />
+    </ItemGroup>
+</Project>

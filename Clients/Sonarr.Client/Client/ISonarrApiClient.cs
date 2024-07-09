@@ -1,6 +1,6 @@
-﻿using Announcer.Clients.Sonarr.Responses;
+﻿using Announcarr.Clients.Sonarr.Responses;
 
-namespace Announcer.Clients.Sonarr.Client;
+namespace Announcarr.Clients.Sonarr.Client;
 
 public interface ISonarrApiClient : IDisposable
 {

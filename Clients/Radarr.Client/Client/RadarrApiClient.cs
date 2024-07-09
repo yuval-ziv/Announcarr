@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
-using Announcer.Clients.Radarr.Responses;
-using Announcer.Utils.Extensions.Http;
+using Announcarr.Clients.Radarr.Responses;
+using Announcarr.Utils.Extensions.Http;
 using Newtonsoft.Json;
 
-namespace Announcer.Clients.Radarr.Client;
+namespace Announcarr.Clients.Radarr.Client;
 
 public class RadarrApiClient : IRadarrApiClient
 {
@@ -52,7 +52,7 @@ public class RadarrApiClient : IRadarrApiClient
     {
         if (!httpResponseMessage.IsSuccessStatusCode)
         {
-            throw new UnauthorizedAccessException($"Sonarr returned {httpResponseMessage.StatusCode} for {memberName}");
+            throw new UnauthorizedAccessException($"Radarr returned {httpResponseMessage.StatusCode} for {memberName}");
         }
     }
 }

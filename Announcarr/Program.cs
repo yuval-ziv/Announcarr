@@ -1,15 +1,15 @@
 using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
+using Announcarr.Integrations.Abstractions.Extensions.DependencyInjection;
+using Announcarr.Integrations.Abstractions.Responses;
+using Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
+using Announcarr.Integrations.Radarr.Integration.Configurations;
+using Announcarr.Integrations.Radarr.Integration.Services;
+using Announcarr.Integrations.Sonarr.Extensions.DependencyInjection.Validations;
+using Announcarr.Integrations.Sonarr.Integration.Configurations;
+using Announcarr.Integrations.Sonarr.Integration.Services;
 using Announcarr.JsonConverters;
 using Announcarr.Services;
-using Announcer.Integrations.Abstractions.Extensions.DependencyInjection;
-using Announcer.Integrations.Abstractions.Responses;
-using Announcer.Integrations.Radarr.Configurations;
-using Announcer.Integrations.Radarr.Extensions.DependencyInjection.Validations;
-using Announcer.Integrations.Radarr.Services;
-using Announcer.Integrations.Sonarr.Configurations;
-using Announcer.Integrations.Sonarr.Extensions.DependencyInjection.Validations;
-using Announcer.Integrations.Sonarr.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,6 +24,9 @@ builder.Services.Configure<AnnouncarrConfiguration>(builder.Configuration.GetSec
 IConfigurationSection serviceIntegrationConfigurationSection = builder.Configuration.GetSection("Integrations");
 builder.Services.Configure<SonarrIntegrationConfiguration>(serviceIntegrationConfigurationSection.GetSection("Sonarr"));
 builder.Services.Configure<RadarrIntegrationConfiguration>(serviceIntegrationConfigurationSection.GetSection("Radarr"));
+IConfigurationSection integrationsConfigurationSection = builder.Configuration.GetSection("Integrations");
+builder.Services.Configure<SonarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Sonarr.Integration"));
+builder.Services.Configure<RadarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Radarr.Integration"));
 
 builder.Services.AddIntegration<SonarrIntegrationService>().WithConfiguration<SonarrIntegrationConfiguration>();
 builder.Services.AddIntegration<RadarrIntegrationService>().WithConfiguration<RadarrIntegrationConfiguration>();

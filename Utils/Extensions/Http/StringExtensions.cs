@@ -1,7 +1,7 @@
 ﻿using System.Web;
-using Announcer.Utils.Extensions.Dictionary;
+using Announcarr.Utils.Extensions.Dictionary;
 
-namespace Announcer.Utils.Extensions.Http;
+namespace Announcarr.Utils.Extensions.Http;
 
 public static class StringExtensions
 {

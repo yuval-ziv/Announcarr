@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Announcer.Integrations.Abstractions.Interfaces;
+using Announcarr.Integrations.Abstractions.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Announcer.Integrations.Abstractions.Extensions.DependencyInjection;
+namespace Announcarr.Integrations.Abstractions.Extensions.DependencyInjection;
 
 public static class ServiceCollectionServiceExtensions
 {

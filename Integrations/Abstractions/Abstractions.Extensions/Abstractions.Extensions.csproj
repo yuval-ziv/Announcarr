@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Announcer.Integrations.Abstractions.Extensions</RootNamespace>
+        <RootNamespace>Announcarr.Integrations.Abstractions.Extensions</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
+        <ProjectReference Include="..\Abstractions.Integration\Abstractions.Integration.csproj" />
     </ItemGroup>
 
 </Project>

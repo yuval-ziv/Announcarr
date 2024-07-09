@@ -1,5 +1,5 @@
-﻿using Announcer.Integrations.Abstractions.Interfaces;
-using Announcer.Integrations.Abstractions.Responses;
+﻿using Announcarr.Integrations.Abstractions.Interfaces;
+using Announcarr.Integrations.Abstractions.Responses;
 
 namespace Announcarr.Services;
 
