@@ -14,19 +14,19 @@ public static class ServiceCollectionServiceExtensions
         return services;
     }
 
-    public static IServiceCollection WithConfiguration<TConfiguration>(this IServiceCollection services) where TConfiguration : class, new()
+    public static IServiceCollection WithIntegrationConfiguration<TConfiguration>(this IServiceCollection services) where TConfiguration : class, new()
     {
-        services.WithConfiguration(provider => provider.GetService<IOptions<TConfiguration>>()?.Value ?? new TConfiguration());
+        services.WithIntegrationConfiguration(provider => provider.GetService<IOptions<TConfiguration>>()?.Value ?? new TConfiguration());
         return services;
     }
 
-    public static IServiceCollection WithConfiguration<TConfiguration>(this IServiceCollection services, TConfiguration configuration) where TConfiguration : class
+    public static IServiceCollection WithIntegrationConfiguration<TConfiguration>(this IServiceCollection services, TConfiguration configuration) where TConfiguration : class
     {
         services.AddSingleton(configuration);
         return services;
     }
 
-    public static IServiceCollection WithConfiguration<TConfiguration>(this IServiceCollection services, Func<IServiceProvider, TConfiguration> configurationFactory)
+    public static IServiceCollection WithIntegrationConfiguration<TConfiguration>(this IServiceCollection services, Func<IServiceProvider, TConfiguration> configurationFactory)
         where TConfiguration : class
     {
         services.AddSingleton(typeof(TConfiguration), configurationFactory);

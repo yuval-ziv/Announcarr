@@ -1,5 +1,8 @@
 using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
+using Announcarr.Exporters.Telegram.Configurations;
+using Announcarr.Exporters.Telegram.Services;
+using Announcarr.Exporters.Abstractions.Extensions.DependencyInjection;
 using Announcarr.Integrations.Abstractions.Extensions.DependencyInjection;
 using Announcarr.Integrations.Abstractions.Responses;
 using Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
@@ -21,15 +24,12 @@ builder.Services.AddSingleton<IValidateOptions<RadarrIntegrationConfiguration>, 
 
 builder.Services.Configure<AnnouncarrConfiguration>(builder.Configuration.GetSection(AnnouncarrConfiguration.SectionName));
 
-IConfigurationSection serviceIntegrationConfigurationSection = builder.Configuration.GetSection("Integrations");
-builder.Services.Configure<SonarrIntegrationConfiguration>(serviceIntegrationConfigurationSection.GetSection("Sonarr"));
-builder.Services.Configure<RadarrIntegrationConfiguration>(serviceIntegrationConfigurationSection.GetSection("Radarr"));
 IConfigurationSection integrationsConfigurationSection = builder.Configuration.GetSection("Integrations");
 builder.Services.Configure<SonarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Sonarr.Integration"));
 builder.Services.Configure<RadarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Radarr.Integration"));
 
-builder.Services.AddIntegration<SonarrIntegrationService>().WithConfiguration<SonarrIntegrationConfiguration>();
-builder.Services.AddIntegration<RadarrIntegrationService>().WithConfiguration<RadarrIntegrationConfiguration>();
+builder.Services.AddIntegration<SonarrIntegrationService>().WithIntegrationConfiguration<SonarrIntegrationConfiguration>();
+builder.Services.AddIntegration<RadarrIntegrationService>().WithIntegrationConfiguration<RadarrIntegrationConfiguration>();
 
 builder.Services.AddSingleton<ICalendarService, CalendarService>();
 
