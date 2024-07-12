@@ -16,7 +16,8 @@ public class CalendarService : ICalendarService
 
     public async Task<CalendarResponse> GetAllCalendarItemsAsync(DateTimeOffset? start, DateTimeOffset? end, CancellationToken cancellationToken = default)
     {
-        CalendarResponse[] calendarResponses = await Task.WhenAll(_integrationServices.Select(async serviceIntegration => await GetCalendarResponseAsync(serviceIntegration, start, end, cancellationToken)));
+        CalendarResponse[] calendarResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled())
+            .Select(async serviceIntegration => await GetCalendarResponseAsync(serviceIntegration, start, end, cancellationToken)));
 
         return calendarResponses.Aggregate(CalendarResponse.Merge);
     }

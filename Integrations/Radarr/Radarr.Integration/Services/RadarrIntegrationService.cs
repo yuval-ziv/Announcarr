@@ -16,7 +16,9 @@ public class RadarrIntegrationService : IIntegrationService
         _configuration = configuration;
     }
 
-    public string GetName() => "Radarr";
+    public bool IsEnabled() => _configuration.IsEnabled;
+
+    public string GetName() => _configuration.Name ?? "Radarr";
 
     public async Task<CalendarResponse> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {

@@ -16,7 +16,9 @@ public class SonarrIntegrationService : IIntegrationService
         _configuration = configuration;
     }
 
-    public string GetName() => "Sonarr";
+    public bool IsEnabled() => _configuration.IsEnabled;
+
+    public string GetName() => _configuration.Name ?? "Sonarr";
 
     public async Task<CalendarResponse> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
