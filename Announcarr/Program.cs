@@ -1,5 +1,7 @@
 using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
+using Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection;
+using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 using Announcarr.Exporters.Telegram.Configurations;
 using Announcarr.Exporters.Telegram.Services;
 using Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection;
@@ -24,11 +26,16 @@ builder.Services.AddSingleton<IValidateOptions<RadarrIntegrationConfiguration>, 
 builder.Services.Configure<AnnouncarrConfiguration>(builder.Configuration.GetSection(AnnouncarrConfiguration.SectionName));
 
 IConfigurationSection integrationsConfigurationSection = builder.Configuration.GetSection("Integrations");
-builder.Services.Configure<SonarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Sonarr.Integration"));
-builder.Services.Configure<RadarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Radarr.Integration"));
+builder.Services.Configure<SonarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Sonarr"));
+builder.Services.Configure<RadarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Radarr"));
+
+IConfigurationSection exportersConfigurationSection = builder.Configuration.GetSection("Exporters");
+builder.Services.Configure<TelegramExporterConfiguration>(exportersConfigurationSection.GetSection("Telegram"));
 
 builder.Services.AddIntegration<SonarrIntegrationService>().WithIntegrationConfiguration<SonarrIntegrationConfiguration>();
 builder.Services.AddIntegration<RadarrIntegrationService>().WithIntegrationConfiguration<RadarrIntegrationConfiguration>();
+
+builder.Services.AddExporter<TelegramExporterService>().WithExporterConfiguration<TelegramExporterConfiguration>();
 
 builder.Services.AddSingleton<ICalendarService, CalendarService>();
 
@@ -39,5 +46,7 @@ WebApplication app = builder.Build();
 app.MapGet("/calendar",
     async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end) =>
     Results.Ok((object?)await calendarService.GetAllCalendarItemsAsync(start, end)));
+
+app.MapGet("/testExporters", async (IEnumerable<IExporterService> exporterServices) => await Task.WhenAll(exporterServices.Select(exporterService => exporterService.TestExporterAsync())));
 
 app.Run();
