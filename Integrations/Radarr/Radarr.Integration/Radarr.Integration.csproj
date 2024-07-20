@@ -10,4 +10,8 @@
         <ProjectReference Include="..\..\..\Clients\Radarr.Client\Radarr.Client.csproj"/>
         <ProjectReference Include="..\..\Abstractions\Abstractions.Integration\Abstractions.Integration.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Enums.NET" Version="5.0.0" />
+    </ItemGroup>
 </Project>

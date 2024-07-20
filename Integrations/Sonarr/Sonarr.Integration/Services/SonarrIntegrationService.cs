@@ -25,16 +25,22 @@ public class SonarrIntegrationService : IIntegrationService
         using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
         List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
 
-        return new CalendarResponse { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).Select(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
+        return new CalendarResponse { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
     }
 
-    private SonarrCalendarItem ToSonarrCalendarItem(IGrouping<string?, EpisodeResource> seriesIdToEpisodes)
+    private IEnumerable<SonarrCalendarItem> ToSonarrCalendarItem(IGrouping<string?, EpisodeResource> seriesIdToEpisodes)
     {
         string? seriesTitle = seriesIdToEpisodes.Key;
 
+        return seriesIdToEpisodes.GroupBy(resource => resource.AirDateUtc?.Date).Select(airDateToEpisodes => ToSonarrCalendarItem(seriesTitle, airDateToEpisodes));
+    }
+
+    private SonarrCalendarItem ToSonarrCalendarItem(string? seriesTitle, IGrouping<DateTime?, EpisodeResource> seriesIdToEpisodes)
+    {
         return new SonarrCalendarItem
         {
             CalendarItemSource = GetName(),
+            ReleaseDate = seriesIdToEpisodes.FirstOrDefault(resource => resource.AirDateUtc is not null)?.AirDateUtc,
             ThumbnailUrl = seriesIdToEpisodes.FirstOrDefault()?.Series?.Images?.FirstOrDefault(cover => cover.CoverType == MediaCoverTypes.Poster)?.RemoteUrl,
             SeriesName = seriesTitle,
             Seasons = seriesIdToEpisodes.GroupBy(episode => episode.SeasonNumber).Select(ToSeason).ToList(),

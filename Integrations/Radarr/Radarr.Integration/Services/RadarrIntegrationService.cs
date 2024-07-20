@@ -23,19 +23,38 @@ public class RadarrIntegrationService : IIntegrationService
     public async Task<CalendarResponse> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
-        List<MovieResource> episodeResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
+        List<MovieResource> movieResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
 
-        return new CalendarResponse { CalendarItems = episodeResources.Select(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
+        return new CalendarResponse { CalendarItems = movieResources.Select(movie => ToRadarrCalendarItem(movie, from, to)).Cast<BaseCalendarItem>().ToList() };
     }
 
-    private RadarrCalendarItem ToSonarrCalendarItem(MovieResource movie)
+    private RadarrCalendarItem ToRadarrCalendarItem(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
     {
+        (DateTimeOffset? relevantDate, ReleaseDateType relevantDateType) = GetRelevantDate(movie, from, to);
+
         return new RadarrCalendarItem
         {
             CalendarItemSource = GetName(),
+            ReleaseDate = relevantDate,
+            ReleaseDateType = relevantDateType,
             ThumbnailUrl = movie.Images?.FirstOrDefault(cover => cover.CoverType == MediaCoverTypes.Poster)?.RemoteUrl ?? string.Empty,
             MovieName = movie.Title,
         };
+    }
+
+    private (DateTimeOffset? relevantDate, ReleaseDateType relevantDateType) GetRelevantDate(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
+    {
+        if (movie.PhysicalRelease > from && movie.PhysicalRelease < to)
+        {
+            return (movie.PhysicalRelease, ReleaseDateType.PhysicalRelease);
+        }
+
+        if (movie.DigitalRelease > from && movie.DigitalRelease < to)
+        {
+            return (movie.DigitalRelease, ReleaseDateType.DigitalRelease);
+        }
+
+        return (movie.InCinemas, ReleaseDateType.InCinemas);
     }
 
     public Task GetNewAnnouncementAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
