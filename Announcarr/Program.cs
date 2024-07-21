@@ -1,15 +1,19 @@
 using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
+using Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection;
+using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
+using Announcarr.Exporters.Telegram.Configurations;
+using Announcarr.Exporters.Telegram.Services;
+using Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection;
+using Announcarr.Integrations.Abstractions.Responses;
+using Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
+using Announcarr.Integrations.Radarr.Integration.Configurations;
+using Announcarr.Integrations.Radarr.Integration.Services;
+using Announcarr.Integrations.Sonarr.Extensions.DependencyInjection.Validations;
+using Announcarr.Integrations.Sonarr.Integration.Configurations;
+using Announcarr.Integrations.Sonarr.Integration.Services;
 using Announcarr.JsonConverters;
 using Announcarr.Services;
-using Announcer.Integrations.Abstractions.Extensions.DependencyInjection;
-using Announcer.Integrations.Abstractions.Responses;
-using Announcer.Integrations.Radarr.Configurations;
-using Announcer.Integrations.Radarr.Extensions.DependencyInjection.Validations;
-using Announcer.Integrations.Radarr.Services;
-using Announcer.Integrations.Sonarr.Configurations;
-using Announcer.Integrations.Sonarr.Extensions.DependencyInjection.Validations;
-using Announcer.Integrations.Sonarr.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -21,12 +25,17 @@ builder.Services.AddSingleton<IValidateOptions<RadarrIntegrationConfiguration>, 
 
 builder.Services.Configure<AnnouncarrConfiguration>(builder.Configuration.GetSection(AnnouncarrConfiguration.SectionName));
 
-IConfigurationSection serviceIntegrationConfigurationSection = builder.Configuration.GetSection("Integrations");
-builder.Services.Configure<SonarrIntegrationConfiguration>(serviceIntegrationConfigurationSection.GetSection("Sonarr"));
-builder.Services.Configure<RadarrIntegrationConfiguration>(serviceIntegrationConfigurationSection.GetSection("Radarr"));
+IConfigurationSection integrationsConfigurationSection = builder.Configuration.GetSection("Integrations");
+builder.Services.Configure<SonarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Sonarr"));
+builder.Services.Configure<RadarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Radarr"));
 
-builder.Services.AddIntegration<SonarrIntegrationService>().WithConfiguration<SonarrIntegrationConfiguration>();
-builder.Services.AddIntegration<RadarrIntegrationService>().WithConfiguration<RadarrIntegrationConfiguration>();
+IConfigurationSection exportersConfigurationSection = builder.Configuration.GetSection("Exporters");
+builder.Services.Configure<TelegramExporterConfiguration>(exportersConfigurationSection.GetSection("Telegram"));
+
+builder.Services.AddIntegration<SonarrIntegrationService>().WithIntegrationConfiguration<SonarrIntegrationConfiguration>();
+builder.Services.AddIntegration<RadarrIntegrationService>().WithIntegrationConfiguration<RadarrIntegrationConfiguration>();
+
+builder.Services.AddExporter<TelegramExporterService>().WithExporterConfiguration<TelegramExporterConfiguration>();
 
 builder.Services.AddSingleton<ICalendarService, CalendarService>();
 
@@ -37,5 +46,11 @@ WebApplication app = builder.Build();
 app.MapGet("/calendar",
     async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end) =>
     Results.Ok((object?)await calendarService.GetAllCalendarItemsAsync(start, end)));
+
+app.MapGet("/recentlyAdded",
+    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end) =>
+    Results.Ok((object?)await calendarService.GetAllRecentlyAddedItemsAsync(start, end)));
+
+app.MapGet("/testExporters", async (IEnumerable<IExporterService> exporterServices) => await Task.WhenAll(exporterServices.Select(exporterService => exporterService.TestExporterAsync())));
 
 app.Run();

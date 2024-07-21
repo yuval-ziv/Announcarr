@@ -19,11 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abstractions", "Abstraction
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Radarr", "Radarr", "{EB807E6E-A7CD-4B53-9664-813002B22B7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radarr", "Integrations\Radarr\Radarr\Radarr.csproj", "{C6FB15DA-D1F6-489D-A2BB-82D935C211D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radarr.Integration", "Integrations\Radarr\Radarr.Integration\Radarr.Integration.csproj", "{C6FB15DA-D1F6-489D-A2BB-82D935C211D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radarr.Extensions", "Integrations\Radarr\Radarr.Extensions\Radarr.Extensions.csproj", "{40098268-5057-4C7F-8497-597F1552989B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sonarr", "Integrations\Sonarr\Sonarr\Sonarr.csproj", "{0389F245-48F4-455E-9243-405EFD852E16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sonarr.Integration", "Integrations\Sonarr\Sonarr.Integration\Sonarr.Integration.csproj", "{0389F245-48F4-455E-9243-405EFD852E16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sonarr.Extensions", "Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj", "{384A898F-42B1-48CE-B502-1D3ED1B975AA}"
 EndProject
@@ -35,13 +35,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sonarr.Client", "Clients\So
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radarr.Client", "Clients\Radarr.Client\Radarr.Client.csproj", "{79792A19-94BA-487D-B77B-B83B13BBA008}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "Integrations\Abstractions\Abstractions\Abstractions.csproj", "{3FF28AD2-D45B-4063-815C-FA8BD106D91D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Integration", "Integrations\Abstractions\Abstractions.Integration\Abstractions.Integration.csproj", "{3FF28AD2-D45B-4063-815C-FA8BD106D91D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Extensions", "Integrations\Abstractions\Abstractions.Extensions\Abstractions.Extensions.csproj", "{C750269D-BDB9-4DDA-BAAF-BA52B2EABFCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Inegration.Extensions", "Integrations\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj", "{C750269D-BDB9-4DDA-BAAF-BA52B2EABFCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dictionary", "Utils\Extensions\Dictionary\Dictionary.csproj", "{64D907AF-39DF-4A7C-BC28-3A73FFC9978A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Http", "Utils\Extensions\Http\Http.csproj", "{C1EFC56E-CD5C-4D44-B08C-28ED3035A307}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exporters", "Exporters", "{7E447AE3-84A8-49EC-A054-6FEE4F37A880}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abstractions", "Abstractions", "{2A849E6F-C98E-4E63-991C-998B080E9486}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Exporter", "Exporters\Abstractions\Abstractions.Exporter\Abstractions.Exporter.csproj", "{32132011-28DE-4D55-BB26-6AD4A7CE9A64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram", "Exporters\Telegram\Telegram.csproj", "{E8067C27-90DF-4185-BD03-005FC26E182A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions.Exporter.Extensions", "Exporters\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj", "{80D7C050-DC15-46E3-9950-27AD32CC82E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateTime", "Utils\Extensions\DateTime\DateTime.csproj", "{F67B6000-0876-488B-92AA-1F5CB8C6BFF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +109,22 @@ Global
 		{C1EFC56E-CD5C-4D44-B08C-28ED3035A307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1EFC56E-CD5C-4D44-B08C-28ED3035A307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1EFC56E-CD5C-4D44-B08C-28ED3035A307}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32132011-28DE-4D55-BB26-6AD4A7CE9A64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32132011-28DE-4D55-BB26-6AD4A7CE9A64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32132011-28DE-4D55-BB26-6AD4A7CE9A64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32132011-28DE-4D55-BB26-6AD4A7CE9A64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8067C27-90DF-4185-BD03-005FC26E182A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8067C27-90DF-4185-BD03-005FC26E182A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8067C27-90DF-4185-BD03-005FC26E182A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8067C27-90DF-4185-BD03-005FC26E182A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80D7C050-DC15-46E3-9950-27AD32CC82E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80D7C050-DC15-46E3-9950-27AD32CC82E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80D7C050-DC15-46E3-9950-27AD32CC82E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80D7C050-DC15-46E3-9950-27AD32CC82E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F67B6000-0876-488B-92AA-1F5CB8C6BFF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F67B6000-0876-488B-92AA-1F5CB8C6BFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F67B6000-0876-488B-92AA-1F5CB8C6BFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F67B6000-0876-488B-92AA-1F5CB8C6BFF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EBB00BDD-74D0-4F42-81A2-5EBC86AC9409} = {13E61683-AB13-434D-8C1E-F20F7E0F3CE9}
@@ -114,5 +142,10 @@ Global
 		{C750269D-BDB9-4DDA-BAAF-BA52B2EABFCE} = {8AF26862-3CB0-49D4-A52D-1487B9FC1D86}
 		{64D907AF-39DF-4A7C-BC28-3A73FFC9978A} = {EBB00BDD-74D0-4F42-81A2-5EBC86AC9409}
 		{C1EFC56E-CD5C-4D44-B08C-28ED3035A307} = {EBB00BDD-74D0-4F42-81A2-5EBC86AC9409}
+		{2A849E6F-C98E-4E63-991C-998B080E9486} = {7E447AE3-84A8-49EC-A054-6FEE4F37A880}
+		{32132011-28DE-4D55-BB26-6AD4A7CE9A64} = {2A849E6F-C98E-4E63-991C-998B080E9486}
+		{E8067C27-90DF-4185-BD03-005FC26E182A} = {7E447AE3-84A8-49EC-A054-6FEE4F37A880}
+		{80D7C050-DC15-46E3-9950-27AD32CC82E9} = {2A849E6F-C98E-4E63-991C-998B080E9486}
+		{F67B6000-0876-488B-92AA-1F5CB8C6BFF8} = {EBB00BDD-74D0-4F42-81A2-5EBC86AC9409}
 	EndGlobalSection
 EndGlobal

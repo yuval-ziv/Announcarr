@@ -1,4 +1,4 @@
-﻿namespace Announcer.Clients.Radarr.Responses;
+﻿namespace Announcarr.Clients.Radarr.Responses;
 
 public class Field
 {

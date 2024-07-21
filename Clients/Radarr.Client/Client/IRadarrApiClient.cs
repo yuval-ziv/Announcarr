@@ -1,6 +1,6 @@
-﻿using Announcer.Clients.Radarr.Responses;
+﻿using Announcarr.Clients.Radarr.Responses;
 
-namespace Announcer.Clients.Radarr.Client;
+namespace Announcarr.Clients.Radarr.Client;
 
 public interface IRadarrApiClient : IDisposable
 {

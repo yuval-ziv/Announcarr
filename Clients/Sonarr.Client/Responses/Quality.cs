@@ -1,4 +1,4 @@
-﻿namespace Announcer.Clients.Sonarr.Responses;
+﻿namespace Announcarr.Clients.Sonarr.Responses;
 
 public class Quality
 {

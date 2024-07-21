@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
-using Announcer.Clients.Sonarr.Responses;
-using Announcer.Utils.Extensions.Http;
+using Announcarr.Clients.Sonarr.Responses;
+using Announcarr.Utils.Extensions.Http;
 using Newtonsoft.Json;
 
-namespace Announcer.Clients.Sonarr.Client;
+namespace Announcarr.Clients.Sonarr.Client;
 
 public class SonarrApiClient : ISonarrApiClient
 {
@@ -29,7 +29,7 @@ public class SonarrApiClient : ISonarrApiClient
     public async Task<List<EpisodeResource>> GetCalendarAsync(DateTimeOffset start, DateTimeOffset end, bool unmonitored = false, bool includeSeries = false, bool includeEpisodeFile = false,
         bool includeEpisodesImages = false, string tags = "", CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/calendar".WithQueryParameters(new Dictionary<string, string>
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/calendar".WithQueryParameters(new Dictionary<string, string?>
         {
             { "start", start.ToString(RequestForComments3339Section5Point6DateTimeFormat) },
             { "end", end.ToString(RequestForComments3339Section5Point6DateTimeFormat) },
@@ -44,6 +44,20 @@ public class SonarrApiClient : ISonarrApiClient
 
         string responseContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
         return JsonConvert.DeserializeObject<List<EpisodeResource>>(responseContent) ?? [];
+    }
+
+    public async Task<List<SeriesResource>> GetSeriesAsync(int? tvdbId = null, bool includeSeasonImages = false, CancellationToken cancellationToken = default)
+    {
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/series".WithQueryParameters(new Dictionary<string, string?>
+        {
+            { "tvdbId", tvdbId?.ToString() },
+            { "includeSeasonImages", includeSeasonImages.ToString() },
+        }), cancellationToken);
+
+        ThrowIfNotSuccessStatusCode(httpResponseMessage);
+
+        string responseContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
+        return JsonConvert.DeserializeObject<List<SeriesResource>>(responseContent) ?? [];
     }
 
     public void Dispose()
