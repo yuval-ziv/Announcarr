@@ -28,7 +28,7 @@ public class RadarrApiClient : IRadarrApiClient
 
     public async Task<List<MovieResource>> GetCalendarAsync(DateTimeOffset start, DateTimeOffset end, bool unmonitored = false, string tags = "", CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/calendar".WithQueryParameters(new Dictionary<string, string>
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/calendar".WithQueryParameters(new Dictionary<string, string?>
         {
             { "start", start.ToString(RequestForComments3339Section5Point6DateTimeFormat) },
             { "end", end.ToString(RequestForComments3339Section5Point6DateTimeFormat) },
