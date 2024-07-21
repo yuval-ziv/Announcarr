@@ -31,6 +31,21 @@ public class CalendarService : ICalendarService
         return calendarResponse;
     }
 
+    public async Task<RecentlyAddedResponse> GetAllRecentlyAddedItemsAsync(DateTimeOffset? start, DateTimeOffset? end, CancellationToken cancellationToken = default)
+    {
+        start ??= DateTimeOffset.Now.AddDays(-7);
+        end ??= start.Value.AddDays(7);
+
+        RecentlyAddedResponse[] recentlyAddedResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled())
+            .Select(async serviceIntegration => await GetRecentlyAddedItemsAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
+        RecentlyAddedResponse recentlyAddedResponse = recentlyAddedResponses.Length != 0 ? recentlyAddedResponses.Aggregate(RecentlyAddedResponse.Merge) : new RecentlyAddedResponse();
+
+        await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled())
+            .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedResponse, start.Value, end.Value, cancellationToken)));
+
+        return recentlyAddedResponse;
+    }
+
     private async Task<CalendarResponse> GetCalendarResponseAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken = default)
     {
         try
@@ -41,6 +56,20 @@ public class CalendarService : ICalendarService
         {
             _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.GetName());
             return new CalendarResponse();
+        }
+    }
+
+    private async Task<RecentlyAddedResponse> GetRecentlyAddedItemsAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await integrationService.GetRecentlyAddedAsync(start, end, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.GetName());
+            return new RecentlyAddedResponse();
         }
     }
 }

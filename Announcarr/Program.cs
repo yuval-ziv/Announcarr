@@ -47,6 +47,10 @@ app.MapGet("/calendar",
     async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end) =>
     Results.Ok((object?)await calendarService.GetAllCalendarItemsAsync(start, end)));
 
+app.MapGet("/recentlyAdded",
+    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end) =>
+    Results.Ok((object?)await calendarService.GetAllRecentlyAddedItemsAsync(start, end)));
+
 app.MapGet("/testExporters", async (IEnumerable<IExporterService> exporterServices) => await Task.WhenAll(exporterServices.Select(exporterService => exporterService.TestExporterAsync())));
 
 app.Run();
