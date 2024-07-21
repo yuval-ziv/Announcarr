@@ -37,10 +37,27 @@ public class TelegramExporterService : IExporterService
         await Task.WhenAll(calendarResponse.CalendarItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
     }
 
+    public async Task ExportRecentlyAddedAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    {
+        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
+            $"The recently monitored items for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} are:", cancellationToken: cancellationToken));
+        await Task.WhenAll(recentlyAddedResponse.NewlyMonitoredItems.Select(newMonitoredItem => SendNewMonitoredItemToAllChatsAsync(newMonitoredItem, cancellationToken)));
+        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
+            $"The recently added items for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} is:", cancellationToken: cancellationToken));
+        await Task.WhenAll(recentlyAddedResponse.NewItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
+    }
+
     private async Task SendCalendarItemToAllChatsAsync(BaseCalendarItem calendarItem, CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendPhotoAsync(chatId, new InputFileUrl(calendarItem.ThumbnailUrl ?? DefaultThumbnailNotAvailableUri),
             caption: calendarItem.GetCaption(_configuration.DateTimeFormat),
+            cancellationToken: cancellationToken));
+    }
+
+    private async Task SendNewMonitoredItemToAllChatsAsync(NewlyMonitoredItem newlyMonitoredItem, CancellationToken cancellationToken = default)
+    {
+        await SendToAllChatsAsync(chatId => _bot.SendPhotoAsync(chatId, new InputFileUrl(newlyMonitoredItem.ThumbnailUrl ?? DefaultThumbnailNotAvailableUri),
+            caption: newlyMonitoredItem.GetCaption(_configuration.DateTimeFormat),
             cancellationToken: cancellationToken));
     }
 

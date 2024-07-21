@@ -9,4 +9,6 @@ public interface IExporterService
     Task TestExporterAsync(CancellationToken cancellationToken = default);
 
     Task ExportCalendarAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+
+    Task ExportRecentlyAddedAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
 }
