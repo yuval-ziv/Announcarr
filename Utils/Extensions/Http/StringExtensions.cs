@@ -7,6 +7,6 @@ public static class StringExtensions
 {
     public static string WithQueryParameters(this string api, IDictionary<string, string?> queryParameters, bool skipNullValues = true)
     {
-        return api + "?" + string.Join("&", queryParameters.Where((_, value) => skipNullValues || value is not null).Select((key, value) => key + "=" + HttpUtility.UrlEncode(value)));
+        return api + "?" + string.Join("&", queryParameters.WhereByKeyValuePair((_, value) => skipNullValues || value is not null).SelectByKeyValuePair((key, value) => key + "=" + HttpUtility.UrlEncode(value)));
     }
 }
