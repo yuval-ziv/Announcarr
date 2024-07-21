@@ -28,6 +28,11 @@ public class RadarrIntegrationService : IIntegrationService
         return new CalendarResponse { CalendarItems = movieResources.Select(movie => ToRadarrCalendarItem(movie, from, to)).Cast<BaseCalendarItem>().ToList() };
     }
 
+    public Task<RecentlyAddedResponse> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(new RecentlyAddedResponse());
+    }
+
     private RadarrCalendarItem ToRadarrCalendarItem(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
     {
         (DateTimeOffset? relevantDate, ReleaseDateType relevantDateType) = GetRelevantDate(movie, from, to);

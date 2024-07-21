@@ -9,5 +9,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\Clients\Sonarr.Client\Sonarr.Client.csproj"/>
         <ProjectReference Include="..\..\Abstractions\Abstractions.Integration\Abstractions.Integration.csproj" />
+        <ProjectReference Include="..\..\..\Utils\Extensions\DateTime\DateTime.csproj" />
     </ItemGroup>
 </Project>
