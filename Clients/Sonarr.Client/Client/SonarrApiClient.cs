@@ -46,7 +46,7 @@ public class SonarrApiClient : ISonarrApiClient
         return JsonConvert.DeserializeObject<List<EpisodeResource>>(responseContent) ?? [];
     }
 
-    public async Task<List<SeriesResource>> GetSeriesAsync(int? tvdbId, bool includeSeasonImages = false, CancellationToken cancellationToken = default)
+    public async Task<List<SeriesResource>> GetSeriesAsync(int? tvdbId = null, bool includeSeasonImages = false, CancellationToken cancellationToken = default)
     {
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/series".WithQueryParameters(new Dictionary<string, string?>
         {
