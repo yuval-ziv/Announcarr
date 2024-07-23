@@ -44,12 +44,12 @@ builder.Services.ConfigureHttpJsonOptions(options => { options.SerializerOptions
 WebApplication app = builder.Build();
 
 app.MapGet("/calendar",
-    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end) =>
-    Results.Ok((object?)await calendarService.GetAllCalendarItemsAsync(start, end)));
+    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export) =>
+    Results.Ok((object?)await calendarService.GetAllCalendarItemsAsync(start, end, export)));
 
 app.MapGet("/recentlyAdded",
-    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end) =>
-    Results.Ok((object?)await calendarService.GetAllRecentlyAddedItemsAsync(start, end)));
+    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export) =>
+    Results.Ok((object?)await calendarService.GetAllRecentlyAddedItemsAsync(start, end, export)));
 
 app.MapGet("/testExporters", async (IEnumerable<IExporterService> exporterServices) => await Task.WhenAll(exporterServices.Select(exporterService => exporterService.TestExporterAsync())));
 

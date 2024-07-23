@@ -17,31 +17,37 @@ public class CalendarService : ICalendarService
         _integrationServices = integrationServices.ToList();
     }
 
-    public async Task<CalendarResponse> GetAllCalendarItemsAsync(DateTimeOffset? start, DateTimeOffset? end, CancellationToken cancellationToken = default)
+    public async Task<CalendarResponse> GetAllCalendarItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
     {
         start ??= DateTimeOffset.Now;
         end ??= start.Value.AddDays(7);
 
-        CalendarResponse[] calendarResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled())
+        CalendarResponse[] calendarResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
             .Select(async serviceIntegration => await GetCalendarResponseAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
         CalendarResponse calendarResponse = calendarResponses.Length != 0 ? calendarResponses.Aggregate(CalendarResponse.Merge) : new CalendarResponse();
 
-        await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled()).Select(exporter => exporter.ExportCalendarAsync(calendarResponse, start.Value, end.Value, cancellationToken)));
+        if (export ?? false)
+        {
+            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled()).Select(exporter => exporter.ExportCalendarAsync(calendarResponse, start.Value, end.Value, cancellationToken)));
+        }
 
         return calendarResponse;
     }
 
-    public async Task<RecentlyAddedResponse> GetAllRecentlyAddedItemsAsync(DateTimeOffset? start, DateTimeOffset? end, CancellationToken cancellationToken = default)
+    public async Task<RecentlyAddedResponse> GetAllRecentlyAddedItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
     {
         start ??= DateTimeOffset.Now.AddDays(-7);
         end ??= start.Value.AddDays(7);
 
-        RecentlyAddedResponse[] recentlyAddedResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled())
+        RecentlyAddedResponse[] recentlyAddedResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
             .Select(async serviceIntegration => await GetRecentlyAddedItemsAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
         RecentlyAddedResponse recentlyAddedResponse = recentlyAddedResponses.Length != 0 ? recentlyAddedResponses.Aggregate(RecentlyAddedResponse.Merge) : new RecentlyAddedResponse();
 
-        await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled())
-            .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedResponse, start.Value, end.Value, cancellationToken)));
+        if (export ?? false)
+        {
+            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled())
+                .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedResponse, start.Value, end.Value, cancellationToken)));
+        }
 
         return recentlyAddedResponse;
     }
