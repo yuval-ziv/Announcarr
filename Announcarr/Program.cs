@@ -40,6 +40,7 @@ builder.Services.AddExporter<TelegramExporterService>().WithExporterConfiguratio
 builder.Services.AddSingleton<ICalendarService, CalendarService>();
 
 builder.Services.ConfigureHttpJsonOptions(options => { options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseCalendarItem>()); });
+builder.Services.ConfigureHttpJsonOptions(options => { options.SerializerOptions.Converters.Add(new PolymorphicConverter<NewlyMonitoredItem>()); });
 
 WebApplication app = builder.Build();
 
