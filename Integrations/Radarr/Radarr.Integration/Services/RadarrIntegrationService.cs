@@ -16,21 +16,36 @@ public class RadarrIntegrationService : IIntegrationService
         _configuration = configuration;
     }
 
-    public bool IsEnabled() => _configuration.IsEnabled;
+    public bool IsEnabled => _configuration.IsEnabled;
 
     public string GetName() => _configuration.Name ?? "Radarr";
+    public bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
 
     public async Task<CalendarResponse> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
+        if (!IsGetCalendarEnabled)
+        {
+            return new CalendarResponse();
+        }
+
         using var radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
         List<MovieResource> movieResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
 
         return new CalendarResponse { CalendarItems = movieResources.Select(movie => ToRadarrCalendarItem(movie, from, to)).Cast<BaseCalendarItem>().ToList() };
     }
 
-    public Task<RecentlyAddedResponse> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    public bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
+
+    public async Task<RecentlyAddedResponse> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(new RecentlyAddedResponse());
+        if (!IsGetRecentlyAddedEnabled)
+        {
+            return new RecentlyAddedResponse();
+        }
+
+        await Task.Delay(1, cancellationToken);
+
+        return new RecentlyAddedResponse();
     }
 
     private RadarrCalendarItem ToRadarrCalendarItem(MovieResource movie, DateTimeOffset from, DateTimeOffset to)

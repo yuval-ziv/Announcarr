@@ -17,20 +17,33 @@ public class SonarrIntegrationService : IIntegrationService
         _configuration = configuration;
     }
 
-    public bool IsEnabled() => _configuration.IsEnabled;
+    public bool IsEnabled => _configuration.IsEnabled;
 
     public string GetName() => _configuration.Name ?? "Sonarr";
+    public bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
 
     public async Task<CalendarResponse> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
+        if (!IsGetCalendarEnabled)
+        {
+            return new CalendarResponse();
+        }
+
         using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
         List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
 
         return new CalendarResponse { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
     }
 
+    public bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
+
     public async Task<RecentlyAddedResponse> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
+        if (!IsGetRecentlyAddedEnabled)
+        {
+            return new RecentlyAddedResponse();
+        }
+
         using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
 
         List<SeriesResource> seriesResources = await sonarrApiClient.GetSeriesAsync(includeSeasonImages: true, cancellationToken: cancellationToken);
@@ -46,9 +59,7 @@ public class SonarrIntegrationService : IIntegrationService
 
     private IEnumerable<SonarrCalendarItem> ToSonarrCalendarItem(IGrouping<string?, EpisodeResource> seriesIdToEpisodes)
     {
-        string? seriesTitle = seriesIdToEpisodes.Key;
-
-        return seriesIdToEpisodes.GroupBy(resource => resource.AirDateUtc?.Date).Select(airDateToEpisodes => ToSonarrCalendarItem(seriesTitle, airDateToEpisodes));
+        return seriesIdToEpisodes.GroupBy(resource => resource.AirDateUtc?.Date).Select(airDateToEpisodes => ToSonarrCalendarItem(seriesIdToEpisodes.Key, airDateToEpisodes));
     }
 
     private SonarrCalendarItem ToSonarrCalendarItem(string? seriesTitle, IGrouping<DateTime?, EpisodeResource> seriesIdToEpisodes)
