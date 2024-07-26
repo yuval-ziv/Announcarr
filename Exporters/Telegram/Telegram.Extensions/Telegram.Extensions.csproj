@@ -7,14 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj" />
-      <ProjectReference Include="..\Telegram.Exporter\Telegram.Exporter.csproj" />
+        <ProjectReference Include="..\..\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj"/>
+        <ProjectReference Include="..\Telegram.Exporter\Telegram.Exporter.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Telegram">
-        <HintPath>..\..\..\Announcarr\bin\Debug\net8.0\Telegram.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>
