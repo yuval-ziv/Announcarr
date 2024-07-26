@@ -42,6 +42,21 @@ public class RadarrApiClient : IRadarrApiClient
         return JsonConvert.DeserializeObject<List<MovieResource>>(responseContent) ?? [];
     }
 
+    public async Task<List<MovieResource>> GetMoviesAsync(int? tmdbId = null, bool? excludeLocalCovers = false, int? languageId = null, CancellationToken cancellationToken = default)
+    {
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/movie".WithQueryParameters(new Dictionary<string, string?>
+        {
+            { "tmdbId", tmdbId?.ToString() },
+            { "excludeLocalCovers", excludeLocalCovers?.ToString() },
+            { "languageId", languageId?.ToString() },
+        }), cancellationToken);
+
+        ThrowIfNotSuccessStatusCode(httpResponseMessage);
+
+        string responseContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
+        return JsonConvert.DeserializeObject<List<MovieResource>>(responseContent) ?? [];
+    }
+
     public void Dispose()
     {
         _httpClient.Dispose();
