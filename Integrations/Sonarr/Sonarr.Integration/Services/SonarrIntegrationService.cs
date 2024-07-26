@@ -93,21 +93,21 @@ public class SonarrIntegrationService : IIntegrationService
         };
     }
 
-    private NewlyMonitoredSeries ToNewlyMonitoredSeries(SeriesResource seriesResource)
+    private NewlyMonitoredSeries ToNewlyMonitoredSeries(SeriesResource series)
     {
         return new NewlyMonitoredSeries
         {
             CalendarItemSource = GetName(),
-            StartedMonitoring = seriesResource.Added,
-            ThumbnailUrl = GetThumbnailUrl(seriesResource),
-            SeriesName = seriesResource.Title,
-            SeasonToAvailableEpisodesCount = GetSeasonToAvailableEpisodesCount(seriesResource.Seasons),
+            StartedMonitoring = series.Added,
+            ThumbnailUrl = GetThumbnailUrl(series),
+            SeriesName = series.Title,
+            SeasonToAvailableEpisodesCount = GetSeasonToAvailableEpisodesCount(series.Seasons),
         };
     }
 
-    private static string? GetThumbnailUrl(SeriesResource? seriesResource)
+    private static string? GetThumbnailUrl(SeriesResource? series)
     {
-        return seriesResource?.Images?.FirstOrDefault(cover => cover.CoverType == MediaCoverTypes.Poster)?.RemoteUrl;
+        return series?.Images?.FirstOrDefault(cover => cover.CoverType == MediaCoverTypes.Poster)?.RemoteUrl;
     }
 
     private List<SeasonEpisodeCount> GetSeasonToAvailableEpisodesCount(List<SeasonResource>? seasons)
