@@ -13,7 +13,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\Utils\Extensions\String\String.csproj" />
         <ProjectReference Include="..\Abstractions.Integration\Abstractions.Integration.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Exceptions\" />
     </ItemGroup>
 
 </Project>
