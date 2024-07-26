@@ -1,6 +1,8 @@
-﻿namespace Announcarr.Integrations.Sonarr.Integration.Configurations;
+﻿using Announcarr.Integrations.Abstractions.Interfaces;
 
-public class SonarrIntegrationConfiguration
+namespace Announcarr.Integrations.Sonarr.Integration.Configurations;
+
+public class SonarrIntegrationConfiguration : IIntegrationConfiguration
 {
     public bool IsEnabled { get; set; } = false;
     public bool IsGetCalendarEnabled { get; set; } = true;

@@ -1,6 +1,8 @@
-﻿namespace Announcarr.Integrations.Radarr.Integration.Configurations;
+﻿using Announcarr.Integrations.Abstractions.Interfaces;
 
-public class RadarrIntegrationConfiguration
+namespace Announcarr.Integrations.Radarr.Integration.Configurations;
+
+public class RadarrIntegrationConfiguration : IIntegrationConfiguration
 {
     public bool IsEnabled { get; set; } = false;
     public bool IsGetCalendarEnabled { get; set; } = true;
