@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\Clients\Radarr.Client\Radarr.Client.csproj"/>
+        <ProjectReference Include="..\..\..\Utils\Extensions\DateTime\DateTime.csproj" />
         <ProjectReference Include="..\..\Abstractions\Abstractions.Integration\Abstractions.Integration.csproj" />
     </ItemGroup>
 
