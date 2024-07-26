@@ -30,11 +30,11 @@ public static class ServiceCollectionServiceExtensions
         return services;
     }
 
-    private static IServiceCollection AddExporter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
+    private static void AddExporter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
         TConfiguration configuration)
         where TImplementation : class, IExporterService
         where TConfiguration : class, IExporterConfiguration
     {
-        return services.AddSingleton<IExporterService, TImplementation>(_ => (TImplementation)Activator.CreateInstance(typeof(TImplementation), configuration)!);
+        services.AddSingleton<IExporterService, TImplementation>(_ => (TImplementation)Activator.CreateInstance(typeof(TImplementation), configuration)!);
     }
 }
