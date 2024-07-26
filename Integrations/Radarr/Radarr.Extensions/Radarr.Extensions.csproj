@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Utils\Extensions\String\String.csproj" />
+      <ProjectReference Include="..\..\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj" />
       <ProjectReference Include="..\Radarr.Integration\Radarr.Integration.csproj" />
     </ItemGroup>
 
