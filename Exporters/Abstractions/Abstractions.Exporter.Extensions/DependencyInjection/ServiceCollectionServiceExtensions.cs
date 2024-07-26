@@ -7,29 +7,34 @@ namespace Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInject
 
 public static class ServiceCollectionServiceExtensions
 {
-    public static IServiceCollection AddExporter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(this IServiceCollection services)
+    public static IServiceCollection AddExporters<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services)
         where TImplementation : class, IExporterService
+        where TConfiguration : class, IExporterConfiguration
     {
-        services.AddSingleton<IExporterService, TImplementation>();
+        using ServiceProvider serviceProvider = services.BuildServiceProvider();
+        List<TConfiguration> list = serviceProvider.GetService<IOptions<List<TConfiguration>>>()?.Value ?? [];
+
+        return services.AddExporters<TImplementation, TConfiguration>(list);
+    }
+
+    public static IServiceCollection AddExporters<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
+        List<TConfiguration>? configurations)
+        where TImplementation : class, IExporterService
+        where TConfiguration : class, IExporterConfiguration
+    {
+        foreach (TConfiguration configuration in configurations ?? Enumerable.Empty<TConfiguration>())
+        {
+            services.AddExporter<TImplementation, TConfiguration>(configuration);
+        }
+
         return services;
     }
 
-    public static IServiceCollection WithExporterConfiguration<TConfiguration>(this IServiceCollection services) where TConfiguration : class, new()
+    private static IServiceCollection AddExporter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
+        TConfiguration configuration)
+        where TImplementation : class, IExporterService
+        where TConfiguration : class, IExporterConfiguration
     {
-        services.WithExporterConfiguration(provider => provider.GetService<IOptions<TConfiguration>>()?.Value ?? new TConfiguration());
-        return services;
-    }
-
-    public static IServiceCollection WithExporterConfiguration<TConfiguration>(this IServiceCollection services, TConfiguration configuration) where TConfiguration : class
-    {
-        services.AddSingleton(configuration);
-        return services;
-    }
-
-    public static IServiceCollection WithExporterConfiguration<TConfiguration>(this IServiceCollection services, Func<IServiceProvider, TConfiguration> configurationFactory)
-        where TConfiguration : class
-    {
-        services.AddSingleton(typeof(TConfiguration), configurationFactory);
-        return services;
+        return services.AddSingleton<IExporterService, TImplementation>(_ => (TImplementation)Activator.CreateInstance(typeof(TImplementation), configuration)!);
     }
 }
