@@ -1,4 +1,4 @@
-﻿using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
+﻿using Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 using Announcarr.Exporters.Telegram.Configurations;
 using Announcarr.Integrations.Abstractions.Responses;
 using Telegram.Bot;
@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 namespace Announcarr.Exporters.Telegram.Services;
 
-public class TelegramExporterService : IExporterService
+public class TelegramExporterService : BaseExporterService
 {
     private const string DefaultThumbnailNotAvailableUri = "https://thumbs.dreamstime.com/b/ning%C3%BAn-icono-disponible-de-la-imagen-plano-ejemplo-del-vector-132482953.jpg";
 
@@ -21,23 +21,29 @@ public class TelegramExporterService : IExporterService
         _chatIds = _configuration.Bot?.ChatIds.Select(chatId => new ChatId(chatId)).ToList() ?? [];
     }
 
-    public bool IsEnabled() => _configuration.IsEnabled;
+    public override bool IsEnabled => _configuration.IsEnabled;
 
-    public string GetName() => _configuration.Name ?? "Telegram";
+    public override string GetName => _configuration.Name ?? "Telegram";
+    public override bool IsTestExporterEnabled => _configuration.IsTestExporterEnabled;
 
-    public async Task TestExporterAsync(CancellationToken cancellationToken = default)
+    protected override async Task TestExporterLogicAsync(CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, "This is a test message.", cancellationToken: cancellationToken));
     }
 
-    public async Task ExportCalendarAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    public override bool IsExportCalendarEnabled => _configuration.IsExportCalendarEnabled;
+
+    protected override async Task ExportCalendarLogicAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
             $"The calendar for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} is:", cancellationToken: cancellationToken));
         await Task.WhenAll(calendarResponse.CalendarItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
     }
 
-    public async Task ExportRecentlyAddedAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    public override bool IsExportRecentlyAddedEnabled => _configuration.IsExportRecentlyAddedEnabled;
+
+    protected override async Task ExportRecentlyAddedLogicAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate,
+        CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
             $"The recently monitored items for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} are:", cancellationToken: cancellationToken));

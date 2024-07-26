@@ -1,13 +1,14 @@
 ﻿using Announcarr.Clients.Radarr.Client;
 using Announcarr.Clients.Radarr.Responses;
-using Announcarr.Integrations.Abstractions.Interfaces;
+using Announcarr.Integrations.Abstractions.AbstractImplementations;
 using Announcarr.Integrations.Abstractions.Responses;
 using Announcarr.Integrations.Radarr.Integration.Configurations;
 using Announcarr.Integrations.Radarr.Integration.Contracts;
+using Announcarr.Utils.Extensions.DateTime;
 
 namespace Announcarr.Integrations.Radarr.Integration.Services;
 
-public class RadarrIntegrationService : IIntegrationService
+public class RadarrIntegrationService : BaseIntegrationService
 {
     private readonly RadarrIntegrationConfiguration _configuration;
 
@@ -16,21 +17,46 @@ public class RadarrIntegrationService : IIntegrationService
         _configuration = configuration;
     }
 
-    public bool IsEnabled() => _configuration.IsEnabled;
+    public override bool IsEnabled => _configuration.IsEnabled;
 
-    public string GetName() => _configuration.Name ?? "Radarr";
+    public override string GetName => _configuration.Name ?? "Radarr";
+    public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
 
-    public async Task<CalendarResponse> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
-        List<MovieResource> movieResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
 
-        return new CalendarResponse { CalendarItems = movieResources.Select(movie => ToRadarrCalendarItem(movie, from, to)).Cast<BaseCalendarItem>().ToList() };
+        return new CalendarResponse
+        {
+            CalendarItems = await GetCalendarItems(radarrApiClient, from, to, false, cancellationToken),
+        };
     }
 
-    public Task<RecentlyAddedResponse> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
+
+    protected override async Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(new RecentlyAddedResponse());
+        using IRadarrApiClient radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
+
+        return new RecentlyAddedResponse
+        {
+            NewlyMonitoredItems = await GetNewlyMonitoredItemsAsync(radarrApiClient, from, to, cancellationToken),
+            NewItems = await GetCalendarItems(radarrApiClient, from, to, true, cancellationToken),
+        };
+    }
+
+    private async Task<List<BaseCalendarItem>> GetCalendarItems(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, bool onlyMoviesWithFile, CancellationToken cancellationToken)
+    {
+        List<MovieResource> episodeResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
+
+        return episodeResources.Where(movie => !onlyMoviesWithFile || (movie.HasFile ?? false)).Select(movie => ToRadarrCalendarItem(movie, from, to)).Cast<BaseCalendarItem>().ToList();
+    }
+
+    private async Task<List<NewlyMonitoredItem>> GetNewlyMonitoredItemsAsync(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    {
+        List<MovieResource> movieResources = await radarrApiClient.GetMoviesAsync(cancellationToken: cancellationToken);
+
+        return movieResources.Where(movie => movie.Added?.Between(from.DateTime, to) ?? false).Select(movie => ToNewlyMonitoredMovie(movie, from, to)).Cast<NewlyMonitoredItem>().ToList();
     }
 
     private RadarrCalendarItem ToRadarrCalendarItem(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
@@ -39,15 +65,15 @@ public class RadarrIntegrationService : IIntegrationService
 
         return new RadarrCalendarItem
         {
-            CalendarItemSource = GetName(),
+            CalendarItemSource = GetName,
             ReleaseDate = relevantDate,
             ReleaseDateType = relevantDateType,
-            ThumbnailUrl = movie.Images?.FirstOrDefault(cover => cover.CoverType == MediaCoverTypes.Poster)?.RemoteUrl ?? string.Empty,
+            ThumbnailUrl = GetThumbnailUrl(movie),
             MovieName = movie.Title,
         };
     }
 
-    private (DateTimeOffset? relevantDate, ReleaseDateType relevantDateType) GetRelevantDate(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
+    private static (DateTimeOffset? relevantDate, ReleaseDateType relevantDateType) GetRelevantDate(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
     {
         if (movie.PhysicalRelease > from && movie.PhysicalRelease < to)
         {
@@ -62,8 +88,24 @@ public class RadarrIntegrationService : IIntegrationService
         return (movie.InCinemas, ReleaseDateType.InCinemas);
     }
 
-    public Task GetNewAnnouncementAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    private NewlyMonitoredMovie ToNewlyMonitoredMovie(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
     {
-        throw new NotImplementedException();
+        (DateTimeOffset? relevantDate, ReleaseDateType relevantDateType) = GetRelevantDate(movie, from, to);
+
+        return new NewlyMonitoredMovie
+        {
+            CalendarItemSource = GetName,
+            StartedMonitoring = movie.Added,
+            ThumbnailUrl = GetThumbnailUrl(movie),
+            MovieName = movie.Title,
+            ReleaseDate = relevantDate,
+            ReleaseDateType = relevantDateType,
+            IsAvailable = movie.HasFile ?? false,
+        };
+    }
+
+    private static string? GetThumbnailUrl(MovieResource? movie)
+    {
+        return movie?.Images?.FirstOrDefault(cover => cover.CoverType == MediaCoverTypes.Poster)?.RemoteUrl;
     }
 }

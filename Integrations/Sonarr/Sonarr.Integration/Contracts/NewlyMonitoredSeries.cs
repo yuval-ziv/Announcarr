@@ -9,7 +9,7 @@ public class NewlyMonitoredSeries : NewlyMonitoredItem
     public List<SeasonEpisodeCount> SeasonToAvailableEpisodesCount { get; set; } = [];
 
     public override string GetCaption(string dateTimeFormat) =>
-        $"Started monitoring {SeriesName}{(StartedMonitoring is null ? string.Empty : $" on {StartedMonitoring?.ToString(dateTimeFormat)}")}{Environment.NewLine}" +
+        $"Started monitoring new series '{SeriesName}'{(StartedMonitoring is null ? string.Empty : $" on {StartedMonitoring?.ToString(dateTimeFormat)}")}{Environment.NewLine}" +
         GetAvailableEpisodesCaption(dateTimeFormat);
 
     private string GetAvailableEpisodesCaption(string dateTimeFormat)

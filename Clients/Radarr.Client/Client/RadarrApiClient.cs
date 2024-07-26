@@ -28,12 +28,27 @@ public class RadarrApiClient : IRadarrApiClient
 
     public async Task<List<MovieResource>> GetCalendarAsync(DateTimeOffset start, DateTimeOffset end, bool unmonitored = false, string tags = "", CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/calendar".WithQueryParameters(new Dictionary<string, string>
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/calendar".WithQueryParameters(new Dictionary<string, string?>
         {
             { "start", start.ToString(RequestForComments3339Section5Point6DateTimeFormat) },
             { "end", end.ToString(RequestForComments3339Section5Point6DateTimeFormat) },
             { "unmonitored", unmonitored.ToString() },
             { "tags", tags },
+        }), cancellationToken);
+
+        ThrowIfNotSuccessStatusCode(httpResponseMessage);
+
+        string responseContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
+        return JsonConvert.DeserializeObject<List<MovieResource>>(responseContent) ?? [];
+    }
+
+    public async Task<List<MovieResource>> GetMoviesAsync(int? tmdbId = null, bool? excludeLocalCovers = false, int? languageId = null, CancellationToken cancellationToken = default)
+    {
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("/api/v3/movie".WithQueryParameters(new Dictionary<string, string?>
+        {
+            { "tmdbId", tmdbId?.ToString() },
+            { "excludeLocalCovers", excludeLocalCovers?.ToString() },
+            { "languageId", languageId?.ToString() },
         }), cancellationToken);
 
         ThrowIfNotSuccessStatusCode(httpResponseMessage);
