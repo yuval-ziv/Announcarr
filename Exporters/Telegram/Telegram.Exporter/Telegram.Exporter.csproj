@@ -4,15 +4,15 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Announcarr.Exporters.Telegram</RootNamespace>
+        <RootNamespace>Announcarr.Exporters.Telegram.Exporter</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+        <PackageReference Include="Telegram.Bot" Version="19.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Abstractions\Abstractions.Exporter\Abstractions.Exporter.csproj" />
+        <ProjectReference Include="..\..\Abstractions\Abstractions.Exporter\Abstractions.Exporter.csproj"/>
     </ItemGroup>
 
 </Project>

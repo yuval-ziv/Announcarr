@@ -2,8 +2,8 @@ using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
 using Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection;
 using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
-using Announcarr.Exporters.Telegram.Configurations;
-using Announcarr.Exporters.Telegram.Services;
+using Announcarr.Exporters.Telegram.Exporter.Configurations;
+using Announcarr.Exporters.Telegram.Exporter.Services;
 using Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection;
 using Announcarr.Integrations.Abstractions.Responses;
 using Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
@@ -16,26 +16,28 @@ using Announcarr.JsonConverters;
 using Announcarr.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Telegram.Extensions.DependencyInjection.Validations;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IValidateOptions<AnnouncarrConfiguration>, AnnouncarrConfigurationValidator>();
-builder.Services.AddSingleton<IValidateOptions<SonarrIntegrationConfiguration>, SonarrServiceIntegrationConfigurationValidator>();
-builder.Services.AddSingleton<IValidateOptions<RadarrIntegrationConfiguration>, RadarrServiceIntegrationConfigurationValidator>();
+builder.Services.AddSingleton<IValidateOptions<List<SonarrIntegrationConfiguration>>, SonarrServiceIntegrationConfigurationValidator>();
+builder.Services.AddSingleton<IValidateOptions<List<RadarrIntegrationConfiguration>>, RadarrServiceIntegrationConfigurationValidator>();
+builder.Services.AddSingleton<IValidateOptions<List<TelegramExporterConfiguration>>, TelegramExporterConfigurationValidator>();
 
 builder.Services.Configure<AnnouncarrConfiguration>(builder.Configuration.GetSection(AnnouncarrConfiguration.SectionName));
 
 IConfigurationSection integrationsConfigurationSection = builder.Configuration.GetSection("Integrations");
-builder.Services.Configure<SonarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Sonarr"));
-builder.Services.Configure<RadarrIntegrationConfiguration>(integrationsConfigurationSection.GetSection("Radarr"));
+builder.Services.Configure<List<SonarrIntegrationConfiguration>>(integrationsConfigurationSection.GetSection("Sonarr"));
+builder.Services.Configure<List<RadarrIntegrationConfiguration>>(integrationsConfigurationSection.GetSection("Radarr"));
 
 IConfigurationSection exportersConfigurationSection = builder.Configuration.GetSection("Exporters");
-builder.Services.Configure<TelegramExporterConfiguration>(exportersConfigurationSection.GetSection("Telegram"));
+builder.Services.Configure<List<TelegramExporterConfiguration>>(exportersConfigurationSection.GetSection("Telegram"));
 
-builder.Services.AddIntegration<SonarrIntegrationService>().WithIntegrationConfiguration<SonarrIntegrationConfiguration>();
-builder.Services.AddIntegration<RadarrIntegrationService>().WithIntegrationConfiguration<RadarrIntegrationConfiguration>();
+builder.Services.AddIntegrations<SonarrIntegrationService, SonarrIntegrationConfiguration>();
+builder.Services.AddIntegrations<RadarrIntegrationService, RadarrIntegrationConfiguration>();
 
-builder.Services.AddExporter<TelegramExporterService>().WithExporterConfiguration<TelegramExporterConfiguration>();
+builder.Services.AddExporters<TelegramExporterService, TelegramExporterConfiguration>();
 
 builder.Services.AddSingleton<ICalendarService, CalendarService>();
 

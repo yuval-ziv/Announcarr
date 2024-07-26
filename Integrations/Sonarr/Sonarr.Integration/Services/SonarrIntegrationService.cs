@@ -19,8 +19,10 @@ public class SonarrIntegrationService : BaseIntegrationService
 
     public override bool IsEnabled => _configuration.IsEnabled;
 
-    public override string GetName => _configuration.Name ?? "Sonarr";
+    public override string Name => _configuration.Name ?? "Sonarr";
     public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
+
+    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
     protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
@@ -29,8 +31,6 @@ public class SonarrIntegrationService : BaseIntegrationService
 
         return new CalendarResponse { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
     }
-
-    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
     protected override async Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
@@ -56,7 +56,7 @@ public class SonarrIntegrationService : BaseIntegrationService
     {
         return new SonarrCalendarItem
         {
-            CalendarItemSource = GetName,
+            CalendarItemSource = Name,
             ReleaseDate = seriesIdToEpisodes.FirstOrDefault(resource => resource.AirDateUtc is not null)?.AirDateUtc,
             ThumbnailUrl = GetThumbnailUrl(seriesIdToEpisodes.FirstOrDefault()?.Series),
             SeriesName = seriesTitle,
@@ -87,7 +87,7 @@ public class SonarrIntegrationService : BaseIntegrationService
     {
         return new NewlyMonitoredSeries
         {
-            CalendarItemSource = GetName,
+            CalendarItemSource = Name,
             StartedMonitoring = series.Added,
             ThumbnailUrl = GetThumbnailUrl(series),
             SeriesName = series.Title,

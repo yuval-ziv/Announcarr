@@ -1,17 +1,19 @@
-﻿using Announcarr.Integrations.Radarr.Integration.Configurations;
+﻿using Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection.Validations;
+using Announcarr.Integrations.Radarr.Integration.Configurations;
+using Announcarr.Utils.Extensions.String;
 using Microsoft.Extensions.Options;
 
 namespace Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
 
-public class RadarrServiceIntegrationConfigurationValidator : IValidateOptions<RadarrIntegrationConfiguration>
+public class RadarrServiceIntegrationConfigurationValidator : BaseServiceIntegrationConfigurationValidator<RadarrIntegrationConfiguration>
 {
-    public ValidateOptionsResult Validate(string? name, RadarrIntegrationConfiguration options)
+    public override ValidateOptionsResult Validate(string? name, List<RadarrIntegrationConfiguration> allOptions)
     {
-        if (string.IsNullOrWhiteSpace(options.ApiKey))
+        if (allOptions.Any(options => options.ApiKey.IsNullOrWhiteSpace()))
         {
-            return ValidateOptionsResult.Fail($"{nameof(options.ApiKey)} is required and cannot be empty or white space only");
+            return ValidateOptionsResult.Fail($"{nameof(RadarrIntegrationConfiguration.ApiKey)} is required and cannot be empty or white space only");
         }
 
-        return ValidateOptionsResult.Success;
+        return base.Validate(name, allOptions);
     }
 }

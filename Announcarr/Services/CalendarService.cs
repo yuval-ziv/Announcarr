@@ -6,9 +6,9 @@ namespace Announcarr.Services;
 
 public class CalendarService : ICalendarService
 {
-    private readonly ILogger<CalendarService> _logger;
     private readonly List<IExporterService> _exporterServices;
     private readonly List<IIntegrationService> _integrationServices;
+    private readonly ILogger<CalendarService> _logger;
 
     public CalendarService(ILogger<CalendarService> logger, IEnumerable<IIntegrationService> integrationServices, IEnumerable<IExporterService> exporterServices)
     {
@@ -60,7 +60,7 @@ public class CalendarService : ICalendarService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.GetName);
+            _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.Name);
             return new CalendarResponse();
         }
     }
@@ -74,7 +74,7 @@ public class CalendarService : ICalendarService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.GetName);
+            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.Name);
             return new RecentlyAddedResponse();
         }
     }

@@ -7,5 +7,8 @@ public static class DateTimeExtensions
         return current > from && current < to;
     }
 
-    public static bool Between(this System.DateTime current, DateTimeOffset from, DateTimeOffset to) => new DateTimeOffset(current).Between(from, to);
+    public static bool Between(this System.DateTime current, DateTimeOffset from, DateTimeOffset to)
+    {
+        return new DateTimeOffset(current).Between(from, to);
+    }
 }

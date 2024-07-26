@@ -19,8 +19,10 @@ public class RadarrIntegrationService : BaseIntegrationService
 
     public override bool IsEnabled => _configuration.IsEnabled;
 
-    public override string GetName => _configuration.Name ?? "Radarr";
+    public override string Name => _configuration.Name ?? "Radarr";
     public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
+
+    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
     protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
@@ -31,8 +33,6 @@ public class RadarrIntegrationService : BaseIntegrationService
             CalendarItems = await GetCalendarItems(radarrApiClient, from, to, false, cancellationToken),
         };
     }
-
-    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
     protected override async Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
@@ -65,7 +65,7 @@ public class RadarrIntegrationService : BaseIntegrationService
 
         return new RadarrCalendarItem
         {
-            CalendarItemSource = GetName,
+            CalendarItemSource = Name,
             ReleaseDate = relevantDate,
             ReleaseDateType = relevantDateType,
             ThumbnailUrl = GetThumbnailUrl(movie),
@@ -94,7 +94,7 @@ public class RadarrIntegrationService : BaseIntegrationService
 
         return new NewlyMonitoredMovie
         {
-            CalendarItemSource = GetName,
+            CalendarItemSource = Name,
             StartedMonitoring = movie.Added,
             ThumbnailUrl = GetThumbnailUrl(movie),
             MovieName = movie.Title,

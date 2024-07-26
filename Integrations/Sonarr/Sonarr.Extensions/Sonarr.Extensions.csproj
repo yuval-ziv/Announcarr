@@ -13,7 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Sonarr.Integration\Sonarr.Integration.csproj" />
+        <ProjectReference Include="..\..\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj"/>
+        <ProjectReference Include="..\Sonarr.Integration\Sonarr.Integration.csproj"/>
     </ItemGroup>
 
 </Project>

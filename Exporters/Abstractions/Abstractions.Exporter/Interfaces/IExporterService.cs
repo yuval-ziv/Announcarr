@@ -5,11 +5,11 @@ namespace Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 public interface IExporterService
 {
     bool IsEnabled { get; }
-    string GetName { get; }
+    string Name { get; }
     bool IsTestExporterEnabled { get; }
-    Task TestExporterAsync(CancellationToken cancellationToken = default);
     bool IsExportCalendarEnabled { get; }
-    Task ExportCalendarAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
     bool IsExportRecentlyAddedEnabled { get; }
+    Task TestExporterAsync(CancellationToken cancellationToken = default);
+    Task ExportCalendarAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
     Task ExportRecentlyAddedAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
 }
