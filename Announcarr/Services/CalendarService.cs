@@ -28,7 +28,7 @@ public class CalendarService : ICalendarService
 
         if (export ?? false)
         {
-            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled()).Select(exporter => exporter.ExportCalendarAsync(calendarResponse, start.Value, end.Value, cancellationToken)));
+            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled).Select(exporter => exporter.ExportCalendarAsync(calendarResponse, start.Value, end.Value, cancellationToken)));
         }
 
         return calendarResponse;
@@ -45,7 +45,7 @@ public class CalendarService : ICalendarService
 
         if (export ?? false)
         {
-            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled())
+            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled)
                 .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedResponse, start.Value, end.Value, cancellationToken)));
         }
 
@@ -60,7 +60,7 @@ public class CalendarService : ICalendarService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.GetName());
+            _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.GetName);
             return new CalendarResponse();
         }
     }
@@ -74,7 +74,7 @@ public class CalendarService : ICalendarService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.GetName());
+            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.GetName);
             return new RecentlyAddedResponse();
         }
     }
