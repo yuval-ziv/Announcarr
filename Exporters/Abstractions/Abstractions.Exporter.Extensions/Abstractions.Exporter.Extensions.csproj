@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Utils\Extensions\String\String.csproj" />
       <ProjectReference Include="..\Abstractions.Exporter\Abstractions.Exporter.csproj" />
     </ItemGroup>
 
