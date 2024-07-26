@@ -1,4 +1,4 @@
-﻿using Announcarr.Exporters.Abstractions.Exporter;
+﻿using Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 using Announcarr.Exporters.Telegram.Configurations;
 using Announcarr.Integrations.Abstractions.Responses;
 using Telegram.Bot;

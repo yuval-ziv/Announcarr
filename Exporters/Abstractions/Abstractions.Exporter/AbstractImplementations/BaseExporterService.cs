@@ -1,7 +1,7 @@
 ﻿using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 using Announcarr.Integrations.Abstractions.Responses;
 
-namespace Announcarr.Exporters.Abstractions.Exporter;
+namespace Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 
 public abstract class BaseExporterService : IExporterService
 {
