@@ -1,6 +1,8 @@
 ﻿namespace Announcarr.Exporters.Telegram.Configurations;
 
 public class TelegramExporterConfiguration
+namespace Announcarr.Exporters.Telegram.Exporter.Configurations;
+
 {
     public bool IsEnabled { get; set; } = false;
     public bool IsTestExporterEnabled { get; set; } = true;
