@@ -6,7 +6,7 @@ namespace Announcarr.Integrations.Abstractions.AbstractImplementations;
 public abstract class BaseIntegrationService : IIntegrationService
 {
     public abstract bool IsEnabled { get; }
-    public abstract string GetName { get; }
+    public abstract string Name { get; }
     public abstract bool IsGetCalendarEnabled { get; }
 
     public Task<CalendarResponse> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)

@@ -19,7 +19,7 @@ public class RadarrIntegrationService : BaseIntegrationService
 
     public override bool IsEnabled => _configuration.IsEnabled;
 
-    public override string GetName => _configuration.Name ?? "Radarr";
+    public override string Name => _configuration.Name ?? "Radarr";
     public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
 
     protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
@@ -65,7 +65,7 @@ public class RadarrIntegrationService : BaseIntegrationService
 
         return new RadarrCalendarItem
         {
-            CalendarItemSource = GetName,
+            CalendarItemSource = Name,
             ReleaseDate = relevantDate,
             ReleaseDateType = relevantDateType,
             ThumbnailUrl = GetThumbnailUrl(movie),
@@ -94,7 +94,7 @@ public class RadarrIntegrationService : BaseIntegrationService
 
         return new NewlyMonitoredMovie
         {
-            CalendarItemSource = GetName,
+            CalendarItemSource = Name,
             StartedMonitoring = movie.Added,
             ThumbnailUrl = GetThumbnailUrl(movie),
             MovieName = movie.Title,
