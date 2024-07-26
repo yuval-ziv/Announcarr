@@ -1,5 +1,4 @@
 ﻿using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
-using Announcarr.Integrations.Abstractions.Interfaces;
 using Announcarr.Utils.Extensions.String;
 using Microsoft.Extensions.Options;
 
@@ -16,7 +15,7 @@ public abstract class BaseExporterConfigurationValidator<TConfiguration> : IVali
 
         if (allOptions.Any(configuration => configuration.Name.IsNullOrEmpty()))
         {
-            return ValidateOptionsResult.Fail($"{nameof(IIntegrationConfiguration.Name)} is required when there are multiple configurations of the same type, and cannot be empty or whitespace only");
+            return ValidateOptionsResult.Fail($"{nameof(IExporterConfiguration.Name)} is required when there are multiple configurations of the same type, and cannot be empty or whitespace only");
         }
 
         if (allOptions.Select(configuration => configuration.Name).Distinct().Count() < allOptions.Count)

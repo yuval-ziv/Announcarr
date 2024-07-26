@@ -1,4 +1,4 @@
-﻿using Announcarr.Integrations.Abstractions.Responses;
+﻿using Announcarr.Abstractions.Contracts.Contracts;
 using EnumsNET;
 
 namespace Announcarr.Integrations.Radarr.Integration.Contracts;
