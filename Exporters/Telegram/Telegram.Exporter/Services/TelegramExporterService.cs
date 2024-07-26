@@ -23,7 +23,7 @@ public class TelegramExporterService : BaseExporterService
 
     public override bool IsEnabled => _configuration.IsEnabled;
 
-    public override string GetName => _configuration.Name ?? "Telegram";
+    public override string Name => _configuration.Name ?? "Telegram";
     public override bool IsTestExporterEnabled => _configuration.IsTestExporterEnabled;
 
     protected override async Task TestExporterLogicAsync(CancellationToken cancellationToken = default)

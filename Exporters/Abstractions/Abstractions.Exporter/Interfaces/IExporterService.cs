@@ -5,7 +5,7 @@ namespace Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 public interface IExporterService
 {
     bool IsEnabled { get; }
-    string GetName { get; }
+    string Name { get; }
     bool IsTestExporterEnabled { get; }
     Task TestExporterAsync(CancellationToken cancellationToken = default);
     bool IsExportCalendarEnabled { get; }

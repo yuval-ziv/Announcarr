@@ -6,7 +6,7 @@ namespace Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 public abstract class BaseExporterService : IExporterService
 {
     public abstract bool IsEnabled { get; }
-    public abstract string GetName { get; }
+    public abstract string Name { get; }
     public abstract bool IsTestExporterEnabled { get; }
 
     public Task TestExporterAsync(CancellationToken cancellationToken = default)
