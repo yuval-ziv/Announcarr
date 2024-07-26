@@ -60,7 +60,7 @@ public class CalendarService : ICalendarService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.GetName);
+            _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.Name);
             return new CalendarResponse();
         }
     }
@@ -74,7 +74,7 @@ public class CalendarService : ICalendarService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.GetName);
+            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.Name);
             return new RecentlyAddedResponse();
         }
     }
