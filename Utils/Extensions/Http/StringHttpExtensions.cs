@@ -3,7 +3,7 @@ using Announcarr.Utils.Extensions.Dictionary;
 
 namespace Announcarr.Utils.Extensions.Http;
 
-public static class StringExtensions
+public static class StringHttpExtensions
 {
     public static string WithQueryParameters(this string api, IDictionary<string, string?> queryParameters, bool skipNullValues = true)
     {
