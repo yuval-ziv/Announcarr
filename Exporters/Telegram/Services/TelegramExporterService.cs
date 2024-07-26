@@ -21,7 +21,7 @@ public class TelegramExporterService : BaseExporterService
         _chatIds = _configuration.Bot?.ChatIds.Select(chatId => new ChatId(chatId)).ToList() ?? [];
     }
 
-    public override bool IsEnabled() => _configuration.IsEnabled;
+    public override bool IsEnabled => _configuration.IsEnabled;
 
     public override string GetName() => _configuration.Name ?? "Telegram";
     public override bool IsTestExporterEnabled => _configuration.IsTestExporterEnabled;

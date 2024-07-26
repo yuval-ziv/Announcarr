@@ -5,7 +5,7 @@ namespace Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 
 public abstract class BaseExporterService : IExporterService
 {
-    public abstract bool IsEnabled();
+    public abstract bool IsEnabled { get; }
     public abstract string GetName();
     public abstract bool IsTestExporterEnabled { get; }
 
