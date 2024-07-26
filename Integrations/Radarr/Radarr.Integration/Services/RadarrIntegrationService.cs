@@ -22,6 +22,8 @@ public class RadarrIntegrationService : BaseIntegrationService
     public override string Name => _configuration.Name ?? "Radarr";
     public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
 
+    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
+
     protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
@@ -31,8 +33,6 @@ public class RadarrIntegrationService : BaseIntegrationService
             CalendarItems = await GetCalendarItems(radarrApiClient, from, to, false, cancellationToken),
         };
     }
-
-    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
     protected override async Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {

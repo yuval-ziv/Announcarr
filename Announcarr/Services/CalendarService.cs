@@ -6,9 +6,9 @@ namespace Announcarr.Services;
 
 public class CalendarService : ICalendarService
 {
-    private readonly ILogger<CalendarService> _logger;
     private readonly List<IExporterService> _exporterServices;
     private readonly List<IIntegrationService> _integrationServices;
+    private readonly ILogger<CalendarService> _logger;
 
     public CalendarService(ILogger<CalendarService> logger, IEnumerable<IIntegrationService> integrationServices, IEnumerable<IExporterService> exporterServices)
     {

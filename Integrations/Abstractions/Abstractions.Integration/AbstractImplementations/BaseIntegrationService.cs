@@ -19,8 +19,6 @@ public abstract class BaseIntegrationService : IIntegrationService
         return GetCalendarLogicAsync(from, to, cancellationToken);
     }
 
-    protected abstract Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
-
     public abstract bool IsGetRecentlyAddedEnabled { get; }
 
     public Task<RecentlyAddedResponse> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
@@ -32,6 +30,8 @@ public abstract class BaseIntegrationService : IIntegrationService
 
         return GetRecentlyAddedLogicAsync(from, to, cancellationToken);
     }
+
+    protected abstract Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
 
     protected abstract Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
 }

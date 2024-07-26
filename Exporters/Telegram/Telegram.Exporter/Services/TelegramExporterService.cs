@@ -9,10 +9,10 @@ namespace Announcarr.Exporters.Telegram.Exporter.Services;
 public class TelegramExporterService : BaseExporterService
 {
     private const string DefaultThumbnailNotAvailableUri = "https://thumbs.dreamstime.com/b/ning%C3%BAn-icono-disponible-de-la-imagen-plano-ejemplo-del-vector-132482953.jpg";
-
-    private readonly TelegramExporterConfiguration _configuration;
     private readonly TelegramBotClient _bot;
     private readonly List<ChatId> _chatIds;
+
+    private readonly TelegramExporterConfiguration _configuration;
 
     public TelegramExporterService(TelegramExporterConfiguration configuration)
     {
@@ -26,12 +26,14 @@ public class TelegramExporterService : BaseExporterService
     public override string Name => _configuration.Name ?? "Telegram";
     public override bool IsTestExporterEnabled => _configuration.IsTestExporterEnabled;
 
+    public override bool IsExportCalendarEnabled => _configuration.IsExportCalendarEnabled;
+
+    public override bool IsExportRecentlyAddedEnabled => _configuration.IsExportRecentlyAddedEnabled;
+
     protected override async Task TestExporterLogicAsync(CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, "This is a test message.", cancellationToken: cancellationToken));
     }
-
-    public override bool IsExportCalendarEnabled => _configuration.IsExportCalendarEnabled;
 
     protected override async Task ExportCalendarLogicAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
@@ -39,8 +41,6 @@ public class TelegramExporterService : BaseExporterService
             $"The calendar for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} is:", cancellationToken: cancellationToken));
         await Task.WhenAll(calendarResponse.CalendarItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
     }
-
-    public override bool IsExportRecentlyAddedEnabled => _configuration.IsExportRecentlyAddedEnabled;
 
     protected override async Task ExportRecentlyAddedLogicAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate,
         CancellationToken cancellationToken = default)

@@ -18,10 +18,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Exporters\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj" />
-        <ProjectReference Include="..\Exporters\Telegram\Telegram.Exporter\Telegram.Exporter.csproj" />
-        <ProjectReference Include="..\Exporters\Telegram\Telegram.Extensions\Telegram.Extensions.csproj" />
-        <ProjectReference Include="..\Integrations\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj" />
+        <ProjectReference Include="..\Exporters\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj"/>
+        <ProjectReference Include="..\Exporters\Telegram\Telegram.Exporter\Telegram.Exporter.csproj"/>
+        <ProjectReference Include="..\Exporters\Telegram\Telegram.Extensions\Telegram.Extensions.csproj"/>
+        <ProjectReference Include="..\Integrations\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj"/>
         <ProjectReference Include="..\Integrations\Radarr\Radarr.Extensions\Radarr.Extensions.csproj"/>
         <ProjectReference Include="..\Integrations\Radarr\Radarr.Integration\Radarr.Integration.csproj"/>
         <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj"/>

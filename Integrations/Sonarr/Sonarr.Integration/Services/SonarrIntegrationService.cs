@@ -22,6 +22,8 @@ public class SonarrIntegrationService : BaseIntegrationService
     public override string Name => _configuration.Name ?? "Sonarr";
     public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
 
+    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
+
     protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
@@ -29,8 +31,6 @@ public class SonarrIntegrationService : BaseIntegrationService
 
         return new CalendarResponse { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
     }
-
-    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
     protected override async Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
