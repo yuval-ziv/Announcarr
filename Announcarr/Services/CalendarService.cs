@@ -1,6 +1,6 @@
-﻿using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
+﻿using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 using Announcarr.Integrations.Abstractions.Interfaces;
-using Announcarr.Integrations.Abstractions.Responses;
 
 namespace Announcarr.Services;
 

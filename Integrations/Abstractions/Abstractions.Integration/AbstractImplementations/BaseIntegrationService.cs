@@ -1,5 +1,5 @@
-﻿using Announcarr.Integrations.Abstractions.Interfaces;
-using Announcarr.Integrations.Abstractions.Responses;
+﻿using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Integrations.Abstractions.Interfaces;
 
 namespace Announcarr.Integrations.Abstractions.AbstractImplementations;
 

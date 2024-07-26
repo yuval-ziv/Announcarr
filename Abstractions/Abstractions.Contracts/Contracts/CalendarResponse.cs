@@ -1,4 +1,4 @@
-﻿namespace Announcarr.Integrations.Abstractions.Responses;
+﻿namespace Announcarr.Abstractions.Contracts.Contracts;
 
 public class CalendarResponse
 {

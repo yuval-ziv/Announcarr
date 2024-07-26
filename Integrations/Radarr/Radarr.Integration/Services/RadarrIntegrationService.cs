@@ -1,7 +1,7 @@
-﻿using Announcarr.Clients.Radarr.Client;
+﻿using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Clients.Radarr.Client;
 using Announcarr.Clients.Radarr.Responses;
 using Announcarr.Integrations.Abstractions.AbstractImplementations;
-using Announcarr.Integrations.Abstractions.Responses;
 using Announcarr.Integrations.Radarr.Integration.Configurations;
 using Announcarr.Integrations.Radarr.Integration.Contracts;
 using Announcarr.Utils.Extensions.DateTime;

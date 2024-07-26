@@ -1,5 +1,5 @@
-﻿using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
-using Announcarr.Integrations.Abstractions.Responses;
+﻿using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 
 namespace Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 

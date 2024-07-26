@@ -1,3 +1,4 @@
+using Announcarr.Abstractions.Contracts.Contracts;
 using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
 using Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection;
@@ -5,7 +6,6 @@ using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 using Announcarr.Exporters.Telegram.Exporter.Configurations;
 using Announcarr.Exporters.Telegram.Exporter.Services;
 using Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection;
-using Announcarr.Integrations.Abstractions.Responses;
 using Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
 using Announcarr.Integrations.Radarr.Integration.Configurations;
 using Announcarr.Integrations.Radarr.Integration.Services;
