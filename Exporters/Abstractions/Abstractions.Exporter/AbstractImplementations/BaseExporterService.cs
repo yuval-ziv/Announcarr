@@ -34,6 +34,13 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
         return ExportCalendarAsync(mergedContract, startDate, endDate, cancellationToken);
     }
 
+    public Task ExportRecentlyAddedAsync(IEnumerable<RecentlyAddedContract> recentlyAddedContracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    {
+        RecentlyAddedContract mergedContract = recentlyAddedContracts.Where(IsTagSupportedByExporter).Aggregate(RecentlyAddedContract.Merge);
+
+        return ExportRecentlyAddedAsync(mergedContract, startDate, endDate, cancellationToken);
+    }
+
     protected Task ExportCalendarAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
         if (!Configuration.IsEnabledByAnnouncementType(calendarContract.AnnouncementType))
@@ -57,13 +64,6 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
         }
 
         return Task.CompletedTask;
-    }
-
-    public Task ExportRecentlyAddedAsync(IEnumerable<RecentlyAddedContract> recentlyAddedContracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
-    {
-        RecentlyAddedContract mergedContract = recentlyAddedContracts.Where(IsTagSupportedByExporter).Aggregate(RecentlyAddedContract.Merge);
-
-        return ExportRecentlyAddedAsync(mergedContract, startDate, endDate, cancellationToken);
     }
 
     protected Task ExportRecentlyAddedAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
