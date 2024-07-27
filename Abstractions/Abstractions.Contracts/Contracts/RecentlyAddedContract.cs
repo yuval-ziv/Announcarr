@@ -1,13 +1,11 @@
 ﻿namespace Announcarr.Abstractions.Contracts;
 
-public class RecentlyAddedContract : IAnnouncement
+public class RecentlyAddedContract : BaseAnnouncement
 {
     public List<NewlyMonitoredItem> NewlyMonitoredItems { get; set; } = [];
     public List<BaseCalendarItem> NewItems { get; set; } = [];
-    public bool IsEmpty => NewlyMonitoredItems.Count == 0 && NewItems.Count == 0;
-    public AnnouncementType AnnouncementType => AnnouncementType.RecentlyAdded;
-
-    public List<string> Tags { get; set; } = [];
+    public override bool IsEmpty => NewlyMonitoredItems.Count == 0 && NewItems.Count == 0;
+    public override AnnouncementType AnnouncementType => AnnouncementType.RecentlyAdded;
 
     public static RecentlyAddedContract Merge(RecentlyAddedContract first, RecentlyAddedContract second)
     {
@@ -15,6 +13,7 @@ public class RecentlyAddedContract : IAnnouncement
         {
             NewlyMonitoredItems = first.NewlyMonitoredItems.Concat(second.NewlyMonitoredItems).ToList(),
             NewItems = first.NewItems.Concat(second.NewItems).ToList(),
+            Tags = first.Tags.Concat(second.Tags).ToHashSet(),
         };
     }
 }

@@ -12,12 +12,12 @@ public abstract class BaseExporterConfiguration
         return AnnouncementTypeToConfiguration.TryGetValue(announcementType, out AnnouncementTypeConfiguration? value) ? value.IsEnabled : defaultValue;
     }
 
-    public virtual List<string> GetTagsByAnnouncementType(AnnouncementType announcementType)
+    public virtual HashSet<string> GetTagsByAnnouncementType(AnnouncementType announcementType)
     {
         return GetTagsByAnnouncementType(announcementType, []);
     }
 
-    public virtual List<string> GetTagsByAnnouncementType(AnnouncementType announcementType, List<string> defaultTags)
+    public virtual HashSet<string> GetTagsByAnnouncementType(AnnouncementType announcementType, HashSet<string> defaultTags)
     {
         return AnnouncementTypeToConfiguration.TryGetValue(announcementType, out AnnouncementTypeConfiguration? value) ? value.Tags : defaultTags;
     }
