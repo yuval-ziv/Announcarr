@@ -8,26 +8,19 @@ using Announcarr.Utils.Extensions.DateTime;
 
 namespace Announcarr.Integrations.Sonarr.Integration.Services;
 
-public class SonarrIntegrationService : BaseIntegrationService
+public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegrationConfiguration>
 {
-    private readonly SonarrIntegrationConfiguration _configuration;
-
-    public SonarrIntegrationService(SonarrIntegrationConfiguration configuration)
+    public SonarrIntegrationService(SonarrIntegrationConfiguration configuration) : base(configuration)
     {
-        _configuration = configuration;
     }
 
-    public override bool IsEnabled => _configuration.IsEnabled;
+    public override bool IsEnabled => Configuration.IsEnabled;
 
-    public override string Name => _configuration.Name ?? "Sonarr";
-
-    public override bool IsGetCalendarEnabled => _configuration.IsEnabledByAnnouncementType(AnnouncementType.Calendar);
-
-    public override bool IsGetRecentlyAddedEnabled => _configuration.IsEnabledByAnnouncementType(AnnouncementType.RecentlyAdded);
+    public override string Name => Configuration.Name ?? "Sonarr";
 
     protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
+        using var sonarrApiClient = new SonarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
         List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
 
         return new CalendarContract { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
@@ -35,7 +28,7 @@ public class SonarrIntegrationService : BaseIntegrationService
 
     protected override async Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
+        using var sonarrApiClient = new SonarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
 
         List<SeriesResource> seriesResources = await sonarrApiClient.GetSeriesAsync(includeSeasonImages: true, cancellationToken: cancellationToken);
 
@@ -103,7 +96,7 @@ public class SonarrIntegrationService : BaseIntegrationService
 
     private List<SeasonEpisodeCount> GetSeasonToAvailableEpisodesCount(List<SeasonResource>? seasons)
     {
-        return seasons?.Where(season => season.SeasonNumber != 0 || !_configuration.IgnoreSeasonZero).Select(GetAvailableEpisodesCount).ToList() ?? [];
+        return seasons?.Where(season => season.SeasonNumber != 0 || !Configuration.IgnoreSeasonZero).Select(GetAvailableEpisodesCount).ToList() ?? [];
     }
 
     private static SeasonEpisodeCount GetAvailableEpisodesCount(SeasonResource season)
@@ -114,10 +107,5 @@ public class SonarrIntegrationService : BaseIntegrationService
             AvailableEpisodesCount = season.Statistics.EpisodeCount,
             TotalSeasonEpisodesCount = season.Statistics.TotalEpisodeCount,
         };
-    }
-
-    public Task GetNewAnnouncementAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
 }

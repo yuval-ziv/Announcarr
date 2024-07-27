@@ -3,35 +3,45 @@ using Announcarr.Integrations.Abstractions.Integration.Abstractions;
 
 namespace Announcarr.Integrations.Abstractions.Integration.Implementations;
 
-public abstract class BaseIntegrationService : IIntegrationService
+public abstract class BaseIntegrationService<TConfiguration> : IIntegrationService where TConfiguration : BaseIntegrationConfiguration
 {
-    public abstract bool IsEnabled { get; }
-    public abstract string Name { get; }
-    public abstract bool IsGetCalendarEnabled { get; }
+    protected readonly TConfiguration Configuration;
 
-    public Task<CalendarContract> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected BaseIntegrationService(TConfiguration configuration)
     {
-        if (!IsGetCalendarEnabled)
-        {
-            return Task.FromResult(new CalendarContract());
-        }
-
-        return GetCalendarLogicAsync(from, to, cancellationToken);
+        Configuration = configuration;
     }
 
-    public abstract bool IsGetRecentlyAddedEnabled { get; }
+    public abstract bool IsEnabled { get; }
+    public abstract string Name { get; }
 
-    public Task<RecentlyAddedContract> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    public virtual async Task<CalendarContract> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        if (!IsGetRecentlyAddedEnabled)
+        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Calendar))
         {
-            return Task.FromResult(new RecentlyAddedContract());
+            return new CalendarContract();
         }
 
-        return GetRecentlyAddedLogicAsync(from, to, cancellationToken);
+        return AddTags(await GetCalendarLogicAsync(from, to, cancellationToken));
+    }
+
+    public virtual async Task<RecentlyAddedContract> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    {
+        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.RecentlyAdded))
+        {
+            return new RecentlyAddedContract();
+        }
+
+        return AddTags(await GetRecentlyAddedLogicAsync(from, to, cancellationToken));
     }
 
     protected abstract Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
 
     protected abstract Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
+
+    protected virtual TAnnouncement AddTags<TAnnouncement>(TAnnouncement announcement) where TAnnouncement : BaseAnnouncement
+    {
+        announcement.Tags = Configuration.GetTagsByAnnouncementType(announcement.AnnouncementType);
+        return announcement;
+    }
 }
