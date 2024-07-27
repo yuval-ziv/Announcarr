@@ -1,9 +1,9 @@
 ﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
+using Announcarr.Exporters.Abstractions.Exporter.Resolvers;
 using Announcarr.Exporters.Telegram.Exporter.Configurations;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using static Announcarr.Exporters.Abstractions.Exporter.Resolvers.TextMessageResolver;
 
 namespace Announcarr.Exporters.Telegram.Exporter.Services;
 
@@ -40,7 +40,8 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
     protected override async Task ExportEmptyCalendarLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        string text = ResolveTextMessage(CustomMessageOnEmptyContract, AnnouncementType.Calendar);
+        string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, announcementType: AnnouncementType.Calendar, startDate: startDate, endDate: endDate,
+            dateTimeFormat: Configuration.DateTimeFormat);
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, text, cancellationToken: cancellationToken));
     }
 
@@ -57,7 +58,8 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
     protected override async Task ExportEmptyRecentlyAddedLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken)
     {
-        string text = ResolveTextMessage(CustomMessageOnEmptyContract, AnnouncementType.RecentlyAdded);
+        string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, announcementType: AnnouncementType.Calendar, startDate: startDate, endDate: endDate,
+            dateTimeFormat: Configuration.DateTimeFormat);
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, text, cancellationToken: cancellationToken));
     }
 
