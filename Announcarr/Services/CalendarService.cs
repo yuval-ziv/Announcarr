@@ -8,15 +8,24 @@ namespace Announcarr.Services;
 
 public class CalendarService : ICalendarService
 {
+    private readonly AnnouncarrConfiguration _configuration;
     private readonly List<IExporterService> _exporterServices;
     private readonly List<IIntegrationService> _integrationServices;
     private readonly ILogger<CalendarService> _logger;
 
-    public CalendarService(ILogger<CalendarService> logger, IEnumerable<IIntegrationService> integrationServices, IEnumerable<IExporterService> exporterServices)
+    public CalendarService(ILogger<CalendarService> logger, IOptionsMonitor<AnnouncarrConfiguration> options, IEnumerable<IIntegrationService> integrationServices,
+        IEnumerable<IExporterService> exporterServices)
     {
         _logger = logger;
+        _configuration = options.CurrentValue;
         _exporterServices = exporterServices.ToList();
         _integrationServices = integrationServices.ToList();
+
+        _exporterServices.ForEach(exporter =>
+        {
+            exporter.ExportOnEmptyContract = _configuration.EmptyContractFallback.ExportOnEmptyContract;
+            exporter.CustomMessageOnEmptyContract = _configuration.EmptyContractFallback.CustomMessageOnEmptyContract;
+        });
     }
 
     public async Task<CalendarContract> GetAllCalendarItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
