@@ -35,14 +35,13 @@ public class CalendarService : ICalendarService
 
         CalendarContract[] calendarResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
             .Select(async serviceIntegration => await GetCalendarResponseAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
-        CalendarContract calendarContract = calendarResponses.Length != 0 ? calendarResponses.Aggregate(CalendarContract.Merge) : new CalendarContract();
 
         if (export ?? false)
         {
-            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled).Select(exporter => exporter.ExportCalendarAsync(calendarContract, start.Value, end.Value, cancellationToken)));
+            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled).Select(exporter => exporter.ExportCalendarAsync(calendarResponses, start.Value, end.Value, cancellationToken)));
         }
 
-        return calendarContract;
+        return calendarResponses.Length != 0 ? calendarResponses.Aggregate(CalendarContract.Merge) : new CalendarContract();
     }
 
     public async Task<RecentlyAddedContract> GetAllRecentlyAddedItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
@@ -50,17 +49,16 @@ public class CalendarService : ICalendarService
         start ??= DateTimeOffset.Now.AddDays(-7);
         end ??= start.Value.AddDays(7);
 
-        RecentlyAddedContract[] recentlyAddedResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
+        RecentlyAddedContract[] recentlyAddedContracts = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
             .Select(async serviceIntegration => await GetRecentlyAddedItemsAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
-        RecentlyAddedContract recentlyAddedContract = recentlyAddedResponses.Length != 0 ? recentlyAddedResponses.Aggregate(RecentlyAddedContract.Merge) : new RecentlyAddedContract();
 
         if (export ?? false)
         {
             await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled)
-                .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedContract, start.Value, end.Value, cancellationToken)));
+                .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedContracts, start.Value, end.Value, cancellationToken)));
         }
 
-        return recentlyAddedContract;
+        return recentlyAddedContracts.Length != 0 ? recentlyAddedContracts.Aggregate(RecentlyAddedContract.Merge) : new RecentlyAddedContract();
     }
 
     private async Task<CalendarContract> GetCalendarResponseAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken = default)
