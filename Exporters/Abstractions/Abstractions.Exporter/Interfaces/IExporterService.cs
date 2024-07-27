@@ -6,6 +6,8 @@ public interface IExporterService
 {
     bool IsEnabled { get; }
     string Name { get; }
+    bool? ExportOnEmptyContract { get; set; }
+    string? CustomMessageOnEmptyContract { get; set; }
     bool IsTestExporterEnabled { get; }
     bool IsExportCalendarEnabled { get; }
     bool IsExportRecentlyAddedEnabled { get; }
