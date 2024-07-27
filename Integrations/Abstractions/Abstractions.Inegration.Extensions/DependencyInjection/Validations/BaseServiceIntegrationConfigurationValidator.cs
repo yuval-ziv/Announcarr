@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection.Validations;
 
-public abstract class BaseServiceIntegrationConfigurationValidator<TConfiguration> : IValidateOptions<List<TConfiguration>> where TConfiguration : IIntegrationConfiguration
+public abstract class BaseServiceIntegrationConfigurationValidator<TConfiguration> : IValidateOptions<List<TConfiguration>> where TConfiguration : BaseIntegrationConfiguration
 {
     public virtual ValidateOptionsResult Validate(string? name, List<TConfiguration> allOptions)
     {
@@ -15,7 +15,8 @@ public abstract class BaseServiceIntegrationConfigurationValidator<TConfiguratio
 
         if (allOptions.Any(configuration => configuration.Name.IsNullOrEmpty()))
         {
-            return ValidateOptionsResult.Fail($"{nameof(IIntegrationConfiguration.Name)} is required when there are multiple configurations of the same type, and cannot be empty or whitespace only");
+            return ValidateOptionsResult.Fail(
+                $"{nameof(BaseIntegrationConfiguration.Name)} is required when there are multiple configurations of the same type, and cannot be empty or whitespace only");
         }
 
         if (allOptions.Select(configuration => configuration.Name).Distinct().Count() < allOptions.Count)

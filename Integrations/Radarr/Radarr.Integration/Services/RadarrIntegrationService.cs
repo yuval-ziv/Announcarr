@@ -20,9 +20,9 @@ public class RadarrIntegrationService : BaseIntegrationService
     public override bool IsEnabled => _configuration.IsEnabled;
 
     public override string Name => _configuration.Name ?? "Radarr";
-    public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
+    public override bool IsGetCalendarEnabled => _configuration.IsEnabledByAnnouncementType(AnnouncementType.Calendar);
 
-    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
+    public override bool IsGetRecentlyAddedEnabled => _configuration.IsEnabledByAnnouncementType(AnnouncementType.RecentlyAdded);
 
     protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {

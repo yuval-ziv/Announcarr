@@ -9,7 +9,7 @@ public static class ServiceCollectionServiceExtensions
 {
     public static IServiceCollection AddIntegrations<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services)
         where TImplementation : class, IIntegrationService
-        where TConfiguration : class, IIntegrationConfiguration
+        where TConfiguration : BaseIntegrationConfiguration
     {
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
         List<TConfiguration> list = serviceProvider.GetService<IOptions<List<TConfiguration>>>()?.Value ?? [];
@@ -20,7 +20,7 @@ public static class ServiceCollectionServiceExtensions
     public static IServiceCollection AddIntegrations<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
         List<TConfiguration>? configurations)
         where TImplementation : class, IIntegrationService
-        where TConfiguration : class, IIntegrationConfiguration
+        where TConfiguration : BaseIntegrationConfiguration
     {
         foreach (TConfiguration configuration in configurations ?? Enumerable.Empty<TConfiguration>())
         {
@@ -33,7 +33,7 @@ public static class ServiceCollectionServiceExtensions
     private static void AddIntegration<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
         TConfiguration configuration)
         where TImplementation : class, IIntegrationService
-        where TConfiguration : class, IIntegrationConfiguration
+        where TConfiguration : BaseIntegrationConfiguration
     {
         services.AddSingleton<IIntegrationService, TImplementation>(_ => (TImplementation)Activator.CreateInstance(typeof(TImplementation), configuration)!);
     }
