@@ -1,58 +1,69 @@
 ﻿using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Configurations;
 using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 using Announcarr.Integrations.Abstractions.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace Announcarr.Services;
 
 public class CalendarService : ICalendarService
 {
+    private readonly AnnouncarrConfiguration _configuration;
     private readonly List<IExporterService> _exporterServices;
     private readonly List<IIntegrationService> _integrationServices;
     private readonly ILogger<CalendarService> _logger;
 
-    public CalendarService(ILogger<CalendarService> logger, IEnumerable<IIntegrationService> integrationServices, IEnumerable<IExporterService> exporterServices)
+    public CalendarService(ILogger<CalendarService> logger, IOptionsMonitor<AnnouncarrConfiguration> options, IEnumerable<IIntegrationService> integrationServices,
+        IEnumerable<IExporterService> exporterServices)
     {
         _logger = logger;
+        _configuration = options.CurrentValue;
         _exporterServices = exporterServices.ToList();
         _integrationServices = integrationServices.ToList();
+
+        _exporterServices.ForEach(exporter =>
+        {
+            exporter.ExportOnEmptyContract = _configuration.EmptyContractFallback.ExportOnEmptyContract;
+            exporter.CustomMessageOnEmptyContract = _configuration.EmptyContractFallback.CustomMessageOnEmptyContract;
+        });
     }
 
-    public async Task<CalendarResponse> GetAllCalendarItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
+    public async Task<CalendarContract> GetAllCalendarItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
     {
         start ??= DateTimeOffset.Now;
         end ??= start.Value.AddDays(7);
 
-        CalendarResponse[] calendarResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
+        CalendarContract[] calendarResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
             .Select(async serviceIntegration => await GetCalendarResponseAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
-        CalendarResponse calendarResponse = calendarResponses.Length != 0 ? calendarResponses.Aggregate(CalendarResponse.Merge) : new CalendarResponse();
+        CalendarContract calendarContract = calendarResponses.Length != 0 ? calendarResponses.Aggregate(CalendarContract.Merge) : new CalendarContract();
 
         if (export ?? false)
         {
-            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled).Select(exporter => exporter.ExportCalendarAsync(calendarResponse, start.Value, end.Value, cancellationToken)));
+            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled).Select(exporter => exporter.ExportCalendarAsync(calendarContract, start.Value, end.Value, cancellationToken)));
         }
 
-        return calendarResponse;
+        return calendarContract;
     }
 
-    public async Task<RecentlyAddedResponse> GetAllRecentlyAddedItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
+    public async Task<RecentlyAddedContract> GetAllRecentlyAddedItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
     {
         start ??= DateTimeOffset.Now.AddDays(-7);
         end ??= start.Value.AddDays(7);
 
-        RecentlyAddedResponse[] recentlyAddedResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
+        RecentlyAddedContract[] recentlyAddedResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
             .Select(async serviceIntegration => await GetRecentlyAddedItemsAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
-        RecentlyAddedResponse recentlyAddedResponse = recentlyAddedResponses.Length != 0 ? recentlyAddedResponses.Aggregate(RecentlyAddedResponse.Merge) : new RecentlyAddedResponse();
+        RecentlyAddedContract recentlyAddedContract = recentlyAddedResponses.Length != 0 ? recentlyAddedResponses.Aggregate(RecentlyAddedContract.Merge) : new RecentlyAddedContract();
 
         if (export ?? false)
         {
             await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled)
-                .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedResponse, start.Value, end.Value, cancellationToken)));
+                .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedContract, start.Value, end.Value, cancellationToken)));
         }
 
-        return recentlyAddedResponse;
+        return recentlyAddedContract;
     }
 
-    private async Task<CalendarResponse> GetCalendarResponseAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken = default)
+    private async Task<CalendarContract> GetCalendarResponseAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -61,11 +72,11 @@ public class CalendarService : ICalendarService
         catch (Exception e)
         {
             _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.Name);
-            return new CalendarResponse();
+            return new CalendarContract();
         }
     }
 
-    private async Task<RecentlyAddedResponse> GetRecentlyAddedItemsAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end,
+    private async Task<RecentlyAddedContract> GetRecentlyAddedItemsAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end,
         CancellationToken cancellationToken = default)
     {
         try
@@ -75,7 +86,7 @@ public class CalendarService : ICalendarService
         catch (Exception e)
         {
             _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.Name);
-            return new RecentlyAddedResponse();
+            return new RecentlyAddedContract();
         }
     }
 }

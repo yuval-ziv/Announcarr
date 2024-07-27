@@ -8,7 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\Abstractions\Abstractions.Contracts\Abstractions.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\Abstractions\Abstractions.Contracts\Abstractions.Contracts.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Enums.NET" Version="5.0.0"/>
     </ItemGroup>
 
 </Project>

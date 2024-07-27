@@ -24,21 +24,21 @@ public class RadarrIntegrationService : BaseIntegrationService
 
     public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
-    protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
 
-        return new CalendarResponse
+        return new CalendarContract
         {
             CalendarItems = await GetCalendarItems(radarrApiClient, from, to, false, cancellationToken),
         };
     }
 
-    protected override async Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using IRadarrApiClient radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
 
-        return new RecentlyAddedResponse
+        return new RecentlyAddedContract
         {
             NewlyMonitoredItems = await GetNewlyMonitoredItemsAsync(radarrApiClient, from, to, cancellationToken),
             NewItems = await GetCalendarItems(radarrApiClient, from, to, true, cancellationToken),

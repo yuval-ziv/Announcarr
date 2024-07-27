@@ -20,6 +20,6 @@ public class SonarrCalendarItem : BaseCalendarItem
 
     private static string GetCaption(Episode episode)
     {
-        return $"{episode.EpisodeTitle ?? "TBA"} ({episode.EpisodeNumber:00})";
+        return $"{episode.EpisodeTitle ?? "TBA"} (episode {episode.EpisodeNumber:00})";
     }
 }
