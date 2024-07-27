@@ -4,7 +4,7 @@ public class AnnouncarrConfiguration
 {
     public const string SectionName = "Announcarr";
     public required AnnouncarrIntervalConfiguration Interval { get; set; }
-    public required AnnouncarrEmptyAnnouncementFallbackConfiguration EmptyAnnouncementFallback { get; set; }
+    public required AnnouncarrEmptyContractFallbackConfiguration EmptyContractFallback { get; set; }
 }
 
 public class AnnouncarrIntervalConfiguration
@@ -20,8 +20,8 @@ public class AnnouncarrIntervalConfiguration
     public TimeSpan? CustomAnnouncerRange { get; set; }
 }
 
-public class AnnouncarrEmptyAnnouncementFallbackConfiguration
+public class AnnouncarrEmptyContractFallbackConfiguration
 {
-    public bool DoNotSendOnEmpty { get; set; } = true;
-    public string CustomMessage { get; set; } = "There is nothing to announce";
+    public bool ExportOnEmptyContract { get; set; } = false;
+    public string CustomMessageOnEmptyContract { get; set; } = "There is nothing to announce";
 }

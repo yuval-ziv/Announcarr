@@ -112,15 +112,15 @@ public class AnnouncarrConfigurationValidator : IValidateOptions<AnnouncarrConfi
 
     private static ValidateOptionsResult ValidateEmptyAnnouncementConfiguration(AnnouncarrConfiguration options)
     {
-        if (options.EmptyAnnouncementFallback.DoNotSendOnEmpty)
+        if (!options.EmptyContractFallback.ExportOnEmptyContract)
         {
             return ValidateOptionsResult.Success;
         }
 
-        if (options.EmptyAnnouncementFallback.CustomMessage.IsNullOrWhiteSpace())
+        if (options.EmptyContractFallback.CustomMessageOnEmptyContract.IsNullOrWhiteSpace())
         {
             return ValidateOptionsResult.Fail(
-                $"{nameof(options.EmptyAnnouncementFallback.CustomMessage)} cannot be empty or whitespace only when {nameof(options.EmptyAnnouncementFallback.DoNotSendOnEmpty)} is set to true");
+                $"{nameof(options.EmptyContractFallback.CustomMessageOnEmptyContract)} cannot be empty or whitespace only when {nameof(options.EmptyContractFallback.ExportOnEmptyContract)} is set to true");
         }
 
         return ValidateOptionsResult.Success;
