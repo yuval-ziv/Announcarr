@@ -9,7 +9,7 @@ public static class ServiceCollectionServiceExtensions
 {
     public static IServiceCollection AddExporters<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services)
         where TImplementation : class, IExporterService
-        where TConfiguration : class, IExporterConfiguration
+        where TConfiguration : BaseExporterConfiguration
     {
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
         List<TConfiguration> list = serviceProvider.GetService<IOptions<List<TConfiguration>>>()?.Value ?? [];
@@ -20,7 +20,7 @@ public static class ServiceCollectionServiceExtensions
     public static IServiceCollection AddExporters<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
         List<TConfiguration>? configurations)
         where TImplementation : class, IExporterService
-        where TConfiguration : class, IExporterConfiguration
+        where TConfiguration : BaseExporterConfiguration
     {
         foreach (TConfiguration configuration in configurations ?? Enumerable.Empty<TConfiguration>())
         {
@@ -33,7 +33,7 @@ public static class ServiceCollectionServiceExtensions
     private static void AddExporter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation, TConfiguration>(this IServiceCollection services,
         TConfiguration configuration)
         where TImplementation : class, IExporterService
-        where TConfiguration : class, IExporterConfiguration
+        where TConfiguration : BaseExporterConfiguration
     {
         services.AddSingleton<IExporterService, TImplementation>(_ => (TImplementation)Activator.CreateInstance(typeof(TImplementation), configuration)!);
     }

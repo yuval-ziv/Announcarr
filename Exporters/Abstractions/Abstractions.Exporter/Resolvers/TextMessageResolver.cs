@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Abstractions.Contracts;
 using EnumsNET;
 
 namespace Announcarr.Exporters.Abstractions.Exporter.Resolvers;
@@ -10,17 +10,38 @@ public static partial class TextMessageResolver
     [GeneratedRegex(@"(?<!\{)\{announcementType\}(?!\})")]
     private static partial Regex AnnouncementTypeRegex();
 
+    [GeneratedRegex(@"(?<!\{)\{startDate\}(?!\})")]
+    private static partial Regex StartDateTypeRegex();
+
+    [GeneratedRegex(@"(?<!\{)\{endDate\}(?!\})")]
+    private static partial Regex EndDateTypeRegex();
+
     [GeneratedRegex(@"\{\{")]
     private static partial Regex DoubleOpeningBracesRegex();
 
     [GeneratedRegex(@"\}\}")]
     private static partial Regex DoubleClosingBracesRegex();
 
-    public static string ResolveTextMessage(string? text, AnnouncementType announcementType)
+    public static string ResolveTextMessage(string? text, AnnouncementType? announcementType = null, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null,
+        string dateTimeFormat = "dd/MM/yyyy")
     {
         if (text is null)
             return string.Empty;
-        text = AnnouncementTypeRegex().Replace(text, announcementType.AsString(EnumFormat.Description) ?? announcementType.AsString());
+
+        if (announcementType is not null)
+        {
+            text = AnnouncementTypeRegex().Replace(text, announcementType.Value.AsString(EnumFormat.Description) ?? announcementType.Value.AsString());
+        }
+
+        if (startDate is not null)
+        {
+            text = StartDateTypeRegex().Replace(text, startDate.Value.ToString(dateTimeFormat));
+        }
+
+        if (endDate is not null)
+        {
+            text = EndDateTypeRegex().Replace(text, endDate.Value.ToString(dateTimeFormat));
+        }
 
         return ReduceCurlyBraces(text);
     }

@@ -1,32 +1,26 @@
-﻿using Announcarr.Abstractions.Contracts.Contracts;
+﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Clients.Radarr.Client;
 using Announcarr.Clients.Radarr.Responses;
-using Announcarr.Integrations.Abstractions.AbstractImplementations;
+using Announcarr.Integrations.Abstractions.Integration.Implementations;
 using Announcarr.Integrations.Radarr.Integration.Configurations;
 using Announcarr.Integrations.Radarr.Integration.Contracts;
 using Announcarr.Utils.Extensions.DateTime;
 
 namespace Announcarr.Integrations.Radarr.Integration.Services;
 
-public class RadarrIntegrationService : BaseIntegrationService
+public class RadarrIntegrationService : BaseIntegrationService<RadarrIntegrationConfiguration>
 {
-    private readonly RadarrIntegrationConfiguration _configuration;
-
-    public RadarrIntegrationService(RadarrIntegrationConfiguration configuration)
+    public RadarrIntegrationService(RadarrIntegrationConfiguration configuration) : base(configuration)
     {
-        _configuration = configuration;
     }
 
-    public override bool IsEnabled => _configuration.IsEnabled;
+    public override bool IsEnabled => Configuration.IsEnabled;
 
-    public override string Name => _configuration.Name ?? "Radarr";
-    public override bool IsGetCalendarEnabled => _configuration.IsGetCalendarEnabled;
-
-    public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
+    public override string Name => Configuration.Name ?? "Radarr";
 
     protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        using var radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
+        using var radarrApiClient = new RadarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
 
         return new CalendarContract
         {
@@ -36,7 +30,7 @@ public class RadarrIntegrationService : BaseIntegrationService
 
     protected override async Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        using IRadarrApiClient radarrApiClient = new RadarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
+        using IRadarrApiClient radarrApiClient = new RadarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
 
         return new RecentlyAddedContract
         {

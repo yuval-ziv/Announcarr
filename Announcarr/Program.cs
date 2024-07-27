@@ -1,4 +1,4 @@
-using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Abstractions.Contracts;
 using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
 using Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection;

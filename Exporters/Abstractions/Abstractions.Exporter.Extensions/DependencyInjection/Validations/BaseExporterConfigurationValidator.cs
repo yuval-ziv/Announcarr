@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection.Validations;
 
-public abstract class BaseExporterConfigurationValidator<TConfiguration> : IValidateOptions<List<TConfiguration>> where TConfiguration : IExporterConfiguration
+public abstract class BaseExporterConfigurationValidator<TConfiguration> : IValidateOptions<List<TConfiguration>> where TConfiguration : BaseExporterConfiguration
 {
     public virtual ValidateOptionsResult Validate(string? name, List<TConfiguration> allOptions)
     {
@@ -15,7 +15,7 @@ public abstract class BaseExporterConfigurationValidator<TConfiguration> : IVali
 
         if (allOptions.Any(configuration => configuration.Name.IsNullOrEmpty()))
         {
-            return ValidateOptionsResult.Fail($"{nameof(IExporterConfiguration.Name)} is required when there are multiple configurations of the same type, and cannot be empty or whitespace only");
+            return ValidateOptionsResult.Fail($"{nameof(BaseExporterConfiguration.Name)} is required when there are multiple configurations of the same type, and cannot be empty or whitespace only");
         }
 
         if (allOptions.Select(configuration => configuration.Name).Distinct().Count() < allOptions.Count)
