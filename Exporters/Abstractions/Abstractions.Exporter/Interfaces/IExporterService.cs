@@ -10,6 +10,6 @@ public interface IExporterService
     bool IsExportCalendarEnabled { get; }
     bool IsExportRecentlyAddedEnabled { get; }
     Task TestExporterAsync(CancellationToken cancellationToken = default);
-    Task ExportCalendarAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
-    Task ExportRecentlyAddedAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    Task ExportCalendarAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    Task ExportRecentlyAddedAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
 }

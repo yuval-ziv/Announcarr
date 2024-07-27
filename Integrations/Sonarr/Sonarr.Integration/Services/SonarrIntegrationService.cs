@@ -24,15 +24,15 @@ public class SonarrIntegrationService : BaseIntegrationService
 
     public override bool IsGetRecentlyAddedEnabled => _configuration.IsGetRecentlyAddedEnabled;
 
-    protected override async Task<CalendarResponse> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
         List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
 
-        return new CalendarResponse { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
+        return new CalendarContract { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
     }
 
-    protected override async Task<RecentlyAddedResponse> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var sonarrApiClient = new SonarrApiClient(_configuration.Url, _configuration.ApiKey!, _configuration.IgnoreCertificateValidation);
 
@@ -40,7 +40,7 @@ public class SonarrIntegrationService : BaseIntegrationService
 
         List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
 
-        return new RecentlyAddedResponse
+        return new RecentlyAddedContract
         {
             NewlyMonitoredItems = seriesResources.Where(series => series.Added?.Between(from.DateTime, to) ?? false).Select(ToNewlyMonitoredSeries).Cast<NewlyMonitoredItem>().ToList(),
             NewItems = episodeResources.Where(episode => episode.HasFile).GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList(),

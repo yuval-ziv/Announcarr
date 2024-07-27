@@ -1,12 +1,12 @@
 ﻿namespace Announcarr.Abstractions.Contracts.Contracts;
 
-public class CalendarResponse
+public class CalendarContract
 {
     public List<BaseCalendarItem> CalendarItems { get; set; } = [];
 
-    public static CalendarResponse Merge(CalendarResponse first, CalendarResponse second)
+    public static CalendarContract Merge(CalendarContract first, CalendarContract second)
     {
-        return new CalendarResponse
+        return new CalendarContract
         {
             CalendarItems = first.CalendarItems.Concat(second.CalendarItems).ToList(),
         };

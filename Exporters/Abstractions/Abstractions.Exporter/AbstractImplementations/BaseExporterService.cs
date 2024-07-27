@@ -21,31 +21,31 @@ public abstract class BaseExporterService : IExporterService
 
     public abstract bool IsExportCalendarEnabled { get; }
 
-    public Task ExportCalendarAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    public Task ExportCalendarAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
         if (!IsTestExporterEnabled)
         {
             return Task.CompletedTask;
         }
 
-        return ExportCalendarLogicAsync(calendarResponse, startDate, endDate, cancellationToken);
+        return ExportCalendarLogicAsync(calendarContract, startDate, endDate, cancellationToken);
     }
 
     public abstract bool IsExportRecentlyAddedEnabled { get; }
 
-    public Task ExportRecentlyAddedAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    public Task ExportRecentlyAddedAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
         if (!IsTestExporterEnabled)
         {
             return Task.CompletedTask;
         }
 
-        return ExportRecentlyAddedLogicAsync(recentlyAddedResponse, startDate, endDate, cancellationToken);
+        return ExportRecentlyAddedLogicAsync(recentlyAddedContract, startDate, endDate, cancellationToken);
     }
 
     protected abstract Task TestExporterLogicAsync(CancellationToken cancellationToken = default);
 
-    protected abstract Task ExportCalendarLogicAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    protected abstract Task ExportCalendarLogicAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
 
-    protected abstract Task ExportRecentlyAddedLogicAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    protected abstract Task ExportRecentlyAddedLogicAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
 }

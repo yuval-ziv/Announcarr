@@ -35,22 +35,22 @@ public class TelegramExporterService : BaseExporterService
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, "This is a test message.", cancellationToken: cancellationToken));
     }
 
-    protected override async Task ExportCalendarLogicAsync(CalendarResponse calendarResponse, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    protected override async Task ExportCalendarLogicAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
             $"The calendar for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} is:", cancellationToken: cancellationToken));
-        await Task.WhenAll(calendarResponse.CalendarItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
+        await Task.WhenAll(calendarContract.CalendarItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
     }
 
-    protected override async Task ExportRecentlyAddedLogicAsync(RecentlyAddedResponse recentlyAddedResponse, DateTimeOffset startDate, DateTimeOffset endDate,
+    protected override async Task ExportRecentlyAddedLogicAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate,
         CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
             $"The recently monitored items for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} are:", cancellationToken: cancellationToken));
-        await Task.WhenAll(recentlyAddedResponse.NewlyMonitoredItems.Select(newMonitoredItem => SendNewMonitoredItemToAllChatsAsync(newMonitoredItem, cancellationToken)));
+        await Task.WhenAll(recentlyAddedContract.NewlyMonitoredItems.Select(newMonitoredItem => SendNewMonitoredItemToAllChatsAsync(newMonitoredItem, cancellationToken)));
         await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
             $"The recently added items for {startDate.ToString(_configuration.DateTimeFormat)} to {endDate.ToString(_configuration.DateTimeFormat)} is:", cancellationToken: cancellationToken));
-        await Task.WhenAll(recentlyAddedResponse.NewItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
+        await Task.WhenAll(recentlyAddedContract.NewItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
     }
 
     private async Task SendCalendarItemToAllChatsAsync(BaseCalendarItem calendarItem, CancellationToken cancellationToken = default)
