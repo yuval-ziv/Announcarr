@@ -1,4 +1,4 @@
-﻿namespace Announcarr.Abstractions.Contracts.Contracts;
+﻿namespace Announcarr.Abstractions.Contracts;
 
 public class CalendarContract : IAnnouncement
 {

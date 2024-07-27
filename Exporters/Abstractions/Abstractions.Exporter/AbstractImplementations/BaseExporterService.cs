@@ -1,4 +1,4 @@
-﻿using Announcarr.Abstractions.Contracts.Contracts;
+﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 
 namespace Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;

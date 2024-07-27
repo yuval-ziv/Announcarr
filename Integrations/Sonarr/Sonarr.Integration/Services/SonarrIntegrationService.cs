@@ -1,4 +1,4 @@
-﻿using Announcarr.Abstractions.Contracts.Contracts;
+﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Clients.Sonarr.Client;
 using Announcarr.Clients.Sonarr.Responses;
 using Announcarr.Integrations.Abstractions.Integration.Implementations;

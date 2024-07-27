@@ -1,4 +1,4 @@
-﻿using Announcarr.Abstractions.Contracts.Contracts;
+﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Clients.Radarr.Client;
 using Announcarr.Clients.Radarr.Responses;
 using Announcarr.Integrations.Abstractions.Integration.Implementations;

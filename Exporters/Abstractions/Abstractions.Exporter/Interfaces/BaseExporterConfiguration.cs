@@ -1,8 +1,8 @@
 ﻿using Announcarr.Abstractions.Contracts;
 
-namespace Announcarr.Integrations.Abstractions.Integration.Abstractions;
+namespace Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 
-public abstract class BaseIntegrationConfiguration
+public abstract class BaseExporterConfiguration
 {
     public string? Name { get; set; }
     public Dictionary<AnnouncementType, AnnouncementTypeConfiguration> AnnouncementTypeToConfiguration { get; set; } = [];

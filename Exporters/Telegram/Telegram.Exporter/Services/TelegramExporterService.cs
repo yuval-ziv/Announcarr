@@ -1,4 +1,4 @@
-﻿using Announcarr.Abstractions.Contracts.Contracts;
+﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 using Announcarr.Exporters.Telegram.Exporter.Configurations;
 using Telegram.Bot;
@@ -29,9 +29,9 @@ public class TelegramExporterService : BaseExporterService
     public override string? CustomMessageOnEmptyContract { get; set; }
     public override bool IsTestExporterEnabled => _configuration.IsTestExporterEnabled;
 
-    public override bool IsExportCalendarEnabled => _configuration.IsExportCalendarEnabled;
+    public override bool IsExportCalendarEnabled => _configuration.IsEnabledByAnnouncementType(AnnouncementType.Calendar);
 
-    public override bool IsExportRecentlyAddedEnabled => _configuration.IsExportRecentlyAddedEnabled;
+    public override bool IsExportRecentlyAddedEnabled => _configuration.IsEnabledByAnnouncementType(AnnouncementType.RecentlyAdded);
 
     protected override async Task TestExporterLogicAsync(CancellationToken cancellationToken = default)
     {

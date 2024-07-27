@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Announcarr.Abstractions.Contracts.Contracts;
+using Announcarr.Abstractions.Contracts;
 using EnumsNET;
 
 namespace Announcarr.Exporters.Abstractions.Exporter.Resolvers;
