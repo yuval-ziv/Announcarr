@@ -1,7 +1,7 @@
 ﻿using Announcarr.Abstractions.Contracts.Contracts;
 using Announcarr.Configurations;
 using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
-using Announcarr.Integrations.Abstractions.Interfaces;
+using Announcarr.Integrations.Abstractions.Integration.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace Announcarr.Services;

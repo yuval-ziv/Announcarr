@@ -1,4 +1,4 @@
-﻿using Announcarr.Integrations.Abstractions.Interfaces;
+﻿using Announcarr.Integrations.Abstractions.Integration.Abstractions;
 using Announcarr.Utils.Extensions.String;
 using Microsoft.Extensions.Options;
 

@@ -1,4 +1,4 @@
-﻿namespace Announcarr.Integrations.Abstractions.Exceptions;
+﻿namespace Announcarr.Integrations.Abstractions.Integration.Exceptions;
 
 public class IntegrationException : Exception
 {

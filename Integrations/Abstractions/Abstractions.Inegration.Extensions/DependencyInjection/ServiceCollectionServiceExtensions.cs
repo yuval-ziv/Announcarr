@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Announcarr.Integrations.Abstractions.Interfaces;
+using Announcarr.Integrations.Abstractions.Integration.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

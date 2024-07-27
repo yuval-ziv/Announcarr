@@ -1,7 +1,7 @@
 ﻿using Announcarr.Abstractions.Contracts.Contracts;
-using Announcarr.Integrations.Abstractions.Interfaces;
+using Announcarr.Integrations.Abstractions.Integration.Abstractions;
 
-namespace Announcarr.Integrations.Abstractions.AbstractImplementations;
+namespace Announcarr.Integrations.Abstractions.Integration.Implementations;
 
 public abstract class BaseIntegrationService : IIntegrationService
 {

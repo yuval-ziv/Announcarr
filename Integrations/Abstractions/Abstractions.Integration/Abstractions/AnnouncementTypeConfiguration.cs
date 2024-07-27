@@ -1,4 +1,4 @@
-﻿namespace Announcarr.Integrations.Abstractions.Interfaces;
+﻿namespace Announcarr.Integrations.Abstractions.Integration.Abstractions;
 
 public class AnnouncementTypeConfiguration
 {

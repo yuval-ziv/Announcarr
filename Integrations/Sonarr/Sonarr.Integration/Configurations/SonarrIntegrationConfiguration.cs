@@ -1,4 +1,4 @@
-﻿using Announcarr.Integrations.Abstractions.Interfaces;
+﻿using Announcarr.Integrations.Abstractions.Integration.Abstractions;
 
 namespace Announcarr.Integrations.Sonarr.Integration.Configurations;
 

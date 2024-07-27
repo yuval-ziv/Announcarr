@@ -1,7 +1,7 @@
 ﻿using Announcarr.Abstractions.Contracts.Contracts;
 using Announcarr.Clients.Sonarr.Client;
 using Announcarr.Clients.Sonarr.Responses;
-using Announcarr.Integrations.Abstractions.AbstractImplementations;
+using Announcarr.Integrations.Abstractions.Integration.Implementations;
 using Announcarr.Integrations.Sonarr.Integration.Configurations;
 using Announcarr.Integrations.Sonarr.Integration.Contracts;
 using Announcarr.Utils.Extensions.DateTime;

@@ -1,6 +1,6 @@
 ﻿using Announcarr.Abstractions.Contracts.Contracts;
 
-namespace Announcarr.Integrations.Abstractions.Interfaces;
+namespace Announcarr.Integrations.Abstractions.Integration.Abstractions;
 
 public abstract class BaseIntegrationConfiguration
 {
