@@ -4,6 +4,7 @@ public class RecentlyAddedContract
 {
     public List<NewlyMonitoredItem> NewlyMonitoredItems { get; set; } = [];
     public List<BaseCalendarItem> NewItems { get; set; } = [];
+    public bool IsEmpty => NewlyMonitoredItems.Count == 0 && NewItems.Count == 0;
 
     public static RecentlyAddedContract Merge(RecentlyAddedContract first, RecentlyAddedContract second)
     {
