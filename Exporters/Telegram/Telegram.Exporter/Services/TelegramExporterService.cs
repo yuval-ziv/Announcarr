@@ -28,12 +28,12 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
     protected override async Task TestExporterLogicAsync(CancellationToken cancellationToken = default)
     {
-        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, "This is a test message.", cancellationToken: cancellationToken));
+        await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, "This is a test message.", cancellationToken: cancellationToken));
     }
 
     protected override async Task ExportCalendarLogicAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
+        await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId,
             $"The calendar for {startDate.ToString(Configuration.DateTimeFormat)} to {endDate.ToString(Configuration.DateTimeFormat)} is:", cancellationToken: cancellationToken));
         await Task.WhenAll(calendarContract.CalendarItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
     }
@@ -42,16 +42,16 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
     {
         string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, announcementType: AnnouncementType.Calendar, startDate: startDate, endDate: endDate,
             dateTimeFormat: Configuration.DateTimeFormat);
-        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, text, cancellationToken: cancellationToken));
+        await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, text, cancellationToken: cancellationToken));
     }
 
     protected override async Task ExportRecentlyAddedLogicAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate,
         CancellationToken cancellationToken = default)
     {
-        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
+        await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId,
             $"The recently monitored items for {startDate.ToString(Configuration.DateTimeFormat)} to {endDate.ToString(Configuration.DateTimeFormat)} are:", cancellationToken: cancellationToken));
         await Task.WhenAll(recentlyAddedContract.NewlyMonitoredItems.Select(newMonitoredItem => SendNewMonitoredItemToAllChatsAsync(newMonitoredItem, cancellationToken)));
-        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId,
+        await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId,
             $"The recently added items for {startDate.ToString(Configuration.DateTimeFormat)} to {endDate.ToString(Configuration.DateTimeFormat)} is:", cancellationToken: cancellationToken));
         await Task.WhenAll(recentlyAddedContract.NewItems.Select(calendarItem => SendCalendarItemToAllChatsAsync(calendarItem, cancellationToken)));
     }
@@ -60,19 +60,19 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
     {
         string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, announcementType: AnnouncementType.Calendar, startDate: startDate, endDate: endDate,
             dateTimeFormat: Configuration.DateTimeFormat);
-        await SendToAllChatsAsync(chatId => _bot.SendTextMessageAsync(chatId, text, cancellationToken: cancellationToken));
+        await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, text, cancellationToken: cancellationToken));
     }
 
     private async Task SendCalendarItemToAllChatsAsync(BaseCalendarItem calendarItem, CancellationToken cancellationToken = default)
     {
-        await SendToAllChatsAsync(chatId => _bot.SendPhotoAsync(chatId, new InputFileUrl(calendarItem.ThumbnailUrl ?? DefaultThumbnailNotAvailableUri),
+        await SendToAllChatsAsync(chatId => _bot.SendPhoto(chatId, new InputFileUrl(calendarItem.ThumbnailUrl ?? DefaultThumbnailNotAvailableUri),
             caption: calendarItem.GetCaption(Configuration.DateTimeFormat),
             cancellationToken: cancellationToken));
     }
 
     private async Task SendNewMonitoredItemToAllChatsAsync(NewlyMonitoredItem newlyMonitoredItem, CancellationToken cancellationToken = default)
     {
-        await SendToAllChatsAsync(chatId => _bot.SendPhotoAsync(chatId, new InputFileUrl(newlyMonitoredItem.ThumbnailUrl ?? DefaultThumbnailNotAvailableUri),
+        await SendToAllChatsAsync(chatId => _bot.SendPhoto(chatId, new InputFileUrl(newlyMonitoredItem.ThumbnailUrl ?? DefaultThumbnailNotAvailableUri),
             caption: newlyMonitoredItem.GetCaption(Configuration.DateTimeFormat),
             cancellationToken: cancellationToken));
     }
