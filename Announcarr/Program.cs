@@ -14,6 +14,7 @@ using Announcarr.Integrations.Sonarr.Extensions.DependencyInjection.Validations;
 using Announcarr.Integrations.Sonarr.Integration.Configurations;
 using Announcarr.Integrations.Sonarr.Integration.Services;
 using Announcarr.JsonConverters;
+using Announcarr.Middlewares;
 using Announcarr.Services;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,8 @@ builder.Services.AddProblemDetails(options =>
 });
 
 WebApplication app = builder.Build();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.MapGet("/calendar",
     async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export) =>
