@@ -3,15 +3,26 @@ using System.Text;
 using Announcarr.Webhooks.Overseerr.Extensions.Configurations;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Services;
+using Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Announcarr.Webhooks.Overseerr.Extensions.Middlewares;
 
 public class OverseerrMiddleware
 {
+    private static readonly JsonSerializerSettings JsonSerializerSettings = new()
+    {
+        ContractResolver = new DefaultContractResolver
+        {
+            NamingStrategy = new SnakeCaseNamingStrategy { ProcessDictionaryKeys = true },
+        },
+        Converters = [new CaseAndHumpInsensitiveStringEnumConverter()],
+    };
+
     private readonly OverseerrConfiguration _configuration;
     private readonly ILogger<OverseerrMiddleware> _logger;
     private readonly RequestDelegate _next;
@@ -41,7 +52,7 @@ public class OverseerrMiddleware
         }
 
         string requestBody = await ReadRequestBody(context.Request);
-        var contract = JsonConvert.DeserializeObject<OverseerrWebhookContract>(requestBody);
+        var contract = JsonConvert.DeserializeObject<OverseerrWebhookContract>(requestBody, JsonSerializerSettings);
 
         if (contract is null)
         {
