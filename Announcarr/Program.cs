@@ -16,6 +16,8 @@ using Announcarr.Integrations.Sonarr.Integration.Services;
 using Announcarr.JsonConverters;
 using Announcarr.Middlewares;
 using Announcarr.Services;
+using Announcarr.Webhooks.Overseerr.Extensions.Configurations;
+using Announcarr.Webhooks.Overseerr.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -48,6 +50,10 @@ builder.Services.AddSingleton<ICalendarService, CalendarService>();
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseCalendarItem>()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<NewlyMonitoredItem>()));
+
+IConfigurationSection webhooksConfigurationSection = builder.Configuration.GetSection("Webhooks");
+builder.Services.Configure<OverseerrConfiguration>(webhooksConfigurationSection.GetSection(OverseerrConfiguration.SectionName));
+builder.Services.AddDefaultOverseerrWebhookHandlers();
 
 builder.Host.UseSerilog((_, _, loggerConfiguration) =>
 {

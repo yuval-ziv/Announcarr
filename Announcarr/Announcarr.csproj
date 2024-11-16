@@ -30,6 +30,8 @@
         <ProjectReference Include="..\Integrations\Radarr\Radarr.Integration\Radarr.Integration.csproj"/>
         <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj"/>
         <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Integration\Sonarr.Integration.csproj"/>
+        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Extensions\Overseerr.Extensions.csproj" />
+        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Webhook\Overseerr.Webhook.csproj" />
     </ItemGroup>
 
 </Project>
