@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Announcarr.Abstractions.Contracts;
 using Announcarr.Configurations;
 using Announcarr.Configurations.Validations;
@@ -14,8 +15,11 @@ using Announcarr.Integrations.Sonarr.Integration.Configurations;
 using Announcarr.Integrations.Sonarr.Integration.Services;
 using Announcarr.JsonConverters;
 using Announcarr.Services;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Serilog;
+using Serilog.Events;
 using Telegram.Extensions.DependencyInjection.Validations;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -43,6 +47,29 @@ builder.Services.AddSingleton<ICalendarService, CalendarService>();
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseCalendarItem>()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<NewlyMonitoredItem>()));
+
+builder.Host.UseSerilog((_, _, loggerConfiguration) =>
+{
+    loggerConfiguration
+        .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+        .Enrich.FromLogContext()
+        .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}")
+        .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day);
+});
+
+
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        Activity? activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+
+        context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+        context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+        context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+    };
+});
 
 WebApplication app = builder.Build();
 
