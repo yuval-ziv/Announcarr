@@ -74,6 +74,7 @@ builder.Services.AddProblemDetails(options =>
 
 WebApplication app = builder.Build();
 
+app.UseOverseerrWebhooks();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.MapGet("/calendar",

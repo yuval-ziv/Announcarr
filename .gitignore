@@ -5,3 +5,4 @@ riderModule.iml
 /_ReSharper.Caches/
 .idea/
 Announcarr/appsettings.Development.json
+Announcarr/logs
