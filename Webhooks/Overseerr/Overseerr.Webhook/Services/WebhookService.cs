@@ -10,9 +10,9 @@ public class WebhookService : IWebhookService
 {
     private const string OverseerrDefaultUrl = "http://localhost:5055";
 
-    private readonly ILogger<WebhookService> _logger;
     private readonly List<IExporterService> _exporters;
     private readonly List<IOverseerrWebhookHandler> _handlers;
+    private readonly ILogger<WebhookService> _logger;
 
     public WebhookService(ILogger<WebhookService> logger, IEnumerable<IOverseerrWebhookHandler> handlers, IEnumerable<IExporterService> exporters)
     {

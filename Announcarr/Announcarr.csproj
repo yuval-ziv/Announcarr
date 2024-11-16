@@ -14,11 +14,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Quartz" Version="3.13.1" />
-        <PackageReference Include="Serilog" Version="4.1.0" />
-        <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+        <PackageReference Include="Quartz" Version="3.13.1"/>
+        <PackageReference Include="Serilog" Version="4.1.0"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.3"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -30,8 +30,8 @@
         <ProjectReference Include="..\Integrations\Radarr\Radarr.Integration\Radarr.Integration.csproj"/>
         <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj"/>
         <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Integration\Sonarr.Integration.csproj"/>
-        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Extensions\Overseerr.Extensions.csproj" />
-        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Webhook\Overseerr.Webhook.csproj" />
+        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Extensions\Overseerr.Extensions.csproj"/>
+        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Webhook\Overseerr.Webhook.csproj"/>
     </ItemGroup>
 
 </Project>

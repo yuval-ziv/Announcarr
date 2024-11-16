@@ -12,9 +12,9 @@ namespace Announcarr.Webhooks.Overseerr.Extensions.Middlewares;
 
 public class OverseerrMiddleware
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<OverseerrMiddleware> _logger;
     private readonly OverseerrConfiguration _configuration;
+    private readonly ILogger<OverseerrMiddleware> _logger;
+    private readonly RequestDelegate _next;
 
     public OverseerrMiddleware(RequestDelegate next, ILogger<OverseerrMiddleware> logger, OverseerrConfiguration? configuration = null)
     {
@@ -62,18 +62,18 @@ public class OverseerrMiddleware
     }
 
     /// <summary>
-    /// Not handling the request if either of the following conditions are met:
-    /// <list type="number">
-    ///     <item>
-    ///          <description>Webhook listener is not enabled</description>
-    ///      </item>
-    ///     <item>
-    ///          <description>Request is from a remote ip and only local requests are allowed</description>
-    ///      </item>
-    ///     <item>
-    ///          <description>Request doesn't match webhook method and path</description>
-    ///      </item>
-    /// </list>
+    ///     Not handling the request if either of the following conditions are met:
+    ///     <list type="number">
+    ///         <item>
+    ///             <description>Webhook listener is not enabled</description>
+    ///         </item>
+    ///         <item>
+    ///             <description>Request is from a remote ip and only local requests are allowed</description>
+    ///         </item>
+    ///         <item>
+    ///             <description>Request doesn't match webhook method and path</description>
+    ///         </item>
+    ///     </list>
     /// </summary>
     /// <param name="context">the current http request's context</param>
     /// <returns>true if the request should be ignored; false otherwise.</returns>
