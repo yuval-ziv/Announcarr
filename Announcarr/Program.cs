@@ -25,6 +25,8 @@ using Serilog;
 using Serilog.Events;
 using Telegram.Extensions.DependencyInjection.Validations;
 
+const long hundredMegabytes = 1024 * 1024 * 100;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IValidateOptions<AnnouncarrConfiguration>, AnnouncarrConfigurationValidator>();
@@ -58,11 +60,12 @@ builder.Services.AddDefaultOverseerrWebhookHandlers();
 builder.Host.UseSerilog((_, _, loggerConfiguration) =>
 {
     loggerConfiguration
+        .MinimumLevel.Debug()
         .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
         .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
         .Enrich.FromLogContext()
         .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}")
-        .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day);
+        .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, rollOnFileSizeLimit: true, fileSizeLimitBytes: hundredMegabytes);
 });
 
 
