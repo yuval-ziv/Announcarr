@@ -11,4 +11,5 @@ public interface IExporterService
     Task TestExporterAsync(CancellationToken cancellationToken = default);
     Task ExportCalendarAsync(IEnumerable<CalendarContract> calendarContracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
     Task ExportRecentlyAddedAsync(IEnumerable<RecentlyAddedContract> recentlyAddedContracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    Task ExportCustomAnnouncementAsync(CustomAnnouncement customAnnouncement, CancellationToken cancellationToken = default);
 }

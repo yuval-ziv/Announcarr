@@ -63,6 +63,11 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
         await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, text, cancellationToken: cancellationToken));
     }
 
+    protected override Task ExportAnnouncementLogicAsync(CustomAnnouncement message, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task SendCalendarItemToAllChatsAsync(BaseCalendarItem calendarItem, CancellationToken cancellationToken = default)
     {
         await SendToAllChatsAsync(chatId => _bot.SendPhoto(chatId, new InputFileUrl(calendarItem.ThumbnailUrl ?? DefaultThumbnailNotAvailableUri),

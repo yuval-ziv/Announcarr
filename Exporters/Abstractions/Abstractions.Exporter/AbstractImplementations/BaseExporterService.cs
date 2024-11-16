@@ -41,6 +41,26 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
         return ExportRecentlyAddedAsync(mergedContract, startDate, endDate, cancellationToken);
     }
 
+    public Task ExportCustomAnnouncementAsync(CustomAnnouncement customAnnouncement, CancellationToken cancellationToken = default)
+    {
+        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Announcement))
+        {
+            return Task.CompletedTask;
+        }
+
+        if (!IsTagSupportedByExporter(customAnnouncement))
+        {
+            return Task.CompletedTask;
+        }
+
+        if (!customAnnouncement.IsEmpty)
+        {
+            return ExportAnnouncementLogicAsync(customAnnouncement, cancellationToken);
+        }
+
+        return Task.CompletedTask;
+    }
+
     protected Task ExportCalendarAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
         if (!Configuration.IsEnabledByAnnouncementType(calendarContract.AnnouncementType))
@@ -98,6 +118,7 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
 
     protected abstract Task ExportRecentlyAddedLogicAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
     protected abstract Task ExportEmptyRecentlyAddedLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken);
+    protected abstract Task ExportAnnouncementLogicAsync(CustomAnnouncement message, CancellationToken cancellationToken = default);
 
     protected virtual bool IsTagSupportedByExporter<TAnnouncement>(TAnnouncement announcement) where TAnnouncement : BaseAnnouncement
     {
