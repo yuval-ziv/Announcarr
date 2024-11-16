@@ -27,7 +27,7 @@ public class SeasonEpisodeCount : ICaptionableItem
     public bool HasAnyEpisodesAvailable => AvailableEpisodesCount > 0;
     public bool HasAllEpisodesAvailable => AvailableEpisodesCount > 0 && AvailableEpisodesCount == TotalSeasonEpisodesCount;
 
-    public string? GetCaption(string dateTimeFormat)
+    public string GetCaption(string dateTimeFormat)
     {
         if (HasAllEpisodesAvailable)
         {

@@ -16,7 +16,7 @@ public class TestNotificationOverseerrWebhookHandler : IOverseerrWebhookHandler
 
     public NotificationType NotificationType => NotificationType.TestNotification;
 
-    public CustomAnnouncement? Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
+    public CustomAnnouncement Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
     {
         return new CustomAnnouncement
         {
