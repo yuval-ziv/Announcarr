@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text;
+using Announcarr.Utils.Extensions.String;
 using Announcarr.Webhooks.Overseerr.Extensions.Configurations;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Services;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace Announcarr.Webhooks.Overseerr.Extensions.Middlewares;
@@ -18,7 +20,7 @@ public class OverseerrMiddleware
     {
         ContractResolver = new DefaultContractResolver
         {
-            NamingStrategy = new SnakeCaseNamingStrategy { ProcessDictionaryKeys = true },
+            NamingStrategy = new CamelCaseNamingStrategy(),
         },
         Converters = [new CaseAndHumpInsensitiveStringEnumConverter()],
     };
@@ -51,7 +53,8 @@ public class OverseerrMiddleware
         }
 
         string requestBody = await ReadRequestBody(context.Request);
-        var contract = JsonConvert.DeserializeObject<OverseerrWebhookContract>(requestBody, JsonSerializerSettings);
+        string normalizedRequestBody = NormalizeRequestFieldsToCamelCase(requestBody);
+        var contract = JsonConvert.DeserializeObject<OverseerrWebhookContract>(normalizedRequestBody, JsonSerializerSettings);
 
         if (contract is null)
         {
@@ -69,6 +72,52 @@ public class OverseerrMiddleware
 
         _logger.LogDebug("Finished handling overseerr webhook request with notification type {NotificationType} {Result}", contract.NotificationType,
             handlingResult ? "successfully" : "unsuccessfully");
+    }
+
+    private static string NormalizeRequestFieldsToCamelCase(string requestBody)
+    {
+        JObject jObject = JObject.Parse(requestBody);
+
+        NormalizeProperties(jObject);
+
+        return jObject.ToString();
+    }
+
+    private static void NormalizeProperties(JObject jObject)
+    {
+        foreach (JProperty property in jObject.Properties().ToList())
+        {
+            RenamePropertyIfNeeded(jObject, property);
+            HandleNestedProperties(property);
+        }
+    }
+
+    private static void RenamePropertyIfNeeded(JObject jObject, JProperty property)
+    {
+        string newPropertyName = property.Name.ToCamelCase();
+        if (newPropertyName != property.Name)
+        {
+            RenameProperty(jObject, property, newPropertyName);
+        }
+    }
+
+    private static void RenameProperty(JObject jObject, JProperty property, string newName)
+    {
+        jObject.Add(newName, jObject.GetValue(property.Name));
+        jObject.Remove(property.Name);
+    }
+
+    private static void HandleNestedProperties(JProperty property)
+    {
+        switch (property.Value)
+        {
+            case JObject nestedObject:
+                NormalizeProperties(nestedObject);
+                break;
+            case JArray array:
+                array.OfType<JObject>().ToList().ForEach(NormalizeProperties);
+                break;
+        }
     }
 
     /// <summary>
@@ -108,7 +157,7 @@ public class OverseerrMiddleware
         return true;
     }
 
-    private async Task<string> ReadRequestBody(HttpRequest request)
+    private static async Task<string> ReadRequestBody(HttpRequest request)
     {
         request.EnableBuffering();
         var buffer = new byte[Convert.ToInt32(request.ContentLength)];
