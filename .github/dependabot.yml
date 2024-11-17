@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: "nuget" # See documentation for possible values
-  directory: “/” 
+  directory: "/" 
 #    directories: 
 #    - "\\Announcarr\\Announcarr.csproj"
 #    - "\\Integrations\\Sonarr\\Sonarr\\Sonarr.csproj"
