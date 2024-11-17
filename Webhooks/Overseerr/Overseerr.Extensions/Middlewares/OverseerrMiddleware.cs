@@ -36,9 +36,9 @@ public class OverseerrMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        await _next(context);
         if (ShouldNotHandleRequest(context))
         {
-            await _next(context);
             return;
         }
 
@@ -47,7 +47,6 @@ public class OverseerrMiddleware
         if (webhookService is null)
         {
             _logger.LogWarning("Got request to overseerr webhook but no webhook service registered");
-            await _next(context);
             return;
         }
 
