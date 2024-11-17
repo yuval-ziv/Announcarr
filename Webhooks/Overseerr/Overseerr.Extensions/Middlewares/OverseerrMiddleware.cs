@@ -65,7 +65,7 @@ public class OverseerrMiddleware
         NotificationTypeConfiguration notificationTypeConfiguration =
             _configuration.Webhook.NotificationTypeToConfiguration.GetValueOrDefault(contract.NotificationType, new NotificationTypeConfiguration());
 
-        bool handlingResult = await webhookService.HandleAsync(contract, notificationTypeConfiguration.Tags, _configuration.OverseerrHost, _configuration.Webhook.Name,
+        bool handlingResult = await webhookService.HandleAsync(contract, notificationTypeConfiguration.Tags, _configuration.OverseerrUrl, _configuration.Webhook.Name,
             _configuration.Webhook.IsEnabled && notificationTypeConfiguration.IsEnabled);
 
         _logger.LogDebug("Finished handling overseerr webhook request with notification type {NotificationType} {Result}", contract.NotificationType,
