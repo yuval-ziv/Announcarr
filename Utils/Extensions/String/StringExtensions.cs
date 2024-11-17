@@ -32,6 +32,31 @@ public static partial class StringExtensions
         return words.First().ToLower() + string.Concat(words.Skip(1).Select(CapitalizeFirstLetter));
     }
 
+    public static bool IsValidUri([NotNullWhen(true)] this string? value)
+    {
+        if (value.IsNullOrWhiteSpace())
+        {
+            return false;
+        }
+
+        return Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri? _);
+    }
+
+    public static bool IsUriWithPortNumber([NotNullWhen(true)] this string? value)
+    {
+        if (value.IsNullOrWhiteSpace())
+        {
+            return false;
+        }
+
+        if (!Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri? uri))
+        {
+            return false;
+        }
+        
+        return uri.IsAbsoluteUri ? uri.Authority.Contains(':') : uri.OriginalString.Contains(':');
+    }
+
     private static string[] GetWords(string value)
     {
         if (value.All(CapitalizedOrNonLetter))
