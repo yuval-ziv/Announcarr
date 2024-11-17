@@ -52,7 +52,7 @@ public class WebhookService : IWebhookService
         }
 
         message.Tags = tags;
-        message.Link ??= MergeUrlWithPath(overseerrUrl, message.Link);
+        message.Link = message.Link is not null ? MergeUrlWithPath(overseerrUrl, message.Link) : null;
 
         await Task.WhenAll(_exporters.Select(exporter => exporter.ExportCustomAnnouncementAsync(message, cancellationToken)));
         return true;
@@ -60,9 +60,6 @@ public class WebhookService : IWebhookService
 
     private static string MergeUrlWithPath(string overseerrUrl, string? path)
     {
-        return new UriBuilder(new Uri(overseerrUrl))
-        {
-            Path = path,
-        }.ToString();
+        return new Uri(new Uri(overseerrUrl), path).ToString();
     }
 }
