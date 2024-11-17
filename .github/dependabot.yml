@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "nuget" # See documentation for possible values
+  package-ecosystem: "nuget" # See documentation for possible values
   directory: "/" 
 #    directories: 
 #    - "\\Announcarr\\Announcarr.csproj"
@@ -20,5 +20,5 @@ updates:
 #    - "\\Integrations\\Abstractions\\Abstractions\\Abstractions.csproj"
 #    - "\\Utils\\Extensions\\Http\\Http.csproj"
 #    - "\\Utils\\Extensions\\Dictionary\\Dictionary.csproj"
-    schedule:
-      interval: "weekly"
+  schedule:
+    interval: "weekly"
