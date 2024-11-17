@@ -11,8 +11,14 @@ public class OverseerrWebhookContract
     public Media? Media { get; set; }
     public string? Image { get; set; }
     public string? Message { get; set; }
-    public List<string>? Extra { get; set; } //good
+    public List<ExtraData>? Extra { get; set; }
     public MediaRequest? Request { get; set; }
-    public Issue? Issue { get; set; } //good
-    public IssueComment? Comment { get; set; } //good
+    public Issue? Issue { get; set; }
+    public IssueComment? Comment { get; set; }
+}
+
+public class ExtraData
+{
+    public string? Name { get; set; }
+    public string? Value { get; set; }
 }

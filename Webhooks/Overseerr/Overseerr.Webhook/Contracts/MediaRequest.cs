@@ -3,7 +3,7 @@
 public class MediaRequest
 {
     public required int RequestId { get; set; }
-    public required string ReportedByUsername { get; set; }
-    public required string ReportedByEmail { get; set; }
-    public required string ReportedByAvatar { get; set; }
+    public required string RequestedByUsername { get; set; }
+    public required string RequestedByEmail { get; set; }
+    public required string RequestedByAvatar { get; set; }
 }

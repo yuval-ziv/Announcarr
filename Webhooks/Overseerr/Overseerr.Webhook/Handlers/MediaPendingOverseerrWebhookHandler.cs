@@ -25,8 +25,8 @@ public class MediaPendingOverseerrWebhookHandler : IOverseerrWebhookHandler
             return null;
         }
 
-        string username = contract.Request.ReportedByUsername;
-        string email = contract.Request.ReportedByEmail;
+        string username = contract.Request.RequestedByUsername;
+        string email = contract.Request.RequestedByEmail;
         string mediaType = contract.Media.MediaType.ToString().ToLower();
         string subject = contract.Subject;
 
