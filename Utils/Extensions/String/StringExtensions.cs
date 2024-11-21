@@ -5,6 +5,8 @@ namespace Announcarr.Utils.Extensions.String;
 
 public static partial class StringExtensions
 {
+    private const int DefaultAmountOfCharactersToKeep = 0;
+
     [GeneratedRegex(@"[-_\s]+")]
     private static partial Regex WhiteSpaceRegex();
 
@@ -53,8 +55,30 @@ public static partial class StringExtensions
         {
             return false;
         }
-        
+
         return uri.IsAbsoluteUri ? uri.Authority.Contains(':') : uri.OriginalString.Contains(':');
+    }
+
+    public static string Obfuscate(this string? value, char obfuscationCharacter = '*', int keepFirstCharacters = DefaultAmountOfCharactersToKeep,
+        int keepLastCharacters = DefaultAmountOfCharactersToKeep)
+    {
+        if (value.IsNullOrEmpty())
+        {
+            return string.Empty;
+        }
+
+        int totalCharactersToKeep = keepFirstCharacters + keepLastCharacters;
+
+        if (value.Length < totalCharactersToKeep)
+        {
+            throw new ArgumentException($"Input string length must be bigger than total amount of characters to skip (was {value.Length}, needed at least {totalCharactersToKeep})");
+        }
+
+        string first = value[..keepFirstCharacters];
+        var middle = new string(obfuscationCharacter, value.Length - totalCharactersToKeep);
+        string last = value[^keepLastCharacters..];
+
+        return first + middle + last;
     }
 
     private static string[] GetWords(string value)
