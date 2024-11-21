@@ -1,5 +1,6 @@
 ﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
+using Announcarr.Utils.Extensions.String;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Handlers;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,8 @@ namespace Announcarr.Webhooks.Overseerr.Webhook.Services;
 
 public class WebhookService : IWebhookService
 {
-    private const string OverseerrDefaultUrl = "http://localhost:5055";
+    private const string DefaultOverseerrUrl = "http://localhost:5055";
+    private const string DefaultWebhookName = "Overseerr";
 
     private readonly List<IExporterService> _exporters;
     private readonly List<IOverseerrWebhookHandler> _handlers;
@@ -21,18 +23,21 @@ public class WebhookService : IWebhookService
         _handlers = handlers.ToList();
     }
 
-    public Task HandleAsync(OverseerrWebhookContract contract, string overseerrUrl = OverseerrDefaultUrl, string? webhookName = "Overseerr", bool isEnabled = true,
+    public Task HandleAsync(OverseerrWebhookContract contract, string? overseerrUrl = DefaultOverseerrUrl, string? webhookName = DefaultWebhookName, bool isEnabled = true,
         CancellationToken cancellationToken = default)
     {
         return HandleAsync(contract, [], overseerrUrl, webhookName, isEnabled, cancellationToken);
     }
 
-    public async Task<bool> HandleAsync(OverseerrWebhookContract contract, HashSet<string> tags, string overseerrUrl = OverseerrDefaultUrl, string? webhookName = "Overseerr", bool isEnabled = true,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> HandleAsync(OverseerrWebhookContract contract, HashSet<string> tags, string? overseerrUrl = DefaultOverseerrUrl, string? webhookName = DefaultWebhookName,
+        bool isEnabled = true, CancellationToken cancellationToken = default)
     {
+        overseerrUrl = overseerrUrl.IsNullOrEmpty() ? DefaultOverseerrUrl : overseerrUrl;
+        webhookName = webhookName.IsNullOrEmpty() ? DefaultWebhookName : webhookName;
+
         if (!isEnabled)
         {
-            _logger.LogDebug("[{WebhookName}] Got webhook request of type {NotificationType} but handler is disabled", webhookName, contract.NotificationType);
+            _logger.LogDebug("Got webhook request of type {NotificationType} but handler is disabled on webhook {WebhookName}", contract.NotificationType, webhookName);
             return true;
         }
 
@@ -40,7 +45,7 @@ public class WebhookService : IWebhookService
 
         if (selectedHandler is null)
         {
-            _logger.LogError("[{WebhookName}] No handler found for notification type {NotificationType}", webhookName, contract.NotificationType);
+            _logger.LogError("No handler found for notification type {NotificationType} on webhook {WebhookName}", contract.NotificationType, webhookName);
             return false;
         }
 
