@@ -25,13 +25,25 @@ public static class ApplicationBuilderExtensions
 
     public static void UseOverseerrWebhooks(this IApplicationBuilder app)
     {
-        OverseerrConfiguration configuration;
-        using (IServiceScope scope = app.ApplicationServices.CreateScope())
+        using IServiceScope scope = app.ApplicationServices.CreateScope();
+        List<OverseerrConfiguration>? configurations = scope.ServiceProvider.GetRequiredService<IOptions<List<OverseerrConfiguration>>>().Value;
+
+        if (configurations is null)
         {
-            configuration = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<OverseerrConfiguration>>().Value;
+            OverseerrConfiguration overseerrConfiguration = scope.ServiceProvider.GetRequiredService<IOptions<OverseerrConfiguration>>().Value;
+
+            if (overseerrConfiguration is not null)
+            {
+                configurations = [overseerrConfiguration];
+            }
         }
 
-        app.UseOverseerrWebhooks(configuration);
+        app.UseOverseerrWebhooks(configurations);
+    }
+
+    public static void UseOverseerrWebhooks(this IApplicationBuilder app, List<OverseerrConfiguration>? configurations)
+    {
+        configurations?.ForEach(app.UseOverseerrWebhooks);
     }
 
     public static void UseOverseerrWebhooks(this IApplicationBuilder app, OverseerrConfiguration configuration)

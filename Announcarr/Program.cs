@@ -43,19 +43,20 @@ builder.Services.Configure<List<RadarrIntegrationConfiguration>>(integrationsCon
 IConfigurationSection exportersConfigurationSection = builder.Configuration.GetSection("Exporters");
 builder.Services.Configure<List<TelegramExporterConfiguration>>(exportersConfigurationSection.GetSection("Telegram"));
 
+IConfigurationSection webhooksConfigurationSection = builder.Configuration.GetSection("Webhooks");
+builder.Services.Configure<List<OverseerrConfiguration>>(webhooksConfigurationSection.GetSection("Overseerr"));
+
 builder.Services.AddIntegrations<SonarrIntegrationService, SonarrIntegrationConfiguration>();
 builder.Services.AddIntegrations<RadarrIntegrationService, RadarrIntegrationConfiguration>();
 
 builder.Services.AddExporters<TelegramExporterService, TelegramExporterConfiguration>();
 
+builder.Services.AddDefaultOverseerrWebhookHandlers();
+
 builder.Services.AddSingleton<ICalendarService, CalendarService>();
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseCalendarItem>()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<NewlyMonitoredItem>()));
-
-IConfigurationSection webhooksConfigurationSection = builder.Configuration.GetSection("Webhooks");
-builder.Services.Configure<OverseerrConfiguration>(webhooksConfigurationSection.GetSection(OverseerrConfiguration.SectionName));
-builder.Services.AddDefaultOverseerrWebhookHandlers();
 
 builder.Host.UseSerilog((_, _, loggerConfiguration) =>
 {
