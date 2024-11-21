@@ -18,6 +18,7 @@ using Announcarr.Middlewares;
 using Announcarr.Services;
 using Announcarr.Webhooks.Overseerr.Extensions.Configurations;
 using Announcarr.Webhooks.Overseerr.Extensions.DependencyInjection;
+using Announcarr.Webhooks.Overseerr.Extensions.DependencyInjection.Validations;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,6 +34,7 @@ builder.Services.AddSingleton<IValidateOptions<AnnouncarrConfiguration>, Announc
 builder.Services.AddSingleton<IValidateOptions<List<SonarrIntegrationConfiguration>>, SonarrServiceIntegrationConfigurationValidator>();
 builder.Services.AddSingleton<IValidateOptions<List<RadarrIntegrationConfiguration>>, RadarrServiceIntegrationConfigurationValidator>();
 builder.Services.AddSingleton<IValidateOptions<List<TelegramExporterConfiguration>>, TelegramExporterConfigurationValidator>();
+builder.Services.AddSingleton<IValidateOptions<List<OverseerrConfiguration>>, OverseerrConfigurationValidator>();
 
 builder.Services.Configure<AnnouncarrConfiguration>(builder.Configuration.GetSection(AnnouncarrConfiguration.SectionName));
 
