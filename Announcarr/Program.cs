@@ -56,9 +56,12 @@ builder.Services.AddExporters<TelegramExporterService, TelegramExporterConfigura
 builder.Services.AddDefaultOverseerrWebhookHandlers();
 
 builder.Services.AddSingleton<ICalendarService, CalendarService>();
+builder.Services.AddSingleton<ITestExporterService, TestExporterService>();
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseCalendarItem>()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<NewlyMonitoredItem>()));
+
+builder.Services.AddControllers();
 
 builder.Host.UseSerilog((_, _, loggerConfiguration) =>
 {
@@ -70,7 +73,6 @@ builder.Host.UseSerilog((_, _, loggerConfiguration) =>
         .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}")
         .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, rollOnFileSizeLimit: true, fileSizeLimitBytes: hundredMegabytes);
 });
-
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -88,15 +90,6 @@ WebApplication app = builder.Build();
 
 app.UseOverseerrWebhooks();
 app.UseMiddleware<RequestLoggingMiddleware>();
-
-app.MapGet("/calendar",
-    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export) =>
-    Results.Ok((object?)await calendarService.GetAllCalendarItemsAsync(start, end, export)));
-
-app.MapGet("/recentlyAdded",
-    async (ICalendarService calendarService, [FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export) =>
-    Results.Ok((object?)await calendarService.GetAllRecentlyAddedItemsAsync(start, end, export)));
-
-app.MapGet("/testExporters", async (IEnumerable<IExporterService> exporterServices) => await Task.WhenAll(exporterServices.Select(exporterService => exporterService.TestExporterAsync())));
+app.MapControllers();
 
 app.Run();
