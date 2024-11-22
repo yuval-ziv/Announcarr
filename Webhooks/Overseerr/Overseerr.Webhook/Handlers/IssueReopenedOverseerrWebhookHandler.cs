@@ -2,7 +2,6 @@
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts.Enums;
 using Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
-using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Webhooks.Overseerr.Webhook.Handlers;
 

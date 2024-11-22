@@ -96,11 +96,11 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
         if (message.Image.IsNullOrWhiteSpace())
         {
-            return SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, text, parseMode: ParseMode.MarkdownV2, cancellationToken: cancellationToken));
+            return SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, text, ParseMode.MarkdownV2, cancellationToken: cancellationToken));
         }
 
         var image = new InputFileUrl(message.Image);
-        return SendToAllChatsAsync(chatId => _bot.SendPhoto(chatId, image, text, parseMode: ParseMode.MarkdownV2, cancellationToken: cancellationToken));
+        return SendToAllChatsAsync(chatId => _bot.SendPhoto(chatId, image, text, ParseMode.MarkdownV2, cancellationToken: cancellationToken));
     }
 
     private static string GetLinkText(CustomAnnouncement message)

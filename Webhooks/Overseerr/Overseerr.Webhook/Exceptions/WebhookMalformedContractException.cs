@@ -1,6 +1,4 @@
-﻿using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
-
-namespace Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
+﻿namespace Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
 
 public class WebhookMalformedContractException : WebhookException
 {
