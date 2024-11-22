@@ -4,6 +4,7 @@ using Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 using Announcarr.Exporters.Abstractions.Exporter.Resolvers;
 using Announcarr.Exporters.Telegram.Exporter.Configurations;
 using Announcarr.Utils.Extensions.String;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Extensions;
 using Telegram.Bot.Types;
@@ -18,7 +19,11 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
     private readonly List<ChatId> _chatIds;
 
 
-    public TelegramExporterService(TelegramExporterConfiguration configuration) : base(configuration)
+    public TelegramExporterService(TelegramExporterConfiguration configuration) : this(null, configuration)
+    {
+    }
+
+    public TelegramExporterService(ILogger<TelegramExporterService>? logger, TelegramExporterConfiguration configuration) : base(logger, configuration)
     {
         _bot = new TelegramBotClient(Configuration.Bot?.Token ?? "");
         _chatIds = Configuration.Bot?.ChatIds.Select(chatId => new ChatId(chatId)).ToList() ?? [];

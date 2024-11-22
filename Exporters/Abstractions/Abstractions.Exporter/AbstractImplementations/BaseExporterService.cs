@@ -1,14 +1,21 @@
 ﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Exporters.Abstractions.Exporter.AbstractImplementations;
 
 public abstract class BaseExporterService<TConfiguration> : IExporterService where TConfiguration : BaseExporterConfiguration
 {
+    private readonly ILogger<BaseExporterService<TConfiguration>>? _logger;
     protected readonly TConfiguration Configuration;
 
-    protected BaseExporterService(TConfiguration configuration)
+    protected BaseExporterService(TConfiguration configuration) : this(null, configuration)
     {
+    }
+
+    protected BaseExporterService(ILogger<BaseExporterService<TConfiguration>>? logger, TConfiguration configuration)
+    {
+        _logger = logger;
         Configuration = configuration;
     }
 
@@ -17,14 +24,17 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
     public abstract bool? ExportOnEmptyContract { get; set; }
     public abstract string? CustomMessageOnEmptyContract { get; set; }
 
-    public Task TestExporterAsync(CancellationToken cancellationToken = default)
+    public async Task TestExporterAsync(CancellationToken cancellationToken = default)
     {
+        _logger?.LogDebug("Testing exporter {ExporterName}", Name);
         if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Test))
         {
-            return Task.CompletedTask;
+            _logger?.LogDebug("Exporter {ExporterName} is disabled for announcement type {AnnouncementType}", Name, AnnouncementType.Test);
+            return;
         }
 
-        return TestExporterLogicAsync(cancellationToken);
+        await TestExporterLogicAsync(cancellationToken);
+        _logger?.LogDebug("Finished testing exporter {ExporterName}", Name);
     }
 
     public Task ExportCalendarAsync(IEnumerable<CalendarContract> calendarContracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
