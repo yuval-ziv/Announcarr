@@ -10,6 +10,7 @@ public class OverseerrConfiguration
     
     public string Method { get; set; } = HttpMethod.Post.Method;
     public string Path { get; set; } = "/overseerr/webhook";
+    public string? AuthorizationHeader { get; set; } = string.Empty;
     
     public string OverseerrUrl { get; set; } = "http://localhost:5055";
     

@@ -34,6 +34,24 @@ public class OverseerrMiddleware
         _next = next;
         _logger = logger;
         _configuration = configuration ?? new OverseerrConfiguration();
+
+        if (_configuration.AuthorizationHeader.IsNullOrEmpty())
+        {
+            _logger.LogDebug("Starting Overseerr webhook middleware on method {HttpMethod} and path {Path}", _configuration.Method, _configuration.Path);
+            return;
+        }
+
+        string obfuscatedAuthorizationHeader = GetObfuscatedAuthorizationHeader(_configuration.AuthorizationHeader);
+
+        _logger.LogDebug("Starting Overseerr webhook middleware on method {HttpMethod} and path {Path} with authorization header {AuthorizationHeader}", _configuration.Method, _configuration.Path,
+            obfuscatedAuthorizationHeader);
+    }
+
+    private string GetObfuscatedAuthorizationHeader(string authorizationHeader)
+    {
+        var amountOfCharactersToKeepInTheEnd = Convert.ToInt32(Math.Min(authorizationHeader.Length * 0.2, 6));
+
+        return authorizationHeader.Obfuscate(keepLastCharacters: amountOfCharactersToKeepInTheEnd);
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -48,7 +66,14 @@ public class OverseerrMiddleware
 
         if (webhookService is null)
         {
-            _logger.LogWarning("Got request to overseerr webhook but no webhook service registered");
+            _logger.LogWarning("Got request to overseerr webhook on {HttpMethod} and path {Path}, but no webhook service registered", _configuration.Method, _configuration.Path);
+            return;
+        }
+
+        if (!_configuration.AuthorizationHeader.IsNullOrEmpty() && context.Request.Headers["Authorization"] != _configuration.AuthorizationHeader)
+        {
+            _logger.LogWarning("Got request to overseerr webhook on {HttpMethod} and path {Path} with invalid authorization header", _configuration.Method, _configuration.Path);
+            await SetResponseToUnauthorized(context);
             return;
         }
 
@@ -58,20 +83,75 @@ public class OverseerrMiddleware
 
         if (contract is null)
         {
-            _logger.LogError("Got overseerr webhook request but body was either empty or malformed");
+            _logger.LogError("Got overseerr webhook request on {HttpMethod} and path {Path}, but body was either empty or malformed", _configuration.Method, _configuration.Path);
             return;
         }
 
-        _logger.LogDebug("Handling overseerr webhook request with notification type {NotificationType} ", contract.NotificationType);
+        _logger.LogDebug("Handling overseerr webhook request on {HttpMethod} and path {Path} with notification type {NotificationType} ", _configuration.Method, _configuration.Path,
+            contract.NotificationType);
 
-        NotificationTypeConfiguration notificationTypeConfiguration =
-            _configuration.Webhook.NotificationTypeToConfiguration.GetValueOrDefault(contract.NotificationType, new NotificationTypeConfiguration());
+        NotificationTypeConfiguration notificationTypeConfiguration = _configuration.NotificationTypeToConfiguration.GetValueOrDefault(contract.NotificationType, new NotificationTypeConfiguration());
 
-        bool handlingResult = await webhookService.HandleAsync(contract, notificationTypeConfiguration.Tags, _configuration.OverseerrUrl, _configuration.Webhook.Name,
-            _configuration.Webhook.IsEnabled && notificationTypeConfiguration.IsEnabled);
+        bool handlingResult = await webhookService.HandleAsync(contract, notificationTypeConfiguration.Tags, _configuration.OverseerrUrl, _configuration.Name,
+            _configuration.IsEnabled && notificationTypeConfiguration.IsEnabled);
 
-        _logger.LogDebug("Finished handling overseerr webhook request with notification type {NotificationType} {Result}", contract.NotificationType,
-            handlingResult ? "successfully" : "unsuccessfully");
+        await SetResponseToSuccess(context);
+
+        _logger.LogDebug("Finished handling overseerr webhook request on {HttpMethod} and path {Path} with notification type {NotificationType} {Result}", _configuration.Method, _configuration.Path,
+            contract.NotificationType, handlingResult ? "successfully" : "unsuccessfully");
+    }
+
+    /// <summary>
+    ///     Not handling the request if either of the following conditions are met:
+    ///     <list type="number">
+    ///         <item>
+    ///             <description>Webhook listener is not enabled</description>
+    ///         </item>
+    ///         <item>
+    ///             <description>Request is from a remote ip and only local requests are allowed</description>
+    ///         </item>
+    ///         <item>
+    ///             <description>Request doesn't match webhook method and path</description>
+    ///         </item>
+    ///     </list>
+    /// </summary>
+    /// <param name="context">the current http request's context</param>
+    /// <returns>true if the request should be ignored; false otherwise.</returns>
+    private bool ShouldNotHandleRequest(HttpContext context)
+    {
+        return !_configuration.EnableWebhookListener || (!_configuration.AllowRemoteRequests && !IPAddress.IsLoopback(context.Connection.RemoteIpAddress)) ||
+               !RequestingOverseerrWebhook(context.Request);
+    }
+
+    private bool RequestingOverseerrWebhook(HttpRequest request)
+    {
+        if (request.Method != _configuration.Method)
+        {
+            return false;
+        }
+
+        if (request.Path != _configuration.Path)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static async Task SetResponseToUnauthorized(HttpContext context)
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsync("Invalid Authorization Header");
+    }
+
+    private static async Task<string> ReadRequestBody(HttpRequest request)
+    {
+        request.EnableBuffering();
+        var buffer = new byte[Convert.ToInt32(request.ContentLength)];
+        await request.Body.ReadExactlyAsync(buffer);
+        string requestBody = Encoding.UTF8.GetString(buffer);
+        request.Body.Position = 0;
+        return requestBody;
     }
 
     private static string NormalizeRequestFieldsToCamelCase(string requestBody)
@@ -120,50 +200,9 @@ public class OverseerrMiddleware
         }
     }
 
-    /// <summary>
-    ///     Not handling the request if either of the following conditions are met:
-    ///     <list type="number">
-    ///         <item>
-    ///             <description>Webhook listener is not enabled</description>
-    ///         </item>
-    ///         <item>
-    ///             <description>Request is from a remote ip and only local requests are allowed</description>
-    ///         </item>
-    ///         <item>
-    ///             <description>Request doesn't match webhook method and path</description>
-    ///         </item>
-    ///     </list>
-    /// </summary>
-    /// <param name="context">the current http request's context</param>
-    /// <returns>true if the request should be ignored; false otherwise.</returns>
-    private bool ShouldNotHandleRequest(HttpContext context)
+    private static async Task SetResponseToSuccess(HttpContext context)
     {
-        return !_configuration.EnableWebhookListener || (!_configuration.AllowRemoteRequests && !IPAddress.IsLoopback(context.Connection.RemoteIpAddress)) ||
-               !RequestingOverseerrWebhook(context.Request);
-    }
-
-    private bool RequestingOverseerrWebhook(HttpRequest request)
-    {
-        if (request.Method != _configuration.Method)
-        {
-            return false;
-        }
-
-        if (request.Path != _configuration.Path)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private static async Task<string> ReadRequestBody(HttpRequest request)
-    {
-        request.EnableBuffering();
-        var buffer = new byte[Convert.ToInt32(request.ContentLength)];
-        await request.Body.ReadExactlyAsync(buffer);
-        string requestBody = Encoding.UTF8.GetString(buffer);
-        request.Body.Position = 0;
-        return requestBody;
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        await context.Response.WriteAsync("Handled webhook request correctly");
     }
 }
