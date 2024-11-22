@@ -61,6 +61,7 @@ builder.Services.AddSingleton<ITestExporterService, TestExporterService>();
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseCalendarItem>()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<NewlyMonitoredItem>()));
 
+builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
 builder.Host.UseSerilog((_, _, loggerConfiguration) =>
@@ -91,5 +92,10 @@ WebApplication app = builder.Build();
 app.UseOverseerrWebhooks();
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
 app.Run();
