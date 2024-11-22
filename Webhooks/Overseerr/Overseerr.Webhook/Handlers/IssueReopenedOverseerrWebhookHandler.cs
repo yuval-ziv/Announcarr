@@ -1,27 +1,20 @@
 ﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts.Enums;
+using Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Webhooks.Overseerr.Webhook.Handlers;
 
 public class IssueReopenedOverseerrWebhookHandler : IOverseerrWebhookHandler
 {
-    private readonly ILogger<IssueReopenedOverseerrWebhookHandler> _logger;
-
-    public IssueReopenedOverseerrWebhookHandler(ILogger<IssueReopenedOverseerrWebhookHandler> logger)
-    {
-        _logger = logger;
-    }
-
     public NotificationType NotificationType => NotificationType.IssueReopened;
 
-    public CustomAnnouncement? Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
+    public CustomAnnouncement Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
     {
         if (contract.Issue is null || contract.Media is null)
         {
-            _logger.LogError("Malformed webhook contract. Null checks - Contract.Issue={IssueIsNull},Contract.Media={MediaIsNull}", contract.Issue is null, contract.Media is null);
-            return null;
+            throw new WebhookMalformedContractException($"Malformed webhook contract. Null checks - Contract.Issue={contract.Issue is null},Contract.Media={contract.Media is null}");
         }
 
         string username = contract.Issue.ReportedByUsername;

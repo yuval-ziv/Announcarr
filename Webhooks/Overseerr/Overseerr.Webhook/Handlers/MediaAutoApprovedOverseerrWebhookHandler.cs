@@ -2,27 +2,20 @@
 using Announcarr.Utils.Extensions.String;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts.Enums;
+using Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Webhooks.Overseerr.Webhook.Handlers;
 
 public class MediaAutoApprovedOverseerrWebhookHandler : IOverseerrWebhookHandler
 {
-    private readonly ILogger<MediaAutoApprovedOverseerrWebhookHandler> _logger;
-
-    public MediaAutoApprovedOverseerrWebhookHandler(ILogger<MediaAutoApprovedOverseerrWebhookHandler> logger)
-    {
-        _logger = logger;
-    }
-
     public NotificationType NotificationType => NotificationType.MediaAutoApproved;
 
     public CustomAnnouncement? Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
     {
         if (contract.Media is null)
         {
-            _logger.LogError("Malformed webhook contract. Null checks - Contract.Media={MediaIsNull}", contract.Media is null);
-            return null;
+            throw new WebhookMalformedContractException($"Malformed webhook contract. Null checks - Contract.Media={contract.Media is null}");
         }
 
         string mediaType = contract.Media.MediaType.ToString().ToLower();

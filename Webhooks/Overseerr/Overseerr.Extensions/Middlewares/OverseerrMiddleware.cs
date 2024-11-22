@@ -37,14 +37,14 @@ public class OverseerrMiddleware
 
         if (_configuration.AuthorizationHeader.IsNullOrEmpty())
         {
-            _logger.LogDebug("Starting Overseerr webhook middleware on method {HttpMethod} and path {Path}", _configuration.Method, _configuration.Path);
+            _logger.LogDebug("Starting Overseerr webhook middleware {WebhookName} on method {HttpMethod} and path {Path}", _configuration.Name, _configuration.Method, _configuration.Path);
             return;
         }
 
         string obfuscatedAuthorizationHeader = GetObfuscatedAuthorizationHeader(_configuration.AuthorizationHeader);
 
-        _logger.LogDebug("Starting Overseerr webhook middleware on method {HttpMethod} and path {Path} with authorization header {AuthorizationHeader}", _configuration.Method, _configuration.Path,
-            obfuscatedAuthorizationHeader);
+        _logger.LogDebug("Starting Overseerr webhook middleware {WebhookName} on method {HttpMethod} and path {Path} with authorization header {AuthorizationHeader}", _configuration.Name,
+            _configuration.Method, _configuration.Path, obfuscatedAuthorizationHeader);
     }
 
     private string GetObfuscatedAuthorizationHeader(string authorizationHeader)
@@ -66,13 +66,13 @@ public class OverseerrMiddleware
 
         if (webhookService is null)
         {
-            _logger.LogWarning("Got request to overseerr webhook on {HttpMethod} and path {Path}, but no webhook service registered", _configuration.Method, _configuration.Path);
+            _logger.LogWarning("Got request to overseerr webhook on webhook {WebhookName}, but no webhook service registered", _configuration.Name);
             return;
         }
 
         if (!_configuration.AuthorizationHeader.IsNullOrEmpty() && context.Request.Headers["Authorization"] != _configuration.AuthorizationHeader)
         {
-            _logger.LogWarning("Got request to overseerr webhook on {HttpMethod} and path {Path} with invalid authorization header", _configuration.Method, _configuration.Path);
+            _logger.LogWarning("Got request to overseerr webhook on webhook {WebhookName} with invalid authorization header", _configuration.Name);
             await SetResponseToUnauthorized(context);
             return;
         }
@@ -83,12 +83,11 @@ public class OverseerrMiddleware
 
         if (contract is null)
         {
-            _logger.LogError("Got overseerr webhook request on {HttpMethod} and path {Path}, but body was either empty or malformed", _configuration.Method, _configuration.Path);
+            _logger.LogError("Got overseerr webhook request on webhook {WebhookName}, but body was either empty or malformed", _configuration.Name);
             return;
         }
 
-        _logger.LogDebug("Handling overseerr webhook request on {HttpMethod} and path {Path} with notification type {NotificationType} ", _configuration.Method, _configuration.Path,
-            contract.NotificationType);
+        _logger.LogDebug("Handling overseerr webhook request on webhook {WebhookName} with notification type {NotificationType} ", _configuration.Name, contract.NotificationType);
 
         NotificationTypeConfiguration notificationTypeConfiguration = _configuration.NotificationTypeToConfiguration.GetValueOrDefault(contract.NotificationType, new NotificationTypeConfiguration());
 
@@ -97,8 +96,8 @@ public class OverseerrMiddleware
 
         await SetResponseToSuccess(context);
 
-        _logger.LogDebug("Finished handling overseerr webhook request on {HttpMethod} and path {Path} with notification type {NotificationType} {Result}", _configuration.Method, _configuration.Path,
-            contract.NotificationType, handlingResult ? "successfully" : "unsuccessfully");
+        _logger.LogDebug("Finished handling overseerr webhook request on webhook {WebhookName} with notification type {NotificationType} {Result}", _configuration.Name, contract.NotificationType,
+            handlingResult ? "successfully" : "unsuccessfully");
     }
 
     /// <summary>

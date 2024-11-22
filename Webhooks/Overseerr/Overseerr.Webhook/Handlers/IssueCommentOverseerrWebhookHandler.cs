@@ -1,28 +1,20 @@
 ﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts.Enums;
-using Microsoft.Extensions.Logging;
+using Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
 
 namespace Announcarr.Webhooks.Overseerr.Webhook.Handlers;
 
 public class IssueCommentOverseerrWebhookHandler : IOverseerrWebhookHandler
 {
-    private readonly ILogger<IssueCommentOverseerrWebhookHandler> _logger;
-
-    public IssueCommentOverseerrWebhookHandler(ILogger<IssueCommentOverseerrWebhookHandler> logger)
-    {
-        _logger = logger;
-    }
-
     public NotificationType NotificationType => NotificationType.IssueComment;
 
-    public CustomAnnouncement? Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
+    public CustomAnnouncement Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
     {
         if (contract.Comment is null || contract.Issue is null || contract.Media is null)
         {
-            _logger.LogError("Malformed webhook contract. Null checks - Contract.Comment={CommentIsNull},Contract.Issue={IssueIsNull},Contract.Media={MediaIsNull}", contract.Comment is null,
-                contract.Issue is null, contract.Media is null);
-            return null;
+            throw new WebhookMalformedContractException(
+                $"Malformed webhook contract. Null checks - Contract.Comment={contract.Comment is null},Contract.Issue={contract.Issue is null},Contract.Media={contract.Media is null}");
         }
 
         string username = contract.Comment.CommentedByUsername;

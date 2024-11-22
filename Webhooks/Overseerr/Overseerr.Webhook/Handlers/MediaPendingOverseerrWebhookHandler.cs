@@ -2,27 +2,19 @@
 using Announcarr.Utils.Extensions.String;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts.Enums;
-using Microsoft.Extensions.Logging;
+using Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
 
 namespace Announcarr.Webhooks.Overseerr.Webhook.Handlers;
 
 public class MediaPendingOverseerrWebhookHandler : IOverseerrWebhookHandler
 {
-    private readonly ILogger<MediaPendingOverseerrWebhookHandler> _logger;
-
-    public MediaPendingOverseerrWebhookHandler(ILogger<MediaPendingOverseerrWebhookHandler> logger)
-    {
-        _logger = logger;
-    }
-
     public NotificationType NotificationType => NotificationType.MediaPending;
 
     public CustomAnnouncement? Handle(OverseerrWebhookContract contract, CancellationToken cancellationToken = default)
     {
         if (contract.Request is null || contract.Media is null)
         {
-            _logger.LogError("Malformed webhook contract. Null checks - Contract.Request={RequestIsNull},Contract.Media={MediaIsNull}", contract.Request is null, contract.Media is null);
-            return null;
+            throw new WebhookMalformedContractException($"Malformed webhook contract. Null checks - Contract.Request={contract.Request is null},Contract.Media={contract.Media is null}");
         }
 
         string username = contract.Request.RequestedByUsername;

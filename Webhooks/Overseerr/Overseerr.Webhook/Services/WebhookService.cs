@@ -2,6 +2,7 @@
 using Announcarr.Exporters.Abstractions.Exporter.Interfaces;
 using Announcarr.Utils.Extensions.String;
 using Announcarr.Webhooks.Overseerr.Webhook.Contracts;
+using Announcarr.Webhooks.Overseerr.Webhook.Exceptions;
 using Announcarr.Webhooks.Overseerr.Webhook.Handlers;
 using Microsoft.Extensions.Logging;
 
@@ -49,18 +50,26 @@ public class WebhookService : IWebhookService
             return false;
         }
 
-        CustomAnnouncement? message = selectedHandler.Handle(contract, cancellationToken);
-
-        if (message is null)
+        try
         {
+            CustomAnnouncement? message = selectedHandler.Handle(contract, cancellationToken);
+
+            if (message is null)
+            {
+                return false;
+            }
+
+            message.Tags = tags;
+            message.Link = message.Link is not null ? MergeUrlWithPath(overseerrUrl, message.Link) : null;
+
+            await Task.WhenAll(_exporters.Select(exporter => exporter.ExportCustomAnnouncementAsync(message, cancellationToken)));
+            return true;
+        }
+        catch (WebhookException exception)
+        {
+            _logger.LogError(exception, "Error handling webhook request of type {NotificationType} on webhook {WebhookName}", contract.NotificationType, webhookName);
             return false;
         }
-
-        message.Tags = tags;
-        message.Link = message.Link is not null ? MergeUrlWithPath(overseerrUrl, message.Link) : null;
-
-        await Task.WhenAll(_exporters.Select(exporter => exporter.ExportCustomAnnouncementAsync(message, cancellationToken)));
-        return true;
     }
 
     private static string MergeUrlWithPath(string overseerrUrl, string? path)
