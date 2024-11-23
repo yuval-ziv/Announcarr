@@ -16,9 +16,3 @@ public class OverseerrWebhookContract
     public Issue? Issue { get; set; }
     public IssueComment? Comment { get; set; }
 }
-
-public class ExtraData
-{
-    public string? Name { get; set; }
-    public string? Value { get; set; }
-}
