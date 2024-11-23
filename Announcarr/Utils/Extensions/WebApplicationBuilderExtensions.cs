@@ -13,6 +13,7 @@ using Announcarr.Integrations.Sonarr.Extensions.DependencyInjection.Validations;
 using Announcarr.Integrations.Sonarr.Integration.Configurations;
 using Announcarr.Integrations.Sonarr.Integration.Services;
 using Announcarr.JsonConverters;
+using Announcarr.Scheduler;
 using Announcarr.Services;
 using Announcarr.Webhooks.Overseerr.Extensions.Configurations;
 using Announcarr.Webhooks.Overseerr.Extensions.DependencyInjection;
@@ -106,7 +107,7 @@ public static class WebApplicationBuilderExtensions
 
     private static void AddServices(IServiceCollection services)
     {
-        services.AddSingleton<ICalendarService, CalendarService>();
+        services.AddSingleton<IAnnouncarrService, AnnouncarrService>();
         services.AddSingleton<ITestExporterService, TestExporterService>();
     }
 

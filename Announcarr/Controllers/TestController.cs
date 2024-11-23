@@ -8,26 +8,26 @@ namespace Announcarr.Controllers;
 [ApiController]
 public class TestController : Controller
 {
-    private readonly ICalendarService _calendarService;
+    private readonly IAnnouncarrService _announcarrService;
     private readonly ITestExporterService _testExporterService;
 
-    public TestController(ICalendarService calendarService, ITestExporterService testExporterService)
+    public TestController(IAnnouncarrService announcarrService, ITestExporterService testExporterService)
     {
-        _calendarService = calendarService;
+        _announcarrService = announcarrService;
         _testExporterService = testExporterService;
     }
 
     [HttpGet("calendar")]
     public async Task<IActionResult> GetCalendar([FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export)
     {
-        CalendarContract result = await _calendarService.GetAllCalendarItemsAsync(start, end, export);
+        CalendarContract result = await _announcarrService.GetAllCalendarItemsAsync(start, end, export);
         return Ok(result);
     }
 
     [HttpGet("recentlyAdded")]
     public async Task<IActionResult> GetRecentlyAdded([FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export)
     {
-        RecentlyAddedContract result = await _calendarService.GetAllRecentlyAddedItemsAsync(start, end, export);
+        RecentlyAddedContract result = await _announcarrService.GetAllRecentlyAddedItemsAsync(start, end, export);
         return Ok(result);
     }
 

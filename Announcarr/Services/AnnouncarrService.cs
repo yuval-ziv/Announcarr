@@ -6,25 +6,24 @@ using Microsoft.Extensions.Options;
 
 namespace Announcarr.Services;
 
-public class CalendarService : ICalendarService
+public class AnnouncarrService : IAnnouncarrService
 {
-    private readonly AnnouncarrConfiguration _configuration;
     private readonly List<IExporterService> _exporterServices;
     private readonly List<IIntegrationService> _integrationServices;
-    private readonly ILogger<CalendarService> _logger;
+    private readonly ILogger<AnnouncarrService> _logger;
 
-    public CalendarService(ILogger<CalendarService> logger, IOptionsMonitor<AnnouncarrConfiguration> options, IEnumerable<IIntegrationService> integrationServices,
+    public AnnouncarrService(ILogger<AnnouncarrService> logger, IOptionsMonitor<AnnouncarrConfiguration> options, IEnumerable<IIntegrationService> integrationServices,
         IEnumerable<IExporterService> exporterServices)
     {
         _logger = logger;
-        _configuration = options.CurrentValue;
+        AnnouncarrConfiguration configuration = options.CurrentValue;
         _exporterServices = exporterServices.ToList();
         _integrationServices = integrationServices.ToList();
 
         _exporterServices.ForEach(exporter =>
         {
-            exporter.ExportOnEmptyContract = _configuration.EmptyContractFallback.ExportOnEmptyContract;
-            exporter.CustomMessageOnEmptyContract = _configuration.EmptyContractFallback.CustomMessageOnEmptyContract;
+            exporter.ExportOnEmptyContract = configuration.EmptyContractFallback.ExportOnEmptyContract;
+            exporter.CustomMessageOnEmptyContract = configuration.EmptyContractFallback.CustomMessageOnEmptyContract;
         });
     }
 
