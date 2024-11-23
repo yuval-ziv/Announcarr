@@ -5,6 +5,7 @@ using Announcarr.Configurations.Validations;
 using Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection;
 using Announcarr.Exporters.Telegram.Exporter.Configurations;
 using Announcarr.Exporters.Telegram.Exporter.Services;
+using Announcarr.HostedServices;
 using Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection;
 using Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
 using Announcarr.Integrations.Radarr.Integration.Configurations;
@@ -42,6 +43,7 @@ public static class WebApplicationBuilderExtensions
         AddConfigurations(services, configuration);
         AddServices(services);
         AddAnnouncarrLogic(services);
+        services.AddHostedService<AnnouncarrHostedService>();
     }
 
     private static void AddSerilogLogging(WebApplicationBuilder builder)
@@ -109,6 +111,7 @@ public static class WebApplicationBuilderExtensions
     {
         services.AddSingleton<IAnnouncarrService, AnnouncarrService>();
         services.AddSingleton<ITestExporterService, TestExporterService>();
+        services.AddSingleton<IAnnouncarrScheduler, AnnouncarrScheduler>();
     }
 
     private static void AddAnnouncarrLogic(IServiceCollection services)
