@@ -15,6 +15,7 @@ namespace Announcarr.Exporters.Telegram.Exporter.Services;
 public class TelegramExporterService : BaseExporterService<TelegramExporterConfiguration>
 {
     private const string DefaultThumbnailNotAvailableUri = "https://thumbs.dreamstime.com/b/ning%C3%BAn-icono-disponible-de-la-imagen-plano-ejemplo-del-vector-132482953.jpg";
+    private const int ThirtyMinutesInSeconds = 1800;
     private readonly TelegramBotClient _bot;
     private readonly List<ChatId> _chatIds;
 
@@ -25,8 +26,13 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
     public TelegramExporterService(ILogger<TelegramExporterService>? logger, TelegramExporterConfiguration configuration) : base(logger, configuration)
     {
-        _bot = new TelegramBotClient(Configuration.Bot?.Token ?? "");
-        _chatIds = Configuration.Bot?.ChatIds.Select(chatId => new ChatId(chatId)).ToList() ?? [];
+        var telegramBotClientOptions = new TelegramBotClientOptions(Configuration.Bot.Token)
+        {
+            RetryCount = int.MaxValue,
+            RetryThreshold = ThirtyMinutesInSeconds,
+        };
+        _bot = new TelegramBotClient(telegramBotClientOptions);
+        _chatIds = Configuration.Bot.ChatIds.Select(chatId => new ChatId(chatId)).ToList();
     }
 
     public override bool IsEnabled => Configuration.IsEnabled;
