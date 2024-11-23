@@ -7,5 +7,4 @@ public enum AnnouncarrRange
     Weekly,
     Monthly,
     Yearly,
-    Cron,
 }
