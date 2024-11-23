@@ -9,15 +9,14 @@ public class AnnouncarrConfiguration
 
 public class AnnouncarrIntervalConfiguration
 {
-    public AnnouncerRange AnnouncerRange { get; set; }
+    public AnnouncarrRange AnnouncarrRange { get; set; }
 
     public int? MinuteOfHour { get; set; }
     public int? HourOfDay { get; set; }
     public DayOfWeek? DayOfWeek { get; set; }
     public int? DayOfMonth { get; set; }
     public int? MonthOfYear { get; set; }
-    public string? CronAnnouncerRange { get; set; }
-    public TimeSpan? CustomAnnouncerRange { get; set; }
+    public string? CronAnnouncarrRange { get; set; }
 }
 
 public class AnnouncarrEmptyContractFallbackConfiguration

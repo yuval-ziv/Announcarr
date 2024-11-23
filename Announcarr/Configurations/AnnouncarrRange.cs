@@ -1,6 +1,6 @@
 ﻿namespace Announcarr.Configurations;
 
-public enum AnnouncerRange
+public enum AnnouncarrRange
 {
     Hourly,
     Daily,
@@ -8,5 +8,4 @@ public enum AnnouncerRange
     Monthly,
     Yearly,
     Cron,
-    Custom,
 }
