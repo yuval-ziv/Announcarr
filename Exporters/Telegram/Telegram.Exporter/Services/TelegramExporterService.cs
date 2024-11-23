@@ -37,7 +37,10 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
     protected override async Task TestExporterLogicAsync(CancellationToken cancellationToken = default)
     {
-        await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, "This is a test message.", cancellationToken: cancellationToken));
+        if (Configuration.IsTestExporterEnabled)
+        {
+            await SendToAllChatsAsync(chatId => _bot.SendMessage(chatId, "This is a test message.", cancellationToken: cancellationToken));
+        }
     }
 
     protected override async Task ExportCalendarLogicAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
