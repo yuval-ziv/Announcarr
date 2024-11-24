@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Utils\Json\Json.csproj" />
+        <ProjectReference Include="..\..\..\Utils\Json\Json.csproj"/>
         <ProjectReference Include="..\Overseerr.Webhook\Overseerr.Webhook.csproj"/>
     </ItemGroup>
 

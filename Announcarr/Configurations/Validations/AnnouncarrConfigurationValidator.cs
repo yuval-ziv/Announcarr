@@ -1,7 +1,6 @@
 ﻿using Announcarr.Extensions;
 using Announcarr.Utils.Extensions.String;
 using Microsoft.Extensions.Options;
-using Quartz;
 
 namespace Announcarr.Configurations.Validations;
 
@@ -17,97 +16,100 @@ public class AnnouncarrConfigurationValidator : IValidateOptions<AnnouncarrConfi
 
     private static ValidateOptionsResult ValidateIntervalConfiguration(AnnouncarrConfiguration options)
     {
-        return options.Interval.AnnouncerRange switch
+        (bool isValid, string? failedFieldName, string? failedReason) = options.Interval.AnnouncarrRange switch
         {
-            AnnouncerRange.Hourly => ValidateHourlyAnnouncerRange(options),
-            AnnouncerRange.Daily => ValidateDailyAnnouncerRange(options),
-            AnnouncerRange.Weekly => ValidateWeeklyAnnouncerRange(options),
-            AnnouncerRange.Monthly => ValidateMonthlyAnnouncerRange(options),
-            AnnouncerRange.Yearly => ValidateYearlyAnnouncerRange(options),
-            AnnouncerRange.Cron => ValidateCronAnnouncerRange(options),
-            AnnouncerRange.Custom => ValidateCustomAnnouncerRange(options),
-            _ => ValidateOptionsResult.Fail($"{nameof(options.Interval.AnnouncerRange)} is not supported"),
+            AnnouncarrRange.Hourly => ValidateHourlyAnnouncarrRange(options),
+            AnnouncarrRange.Daily => ValidateDailyAnnouncarrRange(options),
+            AnnouncarrRange.Weekly => ValidateWeeklyAnnouncarrRange(options),
+            AnnouncarrRange.Monthly => ValidateMonthlyAnnouncarrRange(options),
+            AnnouncarrRange.Yearly => ValidateYearlyAnnouncarrRange(options),
+            _ => (false, nameof(options.Interval.AnnouncarrRange), "value is not supported"),
         };
+
+        if (isValid)
+        {
+            return ValidateOptionsResult.Success;
+        }
+
+        return ValidateOptionsResult.Fail($"{failedFieldName} {failedReason}. {nameof(options.Interval.AnnouncarrRange)} is set to {options.Interval.AnnouncarrRange}");
     }
 
-    private static ValidateOptionsResult ValidateHourlyAnnouncerRange(AnnouncarrConfiguration options)
+    private static (bool IsValid, string? FailedFieldName, string? FailedReason) ValidateHourlyAnnouncarrRange(AnnouncarrConfiguration options)
     {
         return options.Interval.MinuteOfHour switch
         {
-            null => ValidateOptionsResult.Fail($"{nameof(options.Interval.MinuteOfHour)} is required when {nameof(options.Interval.AnnouncerRange)} is set to {AnnouncerRange.Hourly}"),
-            < 0 or > 59 => ValidateOptionsResult.Fail($"{nameof(options.Interval.MinuteOfHour)} must be an integer value between 0 and 59 (including)."),
-            _ => ValidateOptionsResult.Success,
+            null => Failed(nameof(options.Interval.MinuteOfHour), "is required"),
+            < 0 or > 59 => Failed(nameof(options.Interval.MinuteOfHour), "must be an integer value between 0 and 59 (including)"),
+            _ => Valid,
         };
     }
 
-    private static ValidateOptionsResult ValidateDailyAnnouncerRange(AnnouncarrConfiguration options)
+    private static (bool IsValid, string? FailedFieldName, string? FailedReason) ValidateDailyAnnouncarrRange(AnnouncarrConfiguration options)
     {
+        (bool IsValid, string? FailedFieldName, string? FailedReason) hourlyValidationResult = ValidateHourlyAnnouncarrRange(options);
+
+        if (!hourlyValidationResult.IsValid)
+        {
+            return hourlyValidationResult;
+        }
+
         return options.Interval.HourOfDay switch
         {
-            null => ValidateOptionsResult.Fail($"{nameof(options.Interval.HourOfDay)} is required when {nameof(options.Interval.AnnouncerRange)} is set to {AnnouncerRange.Daily}"),
-            < 0 or > 59 => ValidateOptionsResult.Fail($"{nameof(options.Interval.HourOfDay)} must be an integer value between 0 and 59 (including)."),
-            _ => ValidateOptionsResult.Success,
+            null => Failed(nameof(options.Interval.HourOfDay), "is required"),
+            < 0 or > 24 => Failed(nameof(options.Interval.HourOfDay), "must be an integer value between 0 and 23 (including)"),
+            _ => Valid,
         };
     }
 
-    private static ValidateOptionsResult ValidateWeeklyAnnouncerRange(AnnouncarrConfiguration options)
+    private static (bool IsValid, string? FailedFieldName, string? FailedReason) ValidateWeeklyAnnouncarrRange(AnnouncarrConfiguration options)
     {
+        (bool IsValid, string? FailedFieldName, string? FailedReason) dailyValidationResult = ValidateDailyAnnouncarrRange(options);
+
+        if (!dailyValidationResult.IsValid)
+        {
+            return dailyValidationResult;
+        }
+
         return options.Interval.DayOfWeek switch
         {
-            null => ValidateOptionsResult.Fail($"{nameof(options.Interval.DayOfWeek)} is required when {nameof(options.Interval.AnnouncerRange)} is set to {AnnouncerRange.Weekly}"),
-            DayOfWeek.Sunday or DayOfWeek.Monday or DayOfWeek.Tuesday or DayOfWeek.Wednesday or DayOfWeek.Thursday or DayOfWeek.Friday or DayOfWeek.Saturday => ValidateOptionsResult.Success,
-            _ => ValidateOptionsResult.Fail($"{nameof(options.Interval.DayOfWeek)} value is not supported"),
+            null => Failed(nameof(options.Interval.DayOfWeek), "is required"),
+            DayOfWeek.Sunday or DayOfWeek.Monday or DayOfWeek.Tuesday or DayOfWeek.Wednesday or DayOfWeek.Thursday or DayOfWeek.Friday or DayOfWeek.Saturday => Valid,
+            _ => Failed(nameof(options.Interval.DayOfWeek), "value is not supported"),
         };
     }
 
-    private static ValidateOptionsResult ValidateMonthlyAnnouncerRange(AnnouncarrConfiguration options)
+    private static (bool IsValid, string? FailedFieldName, string? FailedReason) ValidateMonthlyAnnouncarrRange(AnnouncarrConfiguration options)
     {
+        (bool IsValid, string? FailedFieldName, string? FailedReason) dailyValidationResult = ValidateDailyAnnouncarrRange(options);
+
+        if (!dailyValidationResult.IsValid)
+        {
+            return dailyValidationResult;
+        }
+
         return options.Interval.DayOfMonth switch
         {
-            null => ValidateOptionsResult.Fail($"{nameof(options.Interval.DayOfMonth)} is required when {nameof(options.Interval.AnnouncerRange)} is set to {AnnouncerRange.Monthly}"),
-            < 1 or > 31 => ValidateOptionsResult.Fail($"{nameof(options.Interval.DayOfMonth)} must be an integer value between 1 and 31 (including)."),
-            _ => ValidateOptionsResult.Success,
+            null => Failed(nameof(options.Interval.DayOfMonth), "is required"),
+            < 0 or > 24 => Failed(nameof(options.Interval.DayOfMonth), "must be an integer value between 0 and 31 (including)"),
+            _ => Valid,
         };
     }
 
-    private static ValidateOptionsResult ValidateYearlyAnnouncerRange(AnnouncarrConfiguration options)
+    private static (bool IsValid, string? FailedFieldName, string? FailedReason) ValidateYearlyAnnouncarrRange(AnnouncarrConfiguration options)
     {
+        (bool IsValid, string? FailedFieldName, string? FailedReason) dailyValidationResult = ValidateDailyAnnouncarrRange(options);
+
+        if (!dailyValidationResult.IsValid)
+        {
+            return dailyValidationResult;
+        }
+
         return options.Interval.MonthOfYear switch
         {
-            null => ValidateOptionsResult.Fail($"{nameof(options.Interval.MonthOfYear)} is required when {nameof(options.Interval.AnnouncerRange)} is set to {AnnouncerRange.Monthly}"),
-            < 1 or > 12 => ValidateOptionsResult.Fail($"{nameof(options.Interval.MonthOfYear)} must be an integer value between 1 and 12 (including)."),
-            _ => ValidateOptionsResult.Success,
+            null => Failed(nameof(options.Interval.MonthOfYear), "is required"),
+            < 0 or > 24 => Failed(nameof(options.Interval.MonthOfYear), "must be an integer value between 0 and 12 (including)"),
+            _ => Valid,
         };
-    }
-
-    private static ValidateOptionsResult ValidateCronAnnouncerRange(AnnouncarrConfiguration options)
-    {
-        if (options.Interval.CustomAnnouncerRange is null)
-        {
-            return ValidateOptionsResult.Fail($"{nameof(options.Interval.CustomAnnouncerRange)} is required when {nameof(options.Interval.AnnouncerRange)} is set to {AnnouncerRange.Custom}");
-        }
-
-        if (options.Interval.CustomAnnouncerRange?.CompareTo(TimeSpan.Zero) > 0)
-        {
-            return ValidateOptionsResult.Success;
-        }
-
-        return ValidateOptionsResult.Fail($"{nameof(options.Interval.CustomAnnouncerRange)} must be a positive time span bigger than {TimeSpan.Zero}");
-    }
-
-    private static ValidateOptionsResult ValidateCustomAnnouncerRange(AnnouncarrConfiguration options)
-    {
-        if (options.Interval.CronAnnouncerRange is null)
-        {
-            return ValidateOptionsResult.Fail($"{nameof(options.Interval.CronAnnouncerRange)} is required when {nameof(options.Interval.AnnouncerRange)} is set to {AnnouncerRange.Cron}");
-        }
-
-        if (CronExpression.IsValidExpression(options.Interval.CronAnnouncerRange))
-        {
-            return ValidateOptionsResult.Success;
-        }
-
-        return ValidateOptionsResult.Fail($"{nameof(options.Interval.CronAnnouncerRange)} is not a valid cron expression");
     }
 
     private static ValidateOptionsResult ValidateEmptyAnnouncementConfiguration(AnnouncarrConfiguration options)
@@ -125,4 +127,8 @@ public class AnnouncarrConfigurationValidator : IValidateOptions<AnnouncarrConfi
 
         return ValidateOptionsResult.Success;
     }
+
+    private static (bool IsValid, string? FailedFieldName, string? FailedReason) Valid => (true, null, null);
+
+    private static (bool IsValid, string? FailedFieldName, string? FailedReason) Failed(string failedFieldName, string failedReason) => (false, failedFieldName, failedReason);
 }
