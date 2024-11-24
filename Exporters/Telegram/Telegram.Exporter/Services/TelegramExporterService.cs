@@ -26,7 +26,8 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
     public TelegramExporterService(ILogger<TelegramExporterService>? logger, TelegramExporterConfiguration configuration) : base(logger, configuration)
     {
-        var telegramBotClientOptions = new TelegramBotClientOptions(Configuration.Bot.Token)
+        string? customTelegramBotApiServer = Configuration.Bot.CustomTelegramBotApiServer.IsNullOrWhiteSpace() ? null : Configuration.Bot.CustomTelegramBotApiServer;
+        var telegramBotClientOptions = new TelegramBotClientOptions(Configuration.Bot.Token, customTelegramBotApiServer)
         {
             RetryCount = int.MaxValue,
             RetryThreshold = ThirtyMinutesInSeconds,
