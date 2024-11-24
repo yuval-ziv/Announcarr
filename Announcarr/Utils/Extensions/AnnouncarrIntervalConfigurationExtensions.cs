@@ -36,16 +36,42 @@ public static class AnnouncarrIntervalConfigurationExtensions
         return (DateTimeOffset.Now, end);
     }
 
-    public static string ToCron(this AnnouncarrIntervalConfiguration intervalConfiguration)
+    public static string ToCron(this AnnouncarrIntervalConfiguration? intervalConfiguration)
     {
-        return intervalConfiguration.AnnouncarrRange switch
+        return intervalConfiguration?.AnnouncarrRange switch
         {
-            AnnouncarrRange.Hourly => $"{intervalConfiguration.MinuteOfHour} * * * *",
-            AnnouncarrRange.Daily => $"{intervalConfiguration.MinuteOfHour} {intervalConfiguration.HourOfDay} * * *",
-            AnnouncarrRange.Weekly => $"{intervalConfiguration.MinuteOfHour} {intervalConfiguration.HourOfDay} * * {(int)intervalConfiguration.DayOfWeek!}",
-            AnnouncarrRange.Monthly => $"{intervalConfiguration.MinuteOfHour} {intervalConfiguration.HourOfDay} {intervalConfiguration.DayOfMonth} * *",
-            AnnouncarrRange.Yearly => $"{intervalConfiguration.MinuteOfHour} {intervalConfiguration.HourOfDay} {intervalConfiguration.DayOfMonth} {intervalConfiguration.MonthOfYear} *",
-            _ => throw new NotImplementedException(),
+            AnnouncarrRange.Hourly => $"{GetMinuteOfHour(intervalConfiguration)} * * * *",
+            AnnouncarrRange.Daily => $"{GetMinuteOfHour(intervalConfiguration)} {GetHourOfDay(intervalConfiguration)} * * *",
+            AnnouncarrRange.Weekly => $"{GetMinuteOfHour(intervalConfiguration)} {GetHourOfDay(intervalConfiguration)} * * {GetDayOfWeek(intervalConfiguration)}",
+            AnnouncarrRange.Monthly => $"{GetMinuteOfHour(intervalConfiguration)} {GetHourOfDay(intervalConfiguration)} {GetDayOfMonth(intervalConfiguration)} * *",
+            AnnouncarrRange.Yearly =>
+                $"{GetMinuteOfHour(intervalConfiguration)} {GetHourOfDay(intervalConfiguration)} {GetDayOfMonth(intervalConfiguration)} {GetMonthOfYear(intervalConfiguration)} *",
+            _ => throw new ArgumentException($"value of {nameof(intervalConfiguration.AnnouncarrRange)} is unknown", nameof(intervalConfiguration)),
         };
+    }
+
+    private static int GetMinuteOfHour(AnnouncarrIntervalConfiguration intervalConfiguration)
+    {
+        return intervalConfiguration.MinuteOfHour ?? throw new ArgumentException($"{nameof(intervalConfiguration.MinuteOfHour)} must not be null", nameof(intervalConfiguration));
+    }
+
+    private static int GetHourOfDay(AnnouncarrIntervalConfiguration intervalConfiguration)
+    {
+        return intervalConfiguration.HourOfDay ?? throw new ArgumentException($"{nameof(intervalConfiguration.HourOfDay)} must not be null", nameof(intervalConfiguration));
+    }
+
+    private static int GetDayOfWeek(AnnouncarrIntervalConfiguration intervalConfiguration)
+    {
+        return (int?)intervalConfiguration.DayOfWeek ?? throw new ArgumentException($"{nameof(intervalConfiguration.DayOfWeek)} must not be null", nameof(intervalConfiguration));
+    }
+
+    private static int? GetDayOfMonth(AnnouncarrIntervalConfiguration intervalConfiguration)
+    {
+        return intervalConfiguration.DayOfMonth ?? throw new ArgumentException($"{nameof(intervalConfiguration.DayOfMonth)} must not be null", nameof(intervalConfiguration));
+    }
+
+    private static int? GetMonthOfYear(AnnouncarrIntervalConfiguration intervalConfiguration)
+    {
+        return intervalConfiguration.MonthOfYear ?? throw new ArgumentException($"{nameof(intervalConfiguration.MonthOfYear)} must not be null", nameof(intervalConfiguration));
     }
 }
