@@ -1,15 +1,15 @@
 ﻿namespace Announcarr.Abstractions.Contracts;
 
-public class RecentlyAddedContract : BaseAnnouncement
+public class SummaryContract : BaseAnnouncement
 {
+    public List<BaseItem> NewItems { get; set; } = [];
     public List<NewlyMonitoredItem> NewlyMonitoredItems { get; set; } = [];
-    public List<BaseCalendarItem> NewItems { get; set; } = [];
     public override bool IsEmpty => NewlyMonitoredItems.Count == 0 && NewItems.Count == 0;
-    public override AnnouncementType AnnouncementType => AnnouncementType.RecentlyAdded;
+    public override AnnouncementType AnnouncementType => AnnouncementType.Summary;
 
-    public static RecentlyAddedContract Merge(RecentlyAddedContract first, RecentlyAddedContract second)
+    public static SummaryContract Merge(SummaryContract first, SummaryContract second)
     {
-        return new RecentlyAddedContract
+        return new SummaryContract
         {
             NewlyMonitoredItems = first.NewlyMonitoredItems.Concat(second.NewlyMonitoredItems).ToList(),
             NewItems = first.NewItems.Concat(second.NewItems).ToList(),

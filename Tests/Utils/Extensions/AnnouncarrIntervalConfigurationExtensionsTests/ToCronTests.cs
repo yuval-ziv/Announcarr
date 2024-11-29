@@ -3,7 +3,7 @@ using Announcarr.Utils.Extensions;
 using FluentAssertions;
 using NCrontab;
 
-namespace AnnouncarrIntervalConfigurationExtensionsTests;
+namespace Announcarr.Test.Utils.Extensions.AnnouncarrIntervalConfigurationExtensionsTests;
 
 public class ToCronTests
 {

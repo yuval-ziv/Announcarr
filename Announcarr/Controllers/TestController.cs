@@ -17,17 +17,17 @@ public class TestController : Controller
         _testExporterService = testExporterService;
     }
 
-    [HttpGet("calendar")]
-    public async Task<IActionResult> GetCalendar([FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export)
+    [HttpGet("forecast")]
+    public async Task<IActionResult> GetForecast([FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export)
     {
-        CalendarContract result = await _announcarrService.GetAllCalendarItemsAsync(start, end, export);
+        ForecastContract result = await _announcarrService.GetAllForecastItemsAsync(start, end, export);
         return Ok(result);
     }
 
-    [HttpGet("recentlyAdded")]
-    public async Task<IActionResult> GetRecentlyAdded([FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export)
+    [HttpGet("summary")]
+    public async Task<IActionResult> GetSummary([FromQuery(Name = "start")] DateTimeOffset? start, [FromQuery(Name = "end")] DateTimeOffset? end, [FromQuery(Name = "export")] bool? export)
     {
-        RecentlyAddedContract result = await _announcarrService.GetAllRecentlyAddedItemsAsync(start, end, export);
+        SummaryContract result = await _announcarrService.GetAllSummaryItemsAsync(start, end, export);
         return Ok(result);
     }
 

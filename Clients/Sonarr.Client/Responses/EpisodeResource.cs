@@ -15,7 +15,7 @@ public class EpisodeResource
     public string? FinaleType { get; set; }
     public string? Overview { get; set; }
     public EpisodeFileResource? EpisodeFile { get; set; }
-    public bool HasFile { get; set; }
+    public bool? HasFile { get; set; }
     public bool Monitored { get; set; }
     public int AbsoluteEpisodeNumber { get; set; }
     public int SceneAbsoluteEpisodeNumber { get; set; }

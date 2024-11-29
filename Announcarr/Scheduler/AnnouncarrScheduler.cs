@@ -43,13 +43,13 @@ public class AnnouncarrScheduler : IAnnouncarrScheduler
     {
         (DateTimeOffset start, DateTimeOffset end) = _configuration.Interval.GetLastRange();
         _logger.LogDebug("Announcing summary between {StartDate} and {EndDate}", start, end);
-        await _announcarrService.GetAllRecentlyAddedItemsAsync(start, end, true, cancellationToken);
+        await _announcarrService.GetAllSummaryItemsAsync(start, end, true, cancellationToken);
     }
 
     private async Task AnnounceForecast(CancellationToken cancellationToken)
     {
         (DateTimeOffset start, DateTimeOffset end) = _configuration.Interval.GetNextRange();
         _logger.LogDebug("Announcing forecast between {StartDate} and {EndDate}", start, end);
-        await _announcarrService.GetAllCalendarItemsAsync(start, end, true, cancellationToken);
+        await _announcarrService.GetAllForecastItemsAsync(start, end, true, cancellationToken);
     }
 }

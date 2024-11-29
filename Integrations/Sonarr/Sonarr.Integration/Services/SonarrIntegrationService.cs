@@ -5,12 +5,17 @@ using Announcarr.Integrations.Abstractions.Integration.Implementations;
 using Announcarr.Integrations.Sonarr.Integration.Configurations;
 using Announcarr.Integrations.Sonarr.Integration.Contracts;
 using Announcarr.Utils.Extensions.DateTime;
+using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Integrations.Sonarr.Integration.Services;
 
 public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegrationConfiguration>
 {
-    public SonarrIntegrationService(SonarrIntegrationConfiguration configuration) : base(configuration)
+    public SonarrIntegrationService(SonarrIntegrationConfiguration configuration) : this(null, configuration)
+    {
+    }
+
+    public SonarrIntegrationService(ILogger<SonarrIntegrationService>? logger, SonarrIntegrationConfiguration configuration) : base(logger, configuration)
     {
     }
 
@@ -18,39 +23,61 @@ public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegration
 
     public override string Name => Configuration.Name ?? "Sonarr";
 
-    protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<ForecastContract> GetForecastLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var sonarrApiClient = new SonarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
-        List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
+        List<BaseItem> items = await GetForecastItemsAsync(sonarrApiClient, from, to, false, cancellationToken);
 
-        return new CalendarContract { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
-    }
-
-    protected override async Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
-    {
-        using var sonarrApiClient = new SonarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
-
-        List<SeriesResource> seriesResources = await sonarrApiClient.GetSeriesAsync(includeSeasonImages: true, cancellationToken: cancellationToken);
-
-        List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
-
-        return new RecentlyAddedContract
+        return new ForecastContract
         {
-            NewlyMonitoredItems = seriesResources.Where(series => series.Added?.Between(from.DateTime, to) ?? false).Select(ToNewlyMonitoredSeries).Cast<NewlyMonitoredItem>().ToList(),
-            NewItems = episodeResources.Where(episode => episode.HasFile).GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList(),
+            Items = items,
         };
     }
 
-    private IEnumerable<SonarrCalendarItem> ToSonarrCalendarItem(IGrouping<string?, EpisodeResource> seriesIdToEpisodes)
+    protected override async Task<SummaryContract> GetSummaryLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        return seriesIdToEpisodes.GroupBy(resource => resource.AirDateUtc?.Date).Select(airDateToEpisodes => ToSonarrCalendarItem(seriesIdToEpisodes.Key, airDateToEpisodes));
+        using var sonarrApiClient = new SonarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
+
+        return new SummaryContract
+        {
+            NewItems = await GetForecastItemsAsync(sonarrApiClient, from, to, true, cancellationToken),
+            NewlyMonitoredItems = await GetNewlyMonitoredItemsAsync(sonarrApiClient, from, to, cancellationToken),
+        };
     }
 
-    private SonarrCalendarItem ToSonarrCalendarItem(string? seriesTitle, IGrouping<DateTime?, EpisodeResource> seriesIdToEpisodes)
+    private async Task<List<BaseItem>> GetForecastItemsAsync(SonarrApiClient sonarrApiClient, DateTimeOffset from, DateTimeOffset to, bool onlyEpisodesWithFile,
+        CancellationToken cancellationToken = default)
     {
-        return new SonarrCalendarItem
+        Logger?.LogDebug("Fetching calendar for {IntegrationName} between {From} to {To}", Name, from, to);
+        List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
+        List<BaseItem> items = episodeResources.Where(episode => !onlyEpisodesWithFile || (episode.HasFile ?? false)).GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrItem)
+            .Cast<BaseItem>().ToList();
+        Logger?.LogDebug("Fetching calendar for {IntegrationName} between {From} to {To} finished. Found {Count} items", Name, from, to, items.Count);
+
+        return items;
+    }
+
+    private async Task<List<NewlyMonitoredItem>> GetNewlyMonitoredItemsAsync(SonarrApiClient sonarrApiClient, DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    {
+        Logger?.LogDebug("Fetching newly monitored items for {IntegrationName} between {From} to {To}", Name, from, to);
+        List<SeriesResource> seriesResources = await sonarrApiClient.GetSeriesAsync(includeSeasonImages: true, cancellationToken: cancellationToken);
+        List<NewlyMonitoredItem> newlyMonitoredItems =
+            seriesResources.Where(series => series.Added?.Between(from.DateTime, to) ?? false).Select(ToNewlyMonitoredSeries).Cast<NewlyMonitoredItem>().ToList();
+        Logger?.LogDebug("Fetching newly monitored items for {IntegrationName} between {From} to {To} finished. Found {Count} episodes resources", Name, from, to, newlyMonitoredItems.Count);
+
+        return newlyMonitoredItems;
+    }
+
+    private IEnumerable<SonarrItem> ToSonarrItem(IGrouping<string?, EpisodeResource> seriesIdToEpisodes)
+    {
+        return seriesIdToEpisodes.GroupBy(resource => resource.AirDateUtc?.Date).Select(airDateToEpisodes => ToSonarrItem(seriesIdToEpisodes.Key, airDateToEpisodes));
+    }
+
+    private SonarrItem ToSonarrItem(string? seriesTitle, IGrouping<DateTime?, EpisodeResource> seriesIdToEpisodes)
+    {
+        return new SonarrItem
         {
-            CalendarItemSource = Name,
+            ItemSource = Name,
             ReleaseDate = seriesIdToEpisodes.FirstOrDefault(resource => resource.AirDateUtc is not null)?.AirDateUtc,
             ThumbnailUrl = GetThumbnailUrl(seriesIdToEpisodes.FirstOrDefault()?.Series),
             SeriesName = seriesTitle,
@@ -81,7 +108,7 @@ public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegration
     {
         return new NewlyMonitoredSeries
         {
-            CalendarItemSource = Name,
+            ItemSource = Name,
             StartedMonitoring = series.Added,
             ThumbnailUrl = GetThumbnailUrl(series),
             SeriesName = series.Title,

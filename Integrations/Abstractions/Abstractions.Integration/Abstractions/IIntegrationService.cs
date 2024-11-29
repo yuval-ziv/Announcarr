@@ -6,6 +6,6 @@ public interface IIntegrationService
 {
     bool IsEnabled { get; }
     string Name { get; }
-    Task<CalendarContract> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
-    Task<RecentlyAddedContract> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
+    Task<ForecastContract> GetForecastAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
+    Task<SummaryContract> GetSummaryAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
 }
