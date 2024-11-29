@@ -24,26 +24,34 @@ public abstract class BaseIntegrationService<TConfiguration> : IIntegrationServi
 
     public virtual async Task<ForecastContract> GetForecastAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Calendar))
+        Logger?.LogDebug("Getting {AnnouncementType} from {IntegrationName} between {From} to {To}", AnnouncementType.Forecast, Name, from, to);
+        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Forecast))
         {
-            return new CalendarContract();
+            Logger?.LogDebug("Integration {IntegrationName} is disabled for {AnnouncementType}", Name, AnnouncementType.Forecast);
             return new ForecastContract();
         }
 
-        return AddTags(await GetCalendarLogicAsync(from, to, cancellationToken));
         ForecastContract contract = await GetForecastLogicAsync(from, to, cancellationToken);
+        Logger?.LogDebug("Finished getting {AnnouncementType} from {IntegrationName} between {From} and {To}. Found {AmountOfItems} items in announcement {AnnouncementId}", AnnouncementType.Forecast,
+            Name, from, to, contract.Items.Count, contract.Id);
+
         return AddTags(contract);
     }
 
     public virtual async Task<SummaryContract> GetSummaryAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
-        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.RecentlyAdded))
+        Logger?.LogDebug("Getting {AnnouncementType} from {IntegrationName} between {From} to {To}", AnnouncementType.Summary, Name, from, to);
+        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Summary))
         {
-            return new RecentlyAddedContract();
+            Logger?.LogDebug("Integration {IntegrationName} is disabled for {AnnouncementType}", Name, AnnouncementType.Summary);
+            return new SummaryContract();
         }
 
-        return AddTags(await GetRecentlyAddedLogicAsync(from, to, cancellationToken));
         SummaryContract contract = await GetSummaryLogicAsync(from, to, cancellationToken);
+        Logger?.LogDebug("Finished getting {AnnouncementType} from {IntegrationName} between {From} and {To}. " +
+                         "Found {AmountOfNewItems} new items and {AmountOfNewlyAddedItems} newly monitored items in announcement {AnnouncementId}",
+            AnnouncementType.Summary, Name, from, to, contract.NewItems.Count, contract.NewlyMonitoredItems.Count, contract.Id);
+
         return AddTags(contract);
     }
 
@@ -53,7 +61,9 @@ public abstract class BaseIntegrationService<TConfiguration> : IIntegrationServi
 
     protected virtual TAnnouncement AddTags<TAnnouncement>(TAnnouncement announcement) where TAnnouncement : BaseAnnouncement
     {
+        Logger?.LogDebug("Adding tags to announcement  {AnnouncementId}", announcement.Id);
         announcement.Tags = Configuration.GetTagsByAnnouncementType(announcement.AnnouncementType);
+        Logger?.LogDebug("Finished adding tags to announcement {AnnouncementId} with {AmountOfTags} tags", announcement.Id, announcement.Tags.Count);
         return announcement;
     }
 }

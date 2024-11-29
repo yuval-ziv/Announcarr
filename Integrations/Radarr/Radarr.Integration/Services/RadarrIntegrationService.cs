@@ -29,7 +29,7 @@ public class RadarrIntegrationService : BaseIntegrationService<RadarrIntegration
 
         return new ForecastContract
         {
-            Items = await GetForecastItems(radarrApiClient, from, to, false, cancellationToken),
+            Items = await GetForecastItemsAsync(radarrApiClient, from, to, false, cancellationToken),
         };
     }
 
@@ -39,23 +39,30 @@ public class RadarrIntegrationService : BaseIntegrationService<RadarrIntegration
 
         return new SummaryContract
         {
+            NewItems = await GetForecastItemsAsync(radarrApiClient, from, to, true, cancellationToken),
             NewlyMonitoredItems = await GetNewlyMonitoredItemsAsync(radarrApiClient, from, to, cancellationToken),
-            NewItems = await GetForecastItems(radarrApiClient, from, to, true, cancellationToken),
         };
     }
 
-    private async Task<List<BaseItem>> GetForecastItems(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, bool onlyMoviesWithFile, CancellationToken cancellationToken)
+    private async Task<List<BaseItem>> GetForecastItemsAsync(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, bool onlyMoviesWithFile, CancellationToken cancellationToken)
     {
-        List<MovieResource> episodeResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
+        Logger?.LogDebug("Fetching calendar for {IntegrationName} between {From} to {To}", Name, from, to);
+        List<MovieResource> movieResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
+        List<BaseItem> items = movieResources.Where(movie => !onlyMoviesWithFile || (movie.HasFile ?? false)).Select(movie => ToRadarrItem(movie, from, to)).Cast<BaseItem>().ToList();
+        Logger?.LogDebug("Fetching calendar for {IntegrationName} between {From} to {To} finished. Found {Count} items", Name, from, to, items.Count);
 
-        return episodeResources.Where(movie => !onlyMoviesWithFile || (movie.HasFile ?? false)).Select(movie => ToRadarrItem(movie, from, to)).Cast<BaseItem>().ToList();
+        return items;
     }
 
     private async Task<List<NewlyMonitoredItem>> GetNewlyMonitoredItemsAsync(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
+        Logger?.LogDebug("Fetching newly monitored items for {IntegrationName} between {From} to {To}", Name, from, to);
         List<MovieResource> movieResources = await radarrApiClient.GetMoviesAsync(cancellationToken: cancellationToken);
+        List<NewlyMonitoredItem> newlyMonitoredItems = movieResources.Where(movie => movie.Added?.Between(from.DateTime, to) ?? false).Select(movie => ToNewlyMonitoredMovie(movie, from, to))
+            .Cast<NewlyMonitoredItem>().ToList();
+        Logger?.LogDebug("Fetching newly monitored items for {IntegrationName} between {From} to {To} finished. Found {Count} episodes resources", Name, from, to, newlyMonitoredItems.Count);
 
-        return movieResources.Where(movie => movie.Added?.Between(from.DateTime, to) ?? false).Select(movie => ToNewlyMonitoredMovie(movie, from, to)).Cast<NewlyMonitoredItem>().ToList();
+        return newlyMonitoredItems;
     }
 
     private RadarrItem ToRadarrItem(MovieResource movie, DateTimeOffset from, DateTimeOffset to)

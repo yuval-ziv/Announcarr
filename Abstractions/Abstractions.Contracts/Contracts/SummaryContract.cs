@@ -2,8 +2,8 @@
 
 public class SummaryContract : BaseAnnouncement
 {
-    public List<NewlyMonitoredItem> NewlyMonitoredItems { get; set; } = [];
     public List<BaseItem> NewItems { get; set; } = [];
+    public List<NewlyMonitoredItem> NewlyMonitoredItems { get; set; } = [];
     public override bool IsEmpty => NewlyMonitoredItems.Count == 0 && NewItems.Count == 0;
     public override AnnouncementType AnnouncementType => AnnouncementType.Summary;
 
