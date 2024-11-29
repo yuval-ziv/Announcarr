@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
-namespace Json;
+namespace Announcarr.Utils.Json;
 
 public class CaseAndHumpInsensitiveStringEnumConverter : StringEnumConverter
 {

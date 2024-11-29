@@ -3,7 +3,7 @@ using Announcarr.Exporters.Telegram.Exporter.Configurations;
 using Announcarr.Utils.Extensions.String;
 using Microsoft.Extensions.Options;
 
-namespace Telegram.Extensions.DependencyInjection.Validations;
+namespace Announcarr.Exporters.Telegram.Extensions.DependencyInjection.Validations;
 
 public class TelegramExporterConfigurationValidator : BaseExporterConfigurationValidator<TelegramExporterConfiguration>
 {

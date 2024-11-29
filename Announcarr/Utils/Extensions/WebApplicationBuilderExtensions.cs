@@ -5,6 +5,7 @@ using Announcarr.Configurations.Validations;
 using Announcarr.Exporters.Abstractions.Exporter.Extensions.DependencyInjection;
 using Announcarr.Exporters.Telegram.Exporter.Configurations;
 using Announcarr.Exporters.Telegram.Exporter.Services;
+using Announcarr.Exporters.Telegram.Extensions.DependencyInjection.Validations;
 using Announcarr.HostedServices;
 using Announcarr.Integrations.Abstractions.Integration.Extensions.DependencyInjection;
 using Announcarr.Integrations.Radarr.Extensions.DependencyInjection.Validations;
@@ -22,7 +23,6 @@ using Announcarr.Webhooks.Overseerr.Extensions.DependencyInjection.Validations;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Telegram.Extensions.DependencyInjection.Validations;
 
 namespace Announcarr.Utils.Extensions;
 
