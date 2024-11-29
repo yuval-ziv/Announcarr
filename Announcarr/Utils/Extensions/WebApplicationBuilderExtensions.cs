@@ -22,15 +22,12 @@ using Announcarr.Webhooks.Overseerr.Extensions.DependencyInjection.Validations;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Serilog.Events;
 using Telegram.Extensions.DependencyInjection.Validations;
 
 namespace Announcarr.Utils.Extensions;
 
 public static class WebApplicationBuilderExtensions
 {
-    private const long HundredMegabytes = 1024 * 1024 * 100;
-
     public static void AddAnnouncarrServices(this WebApplicationBuilder builder)
     {
         IServiceCollection services = builder.Services;
@@ -48,16 +45,7 @@ public static class WebApplicationBuilderExtensions
 
     private static void AddSerilogLogging(WebApplicationBuilder builder)
     {
-        builder.Host.UseSerilog((_, _, loggerConfiguration) =>
-        {
-            loggerConfiguration
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}")
-                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, rollOnFileSizeLimit: true, fileSizeLimitBytes: HundredMegabytes);
-        });
+        builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
     }
 
     private static void AddControllers(IServiceCollection services)
