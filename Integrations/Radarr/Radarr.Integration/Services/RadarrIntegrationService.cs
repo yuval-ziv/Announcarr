@@ -18,32 +18,32 @@ public class RadarrIntegrationService : BaseIntegrationService<RadarrIntegration
 
     public override string Name => Configuration.Name ?? "Radarr";
 
-    protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<ForecastContract> GetForecastLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var radarrApiClient = new RadarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
 
-        return new CalendarContract
+        return new ForecastContract
         {
-            CalendarItems = await GetCalendarItems(radarrApiClient, from, to, false, cancellationToken),
+            Items = await GetForecastItems(radarrApiClient, from, to, false, cancellationToken),
         };
     }
 
-    protected override async Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<SummaryContract> GetSummaryLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using IRadarrApiClient radarrApiClient = new RadarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
 
-        return new RecentlyAddedContract
+        return new SummaryContract
         {
             NewlyMonitoredItems = await GetNewlyMonitoredItemsAsync(radarrApiClient, from, to, cancellationToken),
-            NewItems = await GetCalendarItems(radarrApiClient, from, to, true, cancellationToken),
+            NewItems = await GetForecastItems(radarrApiClient, from, to, true, cancellationToken),
         };
     }
 
-    private async Task<List<BaseCalendarItem>> GetCalendarItems(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, bool onlyMoviesWithFile, CancellationToken cancellationToken)
+    private async Task<List<BaseItem>> GetForecastItems(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, bool onlyMoviesWithFile, CancellationToken cancellationToken)
     {
         List<MovieResource> episodeResources = await radarrApiClient.GetCalendarAsync(from, to, cancellationToken: cancellationToken);
 
-        return episodeResources.Where(movie => !onlyMoviesWithFile || (movie.HasFile ?? false)).Select(movie => ToRadarrCalendarItem(movie, from, to)).Cast<BaseCalendarItem>().ToList();
+        return episodeResources.Where(movie => !onlyMoviesWithFile || (movie.HasFile ?? false)).Select(movie => ToRadarrItem(movie, from, to)).Cast<BaseItem>().ToList();
     }
 
     private async Task<List<NewlyMonitoredItem>> GetNewlyMonitoredItemsAsync(IRadarrApiClient radarrApiClient, DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
@@ -53,13 +53,13 @@ public class RadarrIntegrationService : BaseIntegrationService<RadarrIntegration
         return movieResources.Where(movie => movie.Added?.Between(from.DateTime, to) ?? false).Select(movie => ToNewlyMonitoredMovie(movie, from, to)).Cast<NewlyMonitoredItem>().ToList();
     }
 
-    private RadarrCalendarItem ToRadarrCalendarItem(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
+    private RadarrItem ToRadarrItem(MovieResource movie, DateTimeOffset from, DateTimeOffset to)
     {
         (DateTimeOffset? relevantDate, ReleaseDateType relevantDateType) = GetRelevantDate(movie, from, to);
 
-        return new RadarrCalendarItem
+        return new RadarrItem
         {
-            CalendarItemSource = Name,
+            ItemSource = Name,
             ReleaseDate = relevantDate,
             ReleaseDateType = relevantDateType,
             ThumbnailUrl = GetThumbnailUrl(movie),
@@ -88,7 +88,7 @@ public class RadarrIntegrationService : BaseIntegrationService<RadarrIntegration
 
         return new NewlyMonitoredMovie
         {
-            CalendarItemSource = Name,
+            ItemSource = Name,
             StartedMonitoring = movie.Added,
             ThumbnailUrl = GetThumbnailUrl(movie),
             MovieName = movie.Title,

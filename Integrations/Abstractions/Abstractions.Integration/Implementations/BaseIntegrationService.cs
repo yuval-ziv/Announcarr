@@ -15,17 +15,20 @@ public abstract class BaseIntegrationService<TConfiguration> : IIntegrationServi
     public abstract bool IsEnabled { get; }
     public abstract string Name { get; }
 
-    public virtual async Task<CalendarContract> GetCalendarAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    public virtual async Task<ForecastContract> GetForecastAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Calendar))
         {
             return new CalendarContract();
+            return new ForecastContract();
         }
 
         return AddTags(await GetCalendarLogicAsync(from, to, cancellationToken));
+        ForecastContract contract = await GetForecastLogicAsync(from, to, cancellationToken);
+        return AddTags(contract);
     }
 
-    public virtual async Task<RecentlyAddedContract> GetRecentlyAddedAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    public virtual async Task<SummaryContract> GetSummaryAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.RecentlyAdded))
         {
@@ -33,11 +36,13 @@ public abstract class BaseIntegrationService<TConfiguration> : IIntegrationServi
         }
 
         return AddTags(await GetRecentlyAddedLogicAsync(from, to, cancellationToken));
+        SummaryContract contract = await GetSummaryLogicAsync(from, to, cancellationToken);
+        return AddTags(contract);
     }
 
-    protected abstract Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
+    protected abstract Task<ForecastContract> GetForecastLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
 
-    protected abstract Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
+    protected abstract Task<SummaryContract> GetSummaryLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
 
     protected virtual TAnnouncement AddTags<TAnnouncement>(TAnnouncement announcement) where TAnnouncement : BaseAnnouncement
     {

@@ -2,7 +2,7 @@
 
 namespace Announcarr.Integrations.Sonarr.Integration.Contracts;
 
-public class SonarrCalendarItem : BaseCalendarItem
+public class SonarrItem : BaseItem
 {
     public string? SeriesName { get; set; }
     public List<Season> Seasons { get; set; } = [];

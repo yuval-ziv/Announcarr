@@ -62,7 +62,7 @@ public static class WebApplicationBuilderExtensions
 
     private static void AddControllers(IServiceCollection services)
     {
-        services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseCalendarItem>()));
+        services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<BaseItem>()));
         services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new PolymorphicConverter<NewlyMonitoredItem>()));
         services.AddControllers();
         services.AddOpenApi();

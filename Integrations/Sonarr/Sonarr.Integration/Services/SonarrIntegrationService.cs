@@ -18,15 +18,15 @@ public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegration
 
     public override string Name => Configuration.Name ?? "Sonarr";
 
-    protected override async Task<CalendarContract> GetCalendarLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<ForecastContract> GetForecastLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var sonarrApiClient = new SonarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
         List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
 
-        return new CalendarContract { CalendarItems = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList() };
+        return new ForecastContract { Items = episodeResources.GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrItem).Cast<BaseItem>().ToList() };
     }
 
-    protected override async Task<RecentlyAddedContract> GetRecentlyAddedLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    protected override async Task<SummaryContract> GetSummaryLogicAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
     {
         using var sonarrApiClient = new SonarrApiClient(Configuration.Url, Configuration.ApiKey!, Configuration.IgnoreCertificateValidation);
 
@@ -34,23 +34,23 @@ public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegration
 
         List<EpisodeResource> episodeResources = await sonarrApiClient.GetCalendarAsync(from, to, includeSeries: true, cancellationToken: cancellationToken);
 
-        return new RecentlyAddedContract
+        return new SummaryContract
         {
             NewlyMonitoredItems = seriesResources.Where(series => series.Added?.Between(from.DateTime, to) ?? false).Select(ToNewlyMonitoredSeries).Cast<NewlyMonitoredItem>().ToList(),
-            NewItems = episodeResources.Where(episode => episode.HasFile).GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrCalendarItem).Cast<BaseCalendarItem>().ToList(),
+            NewItems = episodeResources.Where(episode => episode.HasFile).GroupBy(resource => resource.Series?.Title).SelectMany(ToSonarrItem).Cast<BaseItem>().ToList(),
         };
     }
 
-    private IEnumerable<SonarrCalendarItem> ToSonarrCalendarItem(IGrouping<string?, EpisodeResource> seriesIdToEpisodes)
+    private IEnumerable<SonarrItem> ToSonarrItem(IGrouping<string?, EpisodeResource> seriesIdToEpisodes)
     {
-        return seriesIdToEpisodes.GroupBy(resource => resource.AirDateUtc?.Date).Select(airDateToEpisodes => ToSonarrCalendarItem(seriesIdToEpisodes.Key, airDateToEpisodes));
+        return seriesIdToEpisodes.GroupBy(resource => resource.AirDateUtc?.Date).Select(airDateToEpisodes => ToSonarrItem(seriesIdToEpisodes.Key, airDateToEpisodes));
     }
 
-    private SonarrCalendarItem ToSonarrCalendarItem(string? seriesTitle, IGrouping<DateTime?, EpisodeResource> seriesIdToEpisodes)
+    private SonarrItem ToSonarrItem(string? seriesTitle, IGrouping<DateTime?, EpisodeResource> seriesIdToEpisodes)
     {
-        return new SonarrCalendarItem
+        return new SonarrItem
         {
-            CalendarItemSource = Name,
+            ItemSource = Name,
             ReleaseDate = seriesIdToEpisodes.FirstOrDefault(resource => resource.AirDateUtc is not null)?.AirDateUtc,
             ThumbnailUrl = GetThumbnailUrl(seriesIdToEpisodes.FirstOrDefault()?.Series),
             SeriesName = seriesTitle,
@@ -81,7 +81,7 @@ public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegration
     {
         return new NewlyMonitoredSeries
         {
-            CalendarItemSource = Name,
+            ItemSource = Name,
             StartedMonitoring = series.Added,
             ThumbnailUrl = GetThumbnailUrl(series),
             SeriesName = series.Title,

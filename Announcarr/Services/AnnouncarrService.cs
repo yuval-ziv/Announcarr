@@ -27,63 +27,63 @@ public class AnnouncarrService : IAnnouncarrService
         });
     }
 
-    public async Task<CalendarContract> GetAllCalendarItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
+    public async Task<ForecastContract> GetAllForecastItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
     {
         start ??= DateTimeOffset.Now;
         end ??= start.Value.AddDays(7);
 
-        CalendarContract[] calendarResponses = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
-            .Select(async serviceIntegration => await GetCalendarResponseAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
+        ForecastContract[] contracts = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
+            .Select(async serviceIntegration => await GetForcastResponseAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
 
         if (export ?? false)
         {
-            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled).Select(exporter => exporter.ExportCalendarAsync(calendarResponses, start.Value, end.Value, cancellationToken)));
+            await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled).Select(exporter => exporter.ExportForecastAsync(contracts, start.Value, end.Value, cancellationToken)));
         }
 
-        return calendarResponses.Length != 0 ? calendarResponses.Aggregate(CalendarContract.Merge) : new CalendarContract();
+        return contracts.Length != 0 ? contracts.Aggregate(ForecastContract.Merge) : new ForecastContract();
     }
 
-    public async Task<RecentlyAddedContract> GetAllRecentlyAddedItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
+    public async Task<SummaryContract> GetAllSummaryItemsAsync(DateTimeOffset? start, DateTimeOffset? end, bool? export = false, CancellationToken cancellationToken = default)
     {
         start ??= DateTimeOffset.Now.AddDays(-7);
         end ??= start.Value.AddDays(7);
 
-        RecentlyAddedContract[] recentlyAddedContracts = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
-            .Select(async serviceIntegration => await GetRecentlyAddedItemsAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
+        SummaryContract[] contracts = await Task.WhenAll(_integrationServices.Where(integration => integration.IsEnabled)
+            .Select(async serviceIntegration => await GetSummaryItemsAsync(serviceIntegration, start.Value, end.Value, cancellationToken)));
 
         if (export ?? false)
         {
             await Task.WhenAll(_exporterServices.Where(exporter => exporter.IsEnabled)
-                .Select(exporter => exporter.ExportRecentlyAddedAsync(recentlyAddedContracts, start.Value, end.Value, cancellationToken)));
+                .Select(exporter => exporter.ExportSummaryAsync(contracts, start.Value, end.Value, cancellationToken)));
         }
 
-        return recentlyAddedContracts.Length != 0 ? recentlyAddedContracts.Aggregate(RecentlyAddedContract.Merge) : new RecentlyAddedContract();
+        return contracts.Length != 0 ? contracts.Aggregate(SummaryContract.Merge) : new SummaryContract();
     }
 
-    private async Task<CalendarContract> GetCalendarResponseAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken = default)
+    private async Task<ForecastContract> GetForcastResponseAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken = default)
     {
         try
         {
-            return await integrationService.GetCalendarAsync(start, end, cancellationToken);
+            return await integrationService.GetForecastAsync(start, end, cancellationToken);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get calendar items from {IntegrationServiceName}", integrationService.Name);
-            return new CalendarContract();
+            _logger.LogError(e, "Unable to get forecast items from {IntegrationServiceName}", integrationService.Name);
+            return new ForecastContract();
         }
     }
 
-    private async Task<RecentlyAddedContract> GetRecentlyAddedItemsAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end,
+    private async Task<SummaryContract> GetSummaryItemsAsync(IIntegrationService integrationService, DateTimeOffset start, DateTimeOffset end,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            return await integrationService.GetRecentlyAddedAsync(start, end, cancellationToken);
+            return await integrationService.GetSummaryAsync(start, end, cancellationToken);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to get recently added items from {IntegrationServiceName}", integrationService.Name);
-            return new RecentlyAddedContract();
+            _logger.LogError(e, "Unable to get summary items from {IntegrationServiceName}", integrationService.Name);
+            return new SummaryContract();
         }
     }
 }
