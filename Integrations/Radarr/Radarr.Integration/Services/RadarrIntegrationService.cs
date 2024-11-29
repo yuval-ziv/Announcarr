@@ -5,12 +5,17 @@ using Announcarr.Integrations.Abstractions.Integration.Implementations;
 using Announcarr.Integrations.Radarr.Integration.Configurations;
 using Announcarr.Integrations.Radarr.Integration.Contracts;
 using Announcarr.Utils.Extensions.DateTime;
+using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Integrations.Radarr.Integration.Services;
 
 public class RadarrIntegrationService : BaseIntegrationService<RadarrIntegrationConfiguration>
 {
-    public RadarrIntegrationService(RadarrIntegrationConfiguration configuration) : base(configuration)
+    public RadarrIntegrationService(RadarrIntegrationConfiguration configuration) : this(null, configuration)
+    {
+    }
+
+    public RadarrIntegrationService(ILogger<RadarrIntegrationService>? logger, RadarrIntegrationConfiguration configuration) : base(logger, configuration)
     {
     }
 

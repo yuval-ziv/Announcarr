@@ -5,12 +5,17 @@ using Announcarr.Integrations.Abstractions.Integration.Implementations;
 using Announcarr.Integrations.Sonarr.Integration.Configurations;
 using Announcarr.Integrations.Sonarr.Integration.Contracts;
 using Announcarr.Utils.Extensions.DateTime;
+using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Integrations.Sonarr.Integration.Services;
 
 public class SonarrIntegrationService : BaseIntegrationService<SonarrIntegrationConfiguration>
 {
-    public SonarrIntegrationService(SonarrIntegrationConfiguration configuration) : base(configuration)
+    public SonarrIntegrationService(SonarrIntegrationConfiguration configuration) : this(null, configuration)
+    {
+    }
+
+    public SonarrIntegrationService(ILogger<SonarrIntegrationService>? logger, SonarrIntegrationConfiguration configuration) : base(logger, configuration)
     {
     }
 

@@ -1,14 +1,21 @@
 ﻿using Announcarr.Abstractions.Contracts;
 using Announcarr.Integrations.Abstractions.Integration.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Announcarr.Integrations.Abstractions.Integration.Implementations;
 
 public abstract class BaseIntegrationService<TConfiguration> : IIntegrationService where TConfiguration : BaseIntegrationConfiguration
 {
+    protected readonly ILogger<BaseIntegrationService<TConfiguration>>? Logger;
     protected readonly TConfiguration Configuration;
 
-    protected BaseIntegrationService(TConfiguration configuration)
+    protected BaseIntegrationService(TConfiguration configuration) : this(null, configuration)
     {
+    }
+
+    protected BaseIntegrationService(ILogger<BaseIntegrationService<TConfiguration>>? logger, TConfiguration configuration)
+    {
+        Logger = logger;
         Configuration = configuration;
     }
 
