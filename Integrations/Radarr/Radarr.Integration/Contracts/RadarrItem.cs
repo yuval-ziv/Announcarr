@@ -3,7 +3,7 @@ using EnumsNET;
 
 namespace Announcarr.Integrations.Radarr.Integration.Contracts;
 
-public class RadarrCalendarItem : BaseCalendarItem
+public class RadarrItem : BaseItem
 {
     public string? MovieName { get; set; }
     public ReleaseDateType ReleaseDateType { get; set; }

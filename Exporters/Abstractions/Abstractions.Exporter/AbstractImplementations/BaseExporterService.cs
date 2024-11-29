@@ -37,18 +37,18 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
         Logger?.LogDebug("Finished testing exporter {ExporterName}", Name);
     }
 
-    public Task ExportCalendarAsync(IEnumerable<CalendarContract> calendarContracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    public Task ExportForecastAsync(IEnumerable<ForecastContract> contracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        CalendarContract mergedContract = calendarContracts.Where(IsTagSupportedByExporter).Aggregate(CalendarContract.Merge);
+        ForecastContract mergedContract = contracts.Where(IsTagSupportedByExporter).Aggregate(ForecastContract.Merge);
 
-        return ExportCalendarAsync(mergedContract, startDate, endDate, cancellationToken);
+        return ExportForecastAsync(mergedContract, startDate, endDate, cancellationToken);
     }
 
-    public Task ExportRecentlyAddedAsync(IEnumerable<RecentlyAddedContract> recentlyAddedContracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    public Task ExportSummaryAsync(IEnumerable<SummaryContract> contracts, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        RecentlyAddedContract mergedContract = recentlyAddedContracts.Where(IsTagSupportedByExporter).Aggregate(RecentlyAddedContract.Merge);
+        SummaryContract mergedContract = contracts.Where(IsTagSupportedByExporter).Aggregate(SummaryContract.Merge);
 
-        return ExportRecentlyAddedAsync(mergedContract, startDate, endDate, cancellationToken);
+        return ExportSummaryAsync(mergedContract, startDate, endDate, cancellationToken);
     }
 
     public Task ExportCustomAnnouncementAsync(CustomAnnouncement customAnnouncement, CancellationToken cancellationToken = default)
@@ -71,63 +71,64 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
         return Task.CompletedTask;
     }
 
-    protected Task ExportCalendarAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    protected Task ExportForecastAsync(ForecastContract contract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        Logger?.LogDebug("Start to export calendar with {ItemsCount} items between {Start} and {End} on exporter {ExporterName}", calendarContract.CalendarItems.Count, startDate, endDate, Name);
-        if (!Configuration.IsEnabledByAnnouncementType(calendarContract.AnnouncementType))
+        Logger?.LogDebug("Start to export {AnnouncementType} with {ItemsCount} items between {Start} and {End} on exporter {ExporterName}", contract.AnnouncementType, contract.Items.Count,
+            startDate, endDate, Name);
+        if (!Configuration.IsEnabledByAnnouncementType(contract.AnnouncementType))
         {
-            Logger?.LogDebug("Not exporting items on exporter {ExporterName} because announcement type {AnnouncementType} is not enabled", Name, calendarContract.AnnouncementType);
+            Logger?.LogDebug("Not exporting items on exporter {ExporterName} because announcement type {AnnouncementType} is not enabled", Name, contract.AnnouncementType);
             return Task.CompletedTask;
         }
 
-        if (!IsTagSupportedByExporter(calendarContract))
+        if (!IsTagSupportedByExporter(contract))
         {
             Logger?.LogDebug("Not exporting items on exporter {ExporterName} because tag is not supported", Name);
             return Task.CompletedTask;
         }
 
-        if (!calendarContract.IsEmpty)
+        if (!contract.IsEmpty)
         {
             Logger?.LogDebug("Exporting items on exporter {ExporterName}", Name);
-            return ExportCalendarLogicAsync(calendarContract, startDate, endDate, cancellationToken);
+            return ExportForecastLogicAsync(contract, startDate, endDate, cancellationToken);
         }
 
         if (ExportOnEmptyContract ?? false)
         {
             Logger?.LogDebug("Exporting empty contract on exporter {ExporterName}", Name);
-            return ExportEmptyCalendarLogicAsync(startDate, endDate, cancellationToken);
+            return ExportEmptyForecastLogicAsync(startDate, endDate, cancellationToken);
         }
 
         Logger?.LogDebug("Not exporting items on exporter {ExporterName} because contract is empty", Name);
         return Task.CompletedTask;
     }
 
-    protected Task ExportRecentlyAddedAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    protected Task ExportSummaryAsync(SummaryContract contract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        Logger?.LogDebug("Start to export recently added with {NewItemsCount} items and {NewlyMonitoredItemsCount} items between {Start} and {End} on exporter {ExporterName}",
-            recentlyAddedContract.NewItems.Count, recentlyAddedContract.NewlyMonitoredItems.Count, startDate, endDate, Name);
-        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.RecentlyAdded))
+        Logger?.LogDebug("Start to export {AnnouncementType} with {NewItemsCount} items and {NewlyMonitoredItemsCount} items between {Start} and {End} on exporter {ExporterName}",
+            contract.AnnouncementType, contract.NewItems.Count, contract.NewlyMonitoredItems.Count, startDate, endDate, Name);
+        if (!Configuration.IsEnabledByAnnouncementType(AnnouncementType.Summary))
         {
-            Logger?.LogDebug("Not exporting items on exporter {ExporterName} because announcement type {AnnouncementType} is not enabled", Name, recentlyAddedContract.AnnouncementType);
+            Logger?.LogDebug("Not exporting items on exporter {ExporterName} because announcement type {AnnouncementType} is not enabled", Name, contract.AnnouncementType);
             return Task.CompletedTask;
         }
 
-        if (!IsTagSupportedByExporter(recentlyAddedContract))
+        if (!IsTagSupportedByExporter(contract))
         {
             Logger?.LogDebug("Not exporting items on exporter {ExporterName} because tag is not supported", Name);
             return Task.CompletedTask;
         }
 
-        if (!recentlyAddedContract.IsEmpty)
+        if (!contract.IsEmpty)
         {
             Logger?.LogDebug("Exporting items on exporter {ExporterName}", Name);
-            return ExportRecentlyAddedLogicAsync(recentlyAddedContract, startDate, endDate, cancellationToken);
+            return ExportSummaryLogicAsync(contract, startDate, endDate, cancellationToken);
         }
 
         if (ExportOnEmptyContract ?? false)
         {
             Logger?.LogDebug("Exporting empty contract on exporter {ExporterName}", Name);
-            return ExportEmptyRecentlyAddedLogicAsync(startDate, endDate, cancellationToken);
+            return ExportEmptySummaryLogicAsync(startDate, endDate, cancellationToken);
         }
 
         Logger?.LogDebug("Not exporting items on exporter {ExporterName} because contract is empty", Name);
@@ -136,11 +137,11 @@ public abstract class BaseExporterService<TConfiguration> : IExporterService whe
 
     protected abstract Task TestExporterLogicAsync(CancellationToken cancellationToken = default);
 
-    protected abstract Task ExportCalendarLogicAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
-    protected abstract Task ExportEmptyCalendarLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    protected abstract Task ExportForecastLogicAsync(ForecastContract forecastContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    protected abstract Task ExportEmptyForecastLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
 
-    protected abstract Task ExportRecentlyAddedLogicAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
-    protected abstract Task ExportEmptyRecentlyAddedLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    protected abstract Task ExportSummaryLogicAsync(SummaryContract summaryContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+    protected abstract Task ExportEmptySummaryLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
     protected abstract Task ExportAnnouncementLogicAsync(CustomAnnouncement message, CancellationToken cancellationToken = default);
 
     protected virtual bool IsTagSupportedByExporter<TAnnouncement>(TAnnouncement announcement) where TAnnouncement : BaseAnnouncement

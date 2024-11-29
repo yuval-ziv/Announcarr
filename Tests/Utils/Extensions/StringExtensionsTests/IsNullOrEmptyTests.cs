@@ -1,7 +1,7 @@
 ﻿using Announcarr.Utils.Extensions.String;
 using FluentAssertions;
 
-namespace StringExtensionsTests;
+namespace Announcarr.Test.Utils.Extensions.StringExtensionsTests;
 
 public class IsNullOrEmptyTests
 {

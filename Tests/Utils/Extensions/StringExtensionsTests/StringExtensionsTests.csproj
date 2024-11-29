@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <RootNamespace>Announcarr.Test.Utils.Extensions.StringExtensionsTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

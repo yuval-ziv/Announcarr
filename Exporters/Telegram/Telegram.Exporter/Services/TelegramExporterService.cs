@@ -44,44 +44,44 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
 
     protected override async Task TestExporterLogicAsync(CancellationToken cancellationToken = default)
     {
-        if (Configuration.IsTestExporterEnabled)
+        if (Configuration.IsEnabledByAnnouncementType(AnnouncementType.Test))
         {
             await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, "This is a test message.", cancellationToken: cancellationToken));
         }
     }
 
-    protected override async Task ExportCalendarLogicAsync(CalendarContract calendarContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    protected override async Task ExportForecastLogicAsync(ForecastContract forecastContract, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
         var startDateString = startDate.ToString(Configuration.DateTimeFormat);
         var endDateString = endDate.ToString(Configuration.DateTimeFormat);
 
-        await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, $"The calendar for {startDateString} to {endDateString} is:", cancellationToken: cancellationToken));
-        await ExportItemsAsync(calendarContract.CalendarItems, cancellationToken);
+        await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, $"The forecast for {startDateString} to {endDateString} is:", cancellationToken: cancellationToken));
+        await ExportItemsAsync(forecastContract.Items, cancellationToken);
     }
 
-    protected override async Task ExportEmptyCalendarLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    protected override async Task ExportEmptyForecastLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, AnnouncementType.Calendar, startDate, endDate, Configuration.DateTimeFormat);
+        string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, AnnouncementType.Forecast, startDate, endDate, Configuration.DateTimeFormat);
 
         await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, text, cancellationToken: cancellationToken));
     }
 
-    protected override async Task ExportRecentlyAddedLogicAsync(RecentlyAddedContract recentlyAddedContract, DateTimeOffset startDate, DateTimeOffset endDate,
+    protected override async Task ExportSummaryLogicAsync(SummaryContract summaryContract, DateTimeOffset startDate, DateTimeOffset endDate,
         CancellationToken cancellationToken = default)
     {
         var startDateString = startDate.ToString(Configuration.DateTimeFormat);
         var endDateString = endDate.ToString(Configuration.DateTimeFormat);
 
-        await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, $"The recently monitored items for {startDateString} to {endDateString} are:", cancellationToken: cancellationToken));
-        await ExportItemsAsync(recentlyAddedContract.NewlyMonitoredItems, cancellationToken);
+        await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, $"The summary of newly monitored items for {startDateString} to {endDateString} are:", cancellationToken: cancellationToken));
+        await ExportItemsAsync(summaryContract.NewlyMonitoredItems, cancellationToken);
 
-        await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, $"The recently added items for {startDateString} to {endDateString} is:", cancellationToken: cancellationToken));
-        await ExportItemsAsync(recentlyAddedContract.NewItems, cancellationToken);
+        await ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, $"The summary of new items for {startDateString} to {endDateString} is:", cancellationToken: cancellationToken));
+        await ExportItemsAsync(summaryContract.NewItems, cancellationToken);
     }
 
-    protected override Task ExportEmptyRecentlyAddedLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
+    protected override Task ExportEmptySummaryLogicAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
     {
-        string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, AnnouncementType.Calendar, startDate, endDate, Configuration.DateTimeFormat);
+        string text = TextMessageResolver.ResolveTextMessage(CustomMessageOnEmptyContract, AnnouncementType.Forecast, startDate, endDate, Configuration.DateTimeFormat);
         return ExportToAllChatsAsync(chatId => _bot.SendMessage(chatId, text, cancellationToken: cancellationToken));
     }
 
@@ -145,10 +145,10 @@ public class TelegramExporterService : BaseExporterService<TelegramExporterConfi
         await ExportToAllChatsAsync(async chatId => await _bot.SendMessage(chatId, newItemsCaption, cancellationToken: cancellationToken));
     }
 
-    private (List<InputMediaPhoto> MediaGroup, string Caption) GetMediaGroupAndCaption<T>(T[] calendarItems) where T : ICaptionableItem, IThumbnailItem
+    private (List<InputMediaPhoto> MediaGroup, string Caption) GetMediaGroupAndCaption<T>(T[] items) where T : ICaptionableItem, IThumbnailItem
     {
-        List<InputMediaPhoto> mediaGroup = calendarItems.Select(ToInputMediaPhoto).ToList();
-        string caption = string.Join(Environment.NewLine, calendarItems.Select(item => item.GetCaption(Configuration.DateTimeFormat)));
+        List<InputMediaPhoto> mediaGroup = items.Select(ToInputMediaPhoto).ToList();
+        string caption = string.Join(Environment.NewLine, items.Select(item => item.GetCaption(Configuration.DateTimeFormat)));
 
         return (mediaGroup, caption);
     }
