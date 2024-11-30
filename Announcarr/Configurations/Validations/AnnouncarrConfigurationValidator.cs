@@ -56,7 +56,7 @@ public class AnnouncarrConfigurationValidator : IValidateOptions<AnnouncarrConfi
         return options.Interval.HourOfDay switch
         {
             null => Failed(nameof(options.Interval.HourOfDay), "is required"),
-            < 0 or > 24 => Failed(nameof(options.Interval.HourOfDay), "must be an integer value between 0 and 23 (including)"),
+            < 0 or > 23 => Failed(nameof(options.Interval.HourOfDay), "must be an integer value between 0 and 23 (including)"),
             _ => Valid,
         };
     }
@@ -90,24 +90,24 @@ public class AnnouncarrConfigurationValidator : IValidateOptions<AnnouncarrConfi
         return options.Interval.DayOfMonth switch
         {
             null => Failed(nameof(options.Interval.DayOfMonth), "is required"),
-            < 0 or > 24 => Failed(nameof(options.Interval.DayOfMonth), "must be an integer value between 0 and 31 (including)"),
+            < 1 or > 31 => Failed(nameof(options.Interval.DayOfMonth), "must be an integer value between 1 and 31 (including)"),
             _ => Valid,
         };
     }
 
     private static (bool IsValid, string? FailedFieldName, string? FailedReason) ValidateYearlyAnnouncarrRange(AnnouncarrConfiguration options)
     {
-        (bool IsValid, string? FailedFieldName, string? FailedReason) dailyValidationResult = ValidateDailyAnnouncarrRange(options);
+        (bool IsValid, string? FailedFieldName, string? FailedReason) monthlyValidationResult = ValidateMonthlyAnnouncarrRange(options);
 
-        if (!dailyValidationResult.IsValid)
+        if (!monthlyValidationResult.IsValid)
         {
-            return dailyValidationResult;
+            return monthlyValidationResult;
         }
 
         return options.Interval.MonthOfYear switch
         {
             null => Failed(nameof(options.Interval.MonthOfYear), "is required"),
-            < 0 or > 24 => Failed(nameof(options.Interval.MonthOfYear), "must be an integer value between 0 and 12 (including)"),
+            < 1 or > 12 => Failed(nameof(options.Interval.MonthOfYear), "must be an integer value between 1 and 12 (including)"),
             _ => Valid,
         };
     }
