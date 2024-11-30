@@ -6,3 +6,4 @@ riderModule.iml
 .idea/
 Announcarr/appsettings.Development.json
 Announcarr/logs
+.env
