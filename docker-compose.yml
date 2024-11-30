@@ -6,4 +6,7 @@
       - .env
     ports:
       - 8080:8080
+#    volumes:
+#      - ./logs:/app/logs # Uncomment this line in order to save the logs between runs.
+#      - /path/to/custom/appsettings.json:/app/appsettings.json # Uncomment this line to override the configurations (see more - https://github.com/yuval-ziv/Announcarr/wiki/Configuration#:~:text=Docker%20Compose)
     restart: unless-stopped
