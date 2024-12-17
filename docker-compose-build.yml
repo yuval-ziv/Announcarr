@@ -1,0 +1,6 @@
+﻿services:
+  announcarr:
+    image: announcarr
+    build:
+      context: .
+      dockerfile: Announcarr/Dockerfile
