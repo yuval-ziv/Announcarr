@@ -1,5 +1,5 @@
 ﻿using Announcarr.Utils.Extensions.String;
-using FluentAssertions;
+using Shouldly;
 
 namespace Announcarr.Test.Utils.Extensions.StringExtensionsTests;
 
@@ -15,7 +15,7 @@ public class IsValidUriTests
     public void When_IsValidUriCalled_Given_InvalidUri_Then_ReturnFalse(string? uri)
     {
         bool result = uri.IsValidUri();
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Theory]
@@ -42,6 +42,6 @@ public class IsValidUriTests
     public void When_IsValidUriCalled_Given_ValidUri_Then_ReturnTrue(string? uri)
     {
         bool result = uri.IsValidUri();
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 }

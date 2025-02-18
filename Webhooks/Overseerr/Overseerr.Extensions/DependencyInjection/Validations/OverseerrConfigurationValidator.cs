@@ -6,7 +6,7 @@ namespace Announcarr.Webhooks.Overseerr.Extensions.DependencyInjection.Validatio
 
 public class OverseerrConfigurationValidator : IValidateOptions<List<OverseerrConfiguration>>
 {
-    public ValidateOptionsResult Validate(string name, List<OverseerrConfiguration> allConfigurations)
+    public ValidateOptionsResult Validate(string? name, List<OverseerrConfiguration> allConfigurations)
     {
         if (allConfigurations.Count <= 1)
         {

@@ -1,6 +1,6 @@
 ﻿using Announcarr.Configurations;
 using Announcarr.Utils.Extensions;
-using FluentAssertions;
+using Shouldly;
 using NCrontab;
 
 namespace Announcarr.Test.Utils.Extensions.AnnouncarrIntervalConfigurationExtensionsTests;
@@ -12,20 +12,19 @@ public class ToCronTests
     {
         string cron = intervalConfiguration.ToCron();
 
-        cron.Should().Be(expectedCron);
+        cron.ShouldBe(expectedCron);
         
         CrontabSchedule crontabSchedule = CrontabSchedule.TryParse(cron);
 
-        crontabSchedule.Should().NotBeNull();
+        crontabSchedule.ShouldNotBeNull();
     }
 
     [Theory, MemberData(nameof(InvalidIntervalsData))]
     public void When_ToCronCalled_Given_DifferentInvalidIntervals_Then_ThrowException(AnnouncarrIntervalConfiguration intervalConfiguration, string missingValue)
     {
-        intervalConfiguration.Invoking(s => s.ToCron())
-            .Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"{missingValue} must not be null (Parameter 'intervalConfiguration')");
+        Action action  = () => intervalConfiguration.ToCron();
+        
+        action.ShouldThrow<ArgumentException>().Message.ShouldBe($"{missingValue} must not be null (Parameter 'intervalConfiguration')");
     }
 
     [Fact]
@@ -33,9 +32,7 @@ public class ToCronTests
     {
         AnnouncarrIntervalConfiguration? intervalConfiguration = null;
         Action action = () => intervalConfiguration.ToCron();
-        action.Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"value of {nameof(AnnouncarrIntervalConfiguration.AnnouncarrRange)} is unknown (Parameter 'intervalConfiguration')");
+        action.ShouldThrow<ArgumentException>().Message.ShouldBe($"value of {nameof(AnnouncarrIntervalConfiguration.AnnouncarrRange)} is unknown (Parameter 'intervalConfiguration')");
     }
 
     public static TheoryData<AnnouncarrIntervalConfiguration, string> ValidIntervalsData => new()

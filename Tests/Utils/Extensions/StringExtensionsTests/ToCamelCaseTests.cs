@@ -1,5 +1,5 @@
 ﻿using Announcarr.Utils.Extensions.String;
-using FluentAssertions;
+using Shouldly;
 
 namespace Announcarr.Test.Utils.Extensions.StringExtensionsTests;
 
@@ -20,7 +20,7 @@ public class ToCamelCaseTests
     public void When_ToCamelCaseCalled_Given_StringWithDifferentCasing_Then_ReturnCamelCasedString(string? input)
     {
         string result = input.ToCamelCase();
-        result.Should().Be("helloWorldIAmYou");
+        result.ShouldBe("helloWorldIAmYou");
     }
 
     [Theory]
@@ -33,6 +33,6 @@ public class ToCamelCaseTests
     public void When_ToCamelCaseCalled_Given_NullOrWhiteSpaceString_Then_ReturnEmptyString(string? input)
     {
         string result = input.ToCamelCase();
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 }
