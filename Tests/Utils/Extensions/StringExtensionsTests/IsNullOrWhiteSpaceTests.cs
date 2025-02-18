@@ -1,5 +1,5 @@
 ﻿using Announcarr.Utils.Extensions.String;
-using FluentAssertions;
+using Shouldly;
 
 namespace Announcarr.Test.Utils.Extensions.StringExtensionsTests;
 
@@ -15,7 +15,7 @@ public class IsNullOrWhiteSpaceTests
     public void When_IsNullOrWhiteSpaceCalled_Given_NullOrWhiteSpaceString_Then_ReturnTrue(string? input)
     {
         bool result = input.IsNullOrWhiteSpace();
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Theory]
@@ -25,6 +25,6 @@ public class IsNullOrWhiteSpaceTests
     public void When_IsNullOrWhiteSpaceCalled_Given_ANonNullOrWhiteSpaceString_Then_ReturnFalse(string? input)
     {
         bool result = input.IsNullOrWhiteSpace();
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 }

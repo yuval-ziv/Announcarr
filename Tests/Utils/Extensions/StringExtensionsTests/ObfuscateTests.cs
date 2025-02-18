@@ -1,5 +1,5 @@
 ﻿using Announcarr.Utils.Extensions.String;
-using FluentAssertions;
+using Shouldly;
 
 namespace Announcarr.Test.Utils.Extensions.StringExtensionsTests;
 
@@ -12,7 +12,7 @@ public class ObfuscateTests
     {
         string result = input.Obfuscate();
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Theory]
@@ -22,10 +22,10 @@ public class ObfuscateTests
     [InlineData("VQXIyoAhe9IcIOFRn9gkj9xjjjF08y08r0TJCgEUE4WYiSQnh3rmi9nUcOdcajKM", 32, 33)]
     public void When_ObfuscateCalled_Given_StringWithTooManyCharactersToKeep_Then_ThrowArgumentException(string input, int keepFirstCharacters, int keepLastCharacters)
     {
-        input.Invoking(s => s.Obfuscate(keepFirstCharacters: keepFirstCharacters, keepLastCharacters: keepLastCharacters))
-            .Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"Input string length must be bigger than total amount of characters to skip (was {input.Length}, needed at least {keepFirstCharacters + keepLastCharacters})");
+        Action action = () => input.Obfuscate(keepFirstCharacters: keepFirstCharacters, keepLastCharacters: keepLastCharacters);
+
+        action.ShouldThrow<ArgumentException>()
+            .Message.ShouldBe($"Input string length must be bigger than total amount of characters to skip (was {input.Length}, needed at least {keepFirstCharacters + keepLastCharacters})");
     }
 
     [Theory]
@@ -36,7 +36,7 @@ public class ObfuscateTests
     {
         string result = input.Obfuscate();
 
-        result.Should().HaveLength(input.Length);
+        result.Length.ShouldBe(input.Length);
     }
 
     [Theory]
@@ -46,7 +46,7 @@ public class ObfuscateTests
     {
         string result = input.Obfuscate(keepFirstCharacters: keepFirstCharacters, keepLastCharacters: keepLastCharacters);
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -57,6 +57,6 @@ public class ObfuscateTests
     {
         string result = input.Obfuscate(obfuscationCharacter, keepFirstCharacters, keepLastCharacters);
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 }

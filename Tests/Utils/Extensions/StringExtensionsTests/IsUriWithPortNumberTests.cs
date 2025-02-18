@@ -1,5 +1,5 @@
 ﻿using Announcarr.Utils.Extensions.String;
-using FluentAssertions;
+using Shouldly;
 
 namespace Announcarr.Test.Utils.Extensions.StringExtensionsTests;
 
@@ -15,7 +15,7 @@ public class IsUriWithPortNumberTests
     public void When_IsUriWithPortNumberCalled_Given_InvalidUri_Then_ReturnFalse(string? uri)
     {
         bool result = uri.IsUriWithPortNumber();
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Theory]
@@ -38,7 +38,7 @@ public class IsUriWithPortNumberTests
     public void When_IsUriWithPortNumberCalled_Given_UriWithoutPortNumber_Then_ReturnFalse(string? uri)
     {
         bool result = uri.IsUriWithPortNumber();
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Theory]
@@ -51,6 +51,6 @@ public class IsUriWithPortNumberTests
     public void When_IsUriWithPortNumberCalled_Given_UriWithPortNumber_Then_ReturnTrue(string? uri)
     {
         bool result = uri.IsUriWithPortNumber();
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 }
