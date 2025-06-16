@@ -8,8 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+<<<<<<< dependabot/nuget/Announcarr/multi-d0bbdd40a2
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6"/>
         <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.6"/>
+=======
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.4"/>
+>>>>>>> master
     </ItemGroup>
 
     <ItemGroup>

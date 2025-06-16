@@ -14,7 +14,11 @@
     </ItemGroup>
 
     <ItemGroup>
+<<<<<<< dependabot/nuget/Announcarr/multi-d0bbdd40a2
         <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.6"/>
+=======
+        <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.4"/>
+>>>>>>> master
     </ItemGroup>
 
 </Project>
