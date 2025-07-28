@@ -14,26 +14,26 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
         <PackageReference Include="NCrontab" Version="3.3.3" />
-        <PackageReference Include="Serilog" Version="4.3.0"/>
-        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
+        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
         <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Exporters\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj"/>
-        <ProjectReference Include="..\Exporters\Telegram\Telegram.Exporter\Telegram.Exporter.csproj"/>
-        <ProjectReference Include="..\Exporters\Telegram\Telegram.Extensions\Telegram.Extensions.csproj"/>
-        <ProjectReference Include="..\Integrations\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj"/>
-        <ProjectReference Include="..\Integrations\Radarr\Radarr.Extensions\Radarr.Extensions.csproj"/>
-        <ProjectReference Include="..\Integrations\Radarr\Radarr.Integration\Radarr.Integration.csproj"/>
-        <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj"/>
-        <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Integration\Sonarr.Integration.csproj"/>
-        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Extensions\Overseerr.Extensions.csproj"/>
-        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Webhook\Overseerr.Webhook.csproj"/>
+        <ProjectReference Include="..\Exporters\Abstractions\Abstractions.Exporter.Extensions\Abstractions.Exporter.Extensions.csproj" />
+        <ProjectReference Include="..\Exporters\Telegram\Telegram.Exporter\Telegram.Exporter.csproj" />
+        <ProjectReference Include="..\Exporters\Telegram\Telegram.Extensions\Telegram.Extensions.csproj" />
+        <ProjectReference Include="..\Integrations\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj" />
+        <ProjectReference Include="..\Integrations\Radarr\Radarr.Extensions\Radarr.Extensions.csproj" />
+        <ProjectReference Include="..\Integrations\Radarr\Radarr.Integration\Radarr.Integration.csproj" />
+        <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Extensions\Sonarr.Extensions.csproj" />
+        <ProjectReference Include="..\Integrations\Sonarr\Sonarr.Integration\Sonarr.Integration.csproj" />
+        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Extensions\Overseerr.Extensions.csproj" />
+        <ProjectReference Include="..\Webhooks\Overseerr\Overseerr.Webhook\Overseerr.Webhook.csproj" />
     </ItemGroup>
 
 </Project>
