@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
         <ProjectReference Include="..\..\..\Exporters\Abstractions\Abstractions.Exporter\Abstractions.Exporter.csproj"/>
     </ItemGroup>
 
