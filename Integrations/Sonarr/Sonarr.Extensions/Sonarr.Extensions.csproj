@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6"/>
-        <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.7" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj"/>
-        <ProjectReference Include="..\Sonarr.Integration\Sonarr.Integration.csproj"/>
+        <ProjectReference Include="..\..\Abstractions\Abstractions.Inegration.Extensions\Abstractions.Inegration.Extensions.csproj" />
+        <ProjectReference Include="..\Sonarr.Integration\Sonarr.Integration.csproj" />
     </ItemGroup>
 
 </Project>
