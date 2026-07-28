@@ -14,7 +14,7 @@ public class ToCronTests
 
         cron.ShouldBe(expectedCron);
         
-        CrontabSchedule crontabSchedule = CrontabSchedule.TryParse(cron);
+        CrontabSchedule? crontabSchedule = CrontabSchedule.TryParse(cron);
 
         crontabSchedule.ShouldNotBeNull();
     }
