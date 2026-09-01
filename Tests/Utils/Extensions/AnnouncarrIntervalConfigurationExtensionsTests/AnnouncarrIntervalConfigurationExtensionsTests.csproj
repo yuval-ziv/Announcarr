@@ -7,22 +7,18 @@
         <IsPackable>false</IsPackable>
         <RootNamespace>Announcarr.Test.Utils.Extensions.AnnouncarrIntervalConfigurationExtensionsTests</RootNamespace>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="10.0.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-        <PackageReference Include="NCrontab" Version="3.4.0" />
-        <PackageReference Include="Shouldly" Version="4.3.0" />
-        <PackageReference Include="xunit.v3" Version="4.0.0" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit" />
+        <PackageReference Include="coverlet.collector" Version="10.0.1" />
+        <PackageReference Include="NCrontab" Version="3.4.0" />
+        <PackageReference Include="Shouldly" Version="4.3.0" />
+        <PackageReference Include="xunit.v3" Version="4.0.0" />
     </ItemGroup>
 
     <ItemGroup>

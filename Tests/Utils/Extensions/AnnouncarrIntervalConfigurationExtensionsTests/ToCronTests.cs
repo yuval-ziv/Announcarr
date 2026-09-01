@@ -13,7 +13,7 @@ public class ToCronTests
         string cron = intervalConfiguration.ToCron();
 
         cron.ShouldBe(expectedCron);
-        
+
         CrontabSchedule? crontabSchedule = CrontabSchedule.TryParse(cron);
 
         crontabSchedule.ShouldNotBeNull();
@@ -22,8 +22,8 @@ public class ToCronTests
     [Theory, MemberData(nameof(InvalidIntervalsData))]
     public void When_ToCronCalled_Given_DifferentInvalidIntervals_Then_ThrowException(AnnouncarrIntervalConfiguration intervalConfiguration, string missingValue)
     {
-        Action action  = () => intervalConfiguration.ToCron();
-        
+        Action action = () => intervalConfiguration.ToCron();
+
         action.ShouldThrow<ArgumentException>().Message.ShouldBe($"{missingValue} must not be null (Parameter 'intervalConfiguration')");
     }
 

@@ -1,7 +1,7 @@
 using Announcarr.Utils.Extensions.DateTime;
 using Shouldly;
 
-namespace DateTimeExtensionsTests;
+namespace Announcarr.Test.Utils.Extensions.DateTimeExtensionsTests;
 
 public class BetweenDateTimeTests
 {
