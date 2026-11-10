@@ -1,0 +1,57 @@
+<Solution>
+  <Folder Name="/Abstractions/">
+    <Project Path="Abstractions/Abstractions.Contracts/Abstractions.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Clients/">
+    <Project Path="Clients/Abstractions.Exceptions/Abstractions.Exceptions.csproj" />
+    <Project Path="Clients/Radarr.Client/Radarr.Client.csproj" />
+    <Project Path="Clients/Sonarr.Client/Sonarr.Client.csproj" />
+  </Folder>
+  <Folder Name="/Exporters/" />
+  <Folder Name="/Exporters/Abstractions/">
+    <Project Path="Exporters/Abstractions/Abstractions.Exporter.Extensions/Abstractions.Exporter.Extensions.csproj" />
+    <Project Path="Exporters/Abstractions/Abstractions.Exporter/Abstractions.Exporter.csproj" />
+  </Folder>
+  <Folder Name="/Exporters/Telegram/">
+    <Project Path="Exporters/Telegram/Telegram.Exporter/Telegram.Exporter.csproj" />
+    <Project Path="Exporters/Telegram/Telegram.Extensions/Telegram.Extensions.csproj" />
+  </Folder>
+  <Folder Name="/Integrations/" />
+  <Folder Name="/Integrations/Abstractions/">
+    <Project Path="Integrations/Abstractions/Abstractions.Inegration.Extensions/Abstractions.Inegration.Extensions.csproj" />
+    <Project Path="Integrations/Abstractions/Abstractions.Integration/Abstractions.Integration.csproj" />
+  </Folder>
+  <Folder Name="/Integrations/Radarr/">
+    <Project Path="Integrations/Radarr/Radarr.Extensions/Radarr.Extensions.csproj" />
+    <Project Path="Integrations/Radarr/Radarr.Integration/Radarr.Integration.csproj" />
+  </Folder>
+  <Folder Name="/Integrations/Sonarr/">
+    <Project Path="Integrations/Sonarr/Sonarr.Extensions/Sonarr.Extensions.csproj" />
+    <Project Path="Integrations/Sonarr/Sonarr.Integration/Sonarr.Integration.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/Utils/" />
+  <Folder Name="/Tests/Utils/Extensions/">
+    <Project Path="Tests/Utils/Extensions/AnnouncarrIntervalConfigurationExtensionsTests/AnnouncarrIntervalConfigurationExtensionsTests.csproj" />
+    <Project Path="Tests/Utils/Extensions/DateTimeExtensionsTests/DateTimeExtensionsTests.csproj" />
+    <Project Path="Tests/Utils/Extensions/StringExtensionsTests/StringExtensionsTests.csproj" />
+  </Folder>
+  <Folder Name="/Utils/">
+    <Project Path="Utils/Json/Json.csproj" />
+  </Folder>
+  <Folder Name="/Utils/Extensions/">
+    <Project Path="Utils/Extensions/DateTime/DateTime.csproj" />
+    <Project Path="Utils/Extensions/Dictionary/Dictionary.csproj" />
+    <Project Path="Utils/Extensions/Http/Http.csproj" />
+    <Project Path="Utils/Extensions/String/String.csproj" />
+  </Folder>
+  <Folder Name="/Webhooks/" />
+  <Folder Name="/Webhooks/Overseerr/">
+    <Project Path="Webhooks/Overseerr/Overseerr.Extensions/Overseerr.Extensions.csproj" />
+    <Project Path="Webhooks/Overseerr/Overseerr.Webhook/Overseerr.Webhook.csproj" />
+  </Folder>
+  <Project Path="Announcarr/Announcarr.csproj" />
+</Solution>
